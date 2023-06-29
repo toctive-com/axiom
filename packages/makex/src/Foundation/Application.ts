@@ -12,7 +12,7 @@ export class Application extends Container {
    * @var string
    *
    */
-  protected readonly _version = "1.0.0";
+  readonly VERSION = "1.0.0";
 
   /**
    * The base path for the Laravel installation.
@@ -92,7 +92,7 @@ export class Application extends Container {
    * @return string
    */
   public get version(): string {
-    return this._version;
+    return this.VERSION;
   }
 
   /**
