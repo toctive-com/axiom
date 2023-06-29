@@ -91,6 +91,7 @@ export class Router {
   }
 
   /**
+   * Create a new route with all HTTP verbs and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -106,6 +107,7 @@ export class Router {
   }
 
   /**
+   * Create a new route with all HTTP verbs and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -121,6 +123,7 @@ export class Router {
   }
 
   /**
+   * Create a new Acl route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -136,6 +139,7 @@ export class Router {
   }
 
   /**
+   * Create a new Bind route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -151,6 +155,7 @@ export class Router {
   }
 
   /**
+   * Create a new Checkout route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -166,6 +171,7 @@ export class Router {
   }
 
   /**
+   * Create a new Connect route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -181,6 +187,7 @@ export class Router {
   }
 
   /**
+   * Create a new Copy route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -196,6 +203,7 @@ export class Router {
   }
 
   /**
+   * Create a new Delete route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -211,6 +219,7 @@ export class Router {
   }
 
   /**
+   * Create a new Get route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -226,6 +235,7 @@ export class Router {
   }
 
   /**
+   * Create a new Head route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -241,6 +251,7 @@ export class Router {
   }
 
   /**
+   * Create a new Link route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -256,6 +267,7 @@ export class Router {
   }
 
   /**
+   * Create a new Lock route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -271,6 +283,7 @@ export class Router {
   }
 
   /**
+   * Create a new Merge route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -286,6 +299,7 @@ export class Router {
   }
 
   /**
+   * Create a new Mkactivity route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -301,6 +315,7 @@ export class Router {
   }
 
   /**
+   * Create a new Mkcalendar route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -316,6 +331,7 @@ export class Router {
   }
 
   /**
+   * Create a new Mkcol route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -331,6 +347,7 @@ export class Router {
   }
 
   /**
+   * Create a new Move route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -346,6 +363,7 @@ export class Router {
   }
 
   /**
+   * Create a new Notify route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -361,6 +379,7 @@ export class Router {
   }
 
   /**
+   * Create a new Options route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -376,6 +395,7 @@ export class Router {
   }
 
   /**
+   * Create a new Patch route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -391,6 +411,7 @@ export class Router {
   }
 
   /**
+   * Create a new Post route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -406,6 +427,7 @@ export class Router {
   }
 
   /**
+   * Create a new Propfind route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -421,6 +443,7 @@ export class Router {
   }
 
   /**
+   * Create a new Proppatch route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -436,6 +459,7 @@ export class Router {
   }
 
   /**
+   * Create a new Purge route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -451,6 +475,7 @@ export class Router {
   }
 
   /**
+   * Create a new Put route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -466,6 +491,7 @@ export class Router {
   }
 
   /**
+   * Create a new Rebind route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -481,6 +507,7 @@ export class Router {
   }
 
   /**
+   * Create a new Report route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -496,6 +523,7 @@ export class Router {
   }
 
   /**
+   * Create a new Search route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -511,6 +539,7 @@ export class Router {
   }
 
   /**
+   * Create a new Source route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -526,6 +555,7 @@ export class Router {
   }
 
   /**
+   * Create a new Subscribe route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -541,6 +571,7 @@ export class Router {
   }
 
   /**
+   * Create a new Trace route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -556,6 +587,7 @@ export class Router {
   }
 
   /**
+   * Create a new Unbind route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -571,6 +603,7 @@ export class Router {
   }
 
   /**
+   * Create a new Unlink route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -586,6 +619,7 @@ export class Router {
   }
 
   /**
+   * Create a new Unlock route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
@@ -601,6 +635,7 @@ export class Router {
   }
 
   /**
+   * Create a new Unsubscribe route and store it in Router routes
    *
    * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
