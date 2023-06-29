@@ -2,8 +2,8 @@ import { Router } from "./Router";
 
 export class Route {
   constructor(
-    httpVerb: string|string[],
-    uri: string | string[],
-    action: CallableFunction[]|CallableFunction|null
+    httpVerb: string[],
+    uri: string[] | RegExp[],
+    action: CallableFunction[] | null
   ) {}
 }
