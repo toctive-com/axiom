@@ -1,4 +1,5 @@
 import { Instantiable } from "../Types";
+import Application from "./Application";
 
 export class Container {
   /**
@@ -29,21 +30,33 @@ export class Container {
    * arguments passed to the function.
    *
    */
-  singleton(abstract: string | Instantiable, contract: Instantiable = null) {
+  singleton(
+    abstract: string | Instantiable,
+    contract: Instantiable = null,
+    parameters?: {}
+  ) {
+    return Container.singleton(abstract, contract, parameters);
+  }
+
+  static singleton(
+    abstract: string | Instantiable,
+    contract: Instantiable = null,
+    parameters?: {}
+  ) {
     if (typeof abstract === "string") {
       if (contract === null) {
         throw new Error(
           `${Container.constructor.name}.singleton(): Argument #2 (concrete) can't be null while Argument #1 (abstract) is a string`
         );
       }
-      return this.bind(abstract, contract);
+      return Container.bind(abstract, contract, parameters);
     }
 
     if (contract === null) {
-      return this.bind(abstract.name, abstract);
+      return Container.bind(abstract.name, abstract, parameters);
     }
 
-    return this.bind(abstract.name, contract);
+    return Container.bind(abstract.name, contract, parameters);
   }
 
   /**
@@ -61,13 +74,14 @@ export class Container {
    * resolved from the container, an instance of the `contract` class will be
    * returned.
    */
-  bind(abstract: string, contract: Instantiable) {
+  static bind(abstract: string, contract: Instantiable, parameters?:{}) {
     if (Object.keys(Container.bindings).includes(abstract)) {
-      throw new Error(
+      console.warn(
         `Container.bindings already contains "${abstract}" associated to ${Container.bindings[abstract].constructor.name} class`
       );
+      return Container.bindings[abstract];
     }
-    Container.bindings[abstract] = new contract();
+    return Container.bindings[abstract] = new contract(parameters);
   }
 
   /**
@@ -82,9 +96,17 @@ export class Container {
    * function returns the value associated with that key as type `T`. Otherwise, it
    * returns `null`.
    */
-  make<T>(ref: Instantiable): T {
-    if (!Object.keys(Container.bindings).includes(ref.name)) {
-      throw new Error(`${ref.name} is not stored in Container`);
+  public make<T>(ref: Instantiable): T {
+    return Application.make(ref);
+  }
+  public static make<T>(ref: Instantiable): T {
+  if (!Object.keys(Container.bindings).includes(ref.name)) {
+      // try to make a singleton for `ref`, then return it
+      try {
+        return this.singleton(ref, null);
+      } catch (error) {
+        throw new Error(`${ref.name} is not stored in Container`);
+      }
     }
 
     return Container.bindings[ref.name];
