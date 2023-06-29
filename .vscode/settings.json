@@ -1,5 +1,10 @@
 {
   "cSpell.words": [
-    "makex"
+    "makex",
+    "mkactivity",
+    "mkcalendar",
+    "mkcol",
+    "propfind",
+    "proppatch"
   ]
 }
