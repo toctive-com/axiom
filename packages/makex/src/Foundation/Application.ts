@@ -94,8 +94,31 @@ export class Application extends Container {
   public get version(): string {
     return this._version;
   }
-  public get version() {
-    return this.VERSION;
+
+  /**
+   * Retrieves a value from a nested object based on a given string
+   * path, with an optional default value if the path does not exist.
+   *
+   * @param {string} name - A string representing the name of the configuration
+   * property to retrieve. It can be a nested property, separated by dots (e.g.
+   * "database.host").
+   * @param {unknown} [defaultValue=null] - defaultValue is an optional parameter
+   * with a default value of null. It is used to specify the default value to be
+   * returned if the requested configuration value is not found.
+   *
+   * @returns unknown
+   *
+   */
+  public config(name: string, defaultValue: unknown = null): unknown {
+    let value = this._config;
+
+    for (const configName of name.split(".")) {
+      if (!Object.keys(value).includes(configName)) return defaultValue;
+      value = value[configName];
+    }
+
+    return value;
+  }
 
   /**
    * Creates a server using the `createServer()` function and assigns it
