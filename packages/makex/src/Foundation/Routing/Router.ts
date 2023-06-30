@@ -92,6 +92,23 @@ export class Router {
   }
 
   /**
+   * Loads a file dynamically and returns a Router object.
+   * If the file is already loaded, the file won't loaded again.
+   * 
+   * @see https://v8.dev/features/dynamic-import
+   * 
+   * @param {string} file - The "file" parameter is a string that represents the
+   * path or URL of the file that you want to load.
+   * 
+   * @returns the `Router` object.
+   * 
+   */
+  public static async loadFile(file: string) {
+    await import(file);
+    return Router;
+  }
+
+  /**
    * Create a new route with all HTTP verbs and store it in Router routes
    *
    * @param {string|string[]|RegExp|RegExp[]} uri
