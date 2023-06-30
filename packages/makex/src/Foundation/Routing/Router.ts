@@ -76,7 +76,7 @@ export class Router {
    * @return Route
    *
    */
-  public static addRoute(
+  protected static addRoute(
     httpVerb: string | string[],
     uri: string | string[] | RegExp | RegExp[],
     action: CallableFunction[] | CallableFunction | null
