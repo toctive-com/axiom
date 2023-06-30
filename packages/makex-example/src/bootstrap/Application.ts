@@ -1,5 +1,14 @@
-import { Application as App } from "@toctive/makex";
+import { RouteServiceProvider } from "@/providers/RouteServiceProvider";
+import { Application as App, ServiceProvider } from "@toctive/makex";
 
-export class Application extends App {}
+export class Application extends App {
+  /**
+   * all providers that will be registered and booted when the application boots
+   *
+   * @var ServiceProvider[]
+   *
+   */
+  providers: ServiceProvider[] = [new RouteServiceProvider()];
+}
 
 export default Application;
