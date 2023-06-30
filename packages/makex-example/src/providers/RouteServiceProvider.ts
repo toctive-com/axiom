@@ -1,11 +1,11 @@
 import { RouteServiceProvider as ServiceProvider } from "@toctive/makex";
 
 export class RouteServiceProvider extends ServiceProvider {
-  public register(): void {
+  public async register(): Promise<void> {
     // ...
   }
 
-  public boot(): void {
+  public async boot(): Promise<void> {
     // ...
   }
 }
