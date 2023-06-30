@@ -32,7 +32,7 @@ export abstract class ServiceProvider {
    * @return void
    *
    */
-  construct(app: Application) {
+  constructor(app: Application) {
     this.app = app;
   }
 
