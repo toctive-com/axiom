@@ -42,7 +42,7 @@ export abstract class ServiceProvider {
    * @return void
    *
    */
-  public register() {
+  public async register() {
     // ...
   }
 
@@ -52,7 +52,7 @@ export abstract class ServiceProvider {
    * @return void
    *
    */
-  public boot() {
+  public async boot() {
     // ...
   }
 

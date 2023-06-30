@@ -35,7 +35,8 @@ export async function runApp(): Promise<Application> {
   });
 
   // Load Service Providers which will load Routes, Middleware ... etc
-  app.registerServiceProviders()
+  await app.registerServiceProviders()
 
-  return app.boot();
+  // Boot the application and return app instance
+  return await app.boot();
 }

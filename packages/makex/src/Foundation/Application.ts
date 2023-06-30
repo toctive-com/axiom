@@ -107,12 +107,12 @@ export class Application extends Container {
    * @returns The method is returning the current instance of the class.
    *
    */
-  public boot(): this {
+  public async boot(): Promise<this> {
     if (this.isBooted()) return this;
-    if (!this.isProvidersRegistered()) this.registerServiceProviders();
+    if (!this.isProvidersRegistered()) await this.registerServiceProviders();
 
     // run boot method in all Service Providers
-    this.bootServiceProviders();
+    await this.bootServiceProviders();
 
     this.booted = true;
     return this;
@@ -148,12 +148,14 @@ export class Application extends Container {
    * @returns The method is returning the registered provider.
    *
    */
-  protected register(provider: ServiceProvider): ServiceProvider {
+  protected async register(
+    provider: ServiceProvider
+  ): Promise<ServiceProvider> {
     if (this.isRegistered(provider)) {
       return this.registeredProviders[provider.toString()];
     }
 
-    provider.register();
+    await provider.register();
     return (this.registeredProviders[provider.toString()] = provider);
   }
 
@@ -176,9 +178,9 @@ export class Application extends Container {
    * @return void
    *
    */
-  protected bootServiceProviders(): void {
+  protected async bootServiceProviders(): Promise<void> {
     for (const provider of Object.keys(this.registeredProviders)) {
-      this.registeredProviders[provider].boot();
+      await this.registeredProviders[provider].boot();
     }
   }
 
@@ -189,11 +191,11 @@ export class Application extends Container {
    * @returns void
    *
    */
-  public registerServiceProviders(): void {
+  public async registerServiceProviders(): Promise<void> {
     if (this.isProvidersRegistered()) return;
 
     for (const provider of this.providers) {
-      this.register(provider);
+      await this.register(provider);
     }
   }
 

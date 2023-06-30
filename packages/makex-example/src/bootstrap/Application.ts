@@ -8,7 +8,7 @@ export class Application extends App {
    * @var ServiceProvider[]
    *
    */
-  providers: ServiceProvider[] = [new RouteServiceProvider()];
+  providers: ServiceProvider[] = [new RouteServiceProvider(this)];
 }
 
 export default Application;
