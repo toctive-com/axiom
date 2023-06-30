@@ -1,5 +1,3 @@
-import { Router } from "./Router";
-
 export class Route {
   constructor(
     httpVerb: string[],
