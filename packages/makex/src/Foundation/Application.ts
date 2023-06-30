@@ -1,9 +1,15 @@
 import { existsSync } from "node:fs";
-import { IncomingMessage, Server, ServerResponse, createServer } from "node:http";
+import {
+  IncomingMessage,
+  Server,
+  ServerResponse,
+  createServer,
+} from "node:http";
 import { join } from "node:path";
 import { ApplicationParameters } from "../Types";
 import { Container } from "./Container";
-import Maintenance from "./Maintenance";
+import { Maintenance } from "./Maintenance";
+import { ServiceProvider } from "./ServiceProvider";
 
 export class Application extends Container {
   /**
@@ -13,6 +19,44 @@ export class Application extends Container {
    *
    */
   readonly VERSION = "1.0.0";
+
+  /**
+   * Indicates if the application is booted or not.
+   * method boot in all Service Providers won't run if until this property be
+   * true.
+   *
+   * @var boolean
+   *
+   */
+  protected booted: boolean = false;
+
+  /**
+   * keeps track of whether the service providers have been registered or not.
+   * It is initially set to `false` and will be set to `true` once the service
+   * providers are registered.
+   *
+   * @var boolean
+   *
+   */
+  protected providersRegistered: boolean = false;
+
+  /**
+   * This property is used to store instances of service providers that are
+   * registered by the application.
+   *
+   * @var {[key:string]: ServiceProvider}
+   *
+   */
+  protected registeredProviders: { [key: string]: ServiceProvider } = {};
+
+  /**
+   * Here, we store all service provider for the developer. These providers will
+   * be loaded automatically when the application boots.
+   *
+   * @var ServiceProvider[]
+   *
+   */
+  public providers: ServiceProvider[] = [];
 
   /**
    * The base path for the Laravel installation.
@@ -53,6 +97,104 @@ export class Application extends Container {
 
     // Load all config files
     this._config = config;
+  }
+
+  /**
+   * The boot function checks if the application is already booted and if not,
+   * it runs the boot method in all service providers and sets the booted flag
+   * to true.
+   *
+   * @returns The method is returning the current instance of the class.
+   *
+   */
+  public boot(): this {
+    if (this.isBooted()) return this;
+    if (!this.isProvidersRegistered()) this.registerServiceProviders();
+
+    // run boot method in all Service Providers
+    this.bootServiceProviders();
+
+    this.booted = true;
+    return this;
+  }
+
+  /**
+   * Returns a boolean value indicating whether the system is booted or not.
+   *
+   * @returns boolean
+   *
+   */
+  public isBooted(): boolean {
+    return this.booted;
+  }
+
+  /**
+   * Checks if providers are registered and returns a boolean value.
+   *
+   * @returns boolean
+   *
+   */
+  public isProvidersRegistered(): boolean {
+    return this.providersRegistered;
+  }
+
+  /**
+   * The `register` function takes a `ServiceProvider` and registers it if it is
+   * not already registered, returning the registered provider.
+   *
+   * @param {ServiceProvider} provider - The `provider` parameter is an instance of
+   * the `ServiceProvider` class.
+   *
+   * @returns The method is returning the registered provider.
+   *
+   */
+  protected register(provider: ServiceProvider): ServiceProvider {
+    if (this.isRegistered(provider)) {
+      return this.registeredProviders[provider.toString()];
+    }
+
+    provider.register();
+    return (this.registeredProviders[provider.toString()] = provider);
+  }
+
+  /**
+   * The function checks if a given service provider is registered.
+   * @param {ServiceProvider} provider - The parameter "provider" is of type
+   * "ServiceProvider".
+   *
+   * @returns a boolean value.
+   *
+   */
+  public isRegistered(provider: ServiceProvider): boolean {
+    return Object.keys(this.registeredProviders).includes(provider.toString());
+  }
+
+  /**
+   * The function iterates over the registered providers and calls the boot method
+   * on each one.
+   *
+   * @return void
+   *
+   */
+  protected bootServiceProviders(): void {
+    for (const provider of Object.keys(this.registeredProviders)) {
+      this.registeredProviders[provider].boot();
+    }
+  }
+
+  /**
+   * The function iterates over an array of service providers and registers each
+   * one.
+   *
+   * @returns void
+   *
+   */
+  public registerServiceProviders(): void {
+    if (this.isProvidersRegistered()) return;
+
+    for (const provider of this.providers) {
+      this.register(provider);
+    }
   }
 
   /**

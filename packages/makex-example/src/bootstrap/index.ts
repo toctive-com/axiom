@@ -16,7 +16,7 @@ export * from "./Maintenance";
  * The function creates and returns a new application instance with singletons for
  * main classes (HttpKernel and HttpRequest).
  *
- * @returns {Application} an instance of the `Application` class with `
+ * @returns {Promise<Application>} an instance of the `Application` class with `
  * HttpKernel` and `HttpRequest` singletons registered.
  *
  */
@@ -34,7 +34,8 @@ export async function runApp(): Promise<Application> {
     port: app.config("server.port", 8000),
   });
 
-  // TODO Load Service Providers which will load Routes, Middleware ... etc
+  // Load Service Providers which will load Routes, Middleware ... etc
+  app.registerServiceProviders()
 
-  return app;
+  return app.boot();
 }
