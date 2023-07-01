@@ -48,11 +48,14 @@ export class Route {
    * @returns The method is returning a boolean value.
    *
    */
-  public match(method: string, url: string): boolean {
-    if (this.isHttpMethodAllowed(method) && this.isUriMatches(url)) {
-      return this.isMiddlewareAllowed();
-    }
-    return false;
+  public match(method: string, url: string): this|false {
+    // `isMiddlewareAllowed()` must be called after all other checker. So, we 
+    // don't call every middleware on every route
+    return (
+      this.isHttpMethodAllowed(method) &&
+      this.isUriMatches(url) &&
+      this.isMiddlewareAllowed()
+    ) ? this : false;
   }
 
   /**
