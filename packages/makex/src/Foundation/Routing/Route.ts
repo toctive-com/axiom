@@ -3,12 +3,16 @@ export class Route {
    * All middleware functions are registered here to be executed when the route
    * is matched by the router.
    *
+   * @var Function[]
+   * 
    */
   protected middlewareLayers: Function[] = [];
 
   /**
    * This property is used to store the name of a route.
    *
+   * @var {string | null}
+   * 
    */
   protected routeName: string | null = null;
 
