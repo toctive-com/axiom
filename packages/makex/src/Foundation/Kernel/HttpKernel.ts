@@ -57,8 +57,10 @@ export class HttpKernel {
         this.server.on(
           "request",
           (req: IncomingMessage, res: ServerResponse) => {
-            const request = setPrototypeOf(req, HttpRequest.prototype)
-            const response = setPrototypeOf(res, HttpResponse.prototype)
+            const request = setPrototypeOf(req, HttpRequest.prototype);
+            const response = setPrototypeOf(res, HttpResponse.prototype);
+            Application.singleton(HttpRequest, request);
+            Application.singleton(HttpResponse, response);
             return resolve({ request, response });
           }
         );
