@@ -7,7 +7,9 @@ export class Container {
    * classes/interfaces and their concrete implementations in the container.
    *
    */
-  private static bindings: { [key: string]: InstanceType<Instantiable> } = {};
+  private static bindings: {
+    [key: string]: any;
+  } = {};
 
   /**
    * This function binds an abstract class or string to a concrete implementation.
@@ -40,7 +42,7 @@ export class Container {
 
   static singleton(
     abstract: string | Instantiable,
-    contract: Instantiable = null,
+    contract: Object | Instantiable = null,
     parameters?: {}
   ) {
     if (typeof abstract === "string") {
@@ -49,14 +51,24 @@ export class Container {
           `${Container.constructor.name}.singleton(): Argument #2 (concrete) can't be null while Argument #1 (abstract) is a string`
         );
       }
-      return Container.bind(abstract, contract, parameters);
+
+      if (typeof contract === "object") {
+        return Container.bind(abstract, contract);
+      } else {
+        return Container.bind(abstract, contract, parameters);
+      }
     }
 
     if (contract === null) {
       return Container.bind(abstract.name, abstract, parameters);
     }
 
-    return Container.bind(abstract.name, contract, parameters);
+    
+    if (typeof contract === "object") {
+      return Container.bind(abstract.name, contract);
+    } else {
+      return Container.bind(abstract.name, contract, parameters);
+    }
   }
 
   /**
@@ -74,14 +86,23 @@ export class Container {
    * resolved from the container, an instance of the `contract` class will be
    * returned.
    */
-  static bind(abstract: string, contract: Instantiable, parameters?:{}) {
+  static bind(abstract: string, contract: {});
+  static bind(abstract: string, contract: Instantiable, parameters: {});
+  static bind(abstract: string, contract: Instantiable, parameters?: {}) {
     if (Object.keys(Container.bindings).includes(abstract)) {
       console.warn(
         `Container.bindings already contains "${abstract}" associated to ${Container.bindings[abstract].constructor.name} class`
       );
       return Container.bindings[abstract];
     }
-    return Container.bindings[abstract] = new contract(parameters);
+
+    if (typeof contract === "object") {
+      Container.bindings[abstract] = contract;
+    } else {
+      Container.bindings[abstract] = new contract(parameters);
+    }
+
+    return Container.bindings[abstract];
   }
 
   /**
@@ -100,7 +121,7 @@ export class Container {
     return Application.make(ref);
   }
   public static make<T>(ref: Instantiable): T {
-  if (!Object.keys(Container.bindings).includes(ref.name)) {
+    if (!Object.keys(Container.bindings).includes(ref.name)) {
       // try to make a singleton for `ref`, then return it
       try {
         return this.singleton(ref, null);
