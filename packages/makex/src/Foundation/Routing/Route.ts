@@ -118,7 +118,7 @@ export class Route {
    * @returns Route instance.
    *
    */
-  public called(name: string): this {
+  public named(name: string): this {
     this.routeName = name;
     return this;
   }
