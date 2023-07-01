@@ -47,7 +47,7 @@ export abstract class RouterBase {
   ];
 
   /**
-   * All HTTP verbs that supported by node.js HTTP server
+   * All HTTP verbs that are supported by the node.js HTTP server
    *
    * @see https://nodejs.org/api/http.html#httpmethods
    * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
@@ -59,7 +59,7 @@ export abstract class RouterBase {
     METHODS || RouterBase.defaultSupportedHttpVerbs;
 
   /**
-   * Here we store all registered route with its actions and URIs
+   * Here we store all registered routes with their actions and URIs
    *
    * @var Route[]
    *
@@ -93,7 +93,7 @@ export abstract class RouterBase {
 
   /**
    * Loads a file dynamically and returns a Router object.
-   * If the file is already loaded, the file won't loaded again.
+   * If the file is already loaded, the file won't be loaded again.
    *
    * @see https://v8.dev/features/dynamic-import
    *
