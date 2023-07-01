@@ -33,6 +33,27 @@ export class RouteRegistrar extends RouterBase {
 
   constructor(attributes?: any) {
     super();
+
+    this.parseAttributes(attributes);
+  }
+
+  /**
+   * Parses attributes and assigns values to the middlewareLayers and
+   * prefix properties if they exist in the attributes object.
+   *
+   * @param {any} attributes
+   *
+   */
+  protected parseAttributes(attributes: any) {
+    if (attributes) {
+      if (attributes.middleware) {
+        this.middlewareLayers = attributes.middleware;
+      }
+
+      if (attributes.prefix) {
+        this.prefix = attributes.prefix;
+      }
+    }
   }
 
   /**
