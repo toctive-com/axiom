@@ -1,3 +1,6 @@
+import { HttpRequest } from "../Http/Request";
+import { HttpResponse } from "../Http/Response";
+
 export class Route {
   /**
    * All middleware functions are registered here to be executed when the route
@@ -56,14 +59,14 @@ export class Route {
    * @returns The method is returning a boolean value.
    *
    */
-  public match(method: string, url: string): this|false {
-    // `isMiddlewareAllowed()` must be called after all other checker. So, we 
+  public match(method: string, url: string): this | false {
+    // `isMiddlewareAllowed()` must be called after all other checker. So, we
     // don't call every middleware on every route
-    return (
-      this.isHttpMethodAllowed(method) &&
+    return this.isHttpMethodAllowed(method) &&
       this.isUriMatches(url) &&
       this.isMiddlewareAllowed()
-    ) ? this : false;
+      ? this
+      : false;
   }
 
   /**
@@ -103,6 +106,32 @@ export class Route {
    */
   public isMiddlewareAllowed(): boolean {
     return this.middlewareLayers.every((middleware: Function) => middleware());
+  }
+
+  /**
+   * execute
+   */
+  /**
+   * The execute function iterates over a list of actions and calls each action with
+   * the next action, request, and response objects.
+   *
+   * @param {HttpRequest} request - The `request` parameter is an object that
+   * represents the incoming HTTP request. It typically contains information such as
+   * the request method (GET, POST, etc.), headers, query parameters, and request
+   * body.
+   * @param {HttpResponse} response - The `response` parameter is an object that
+   * represents the HTTP response that will be sent back to the client. It typically
+   * contains information such as the status code, headers, and the response body.
+   *
+   * @returns The result of calling action functions.
+   *
+   */
+  public execute(request: HttpRequest, response: HttpResponse) {
+    for (let i = 0; i < this.action.length; i++) {
+      const action = this.action[i];
+      const nextAction = this.action[i + 1];
+      return action({ next: nextAction, request, response });
+    }
   }
 
   /**

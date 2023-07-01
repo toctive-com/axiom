@@ -4,6 +4,7 @@ import setPrototypeOf from "setprototypeof";
 import Application from "../Application";
 import { HttpRequest } from "../Http/Request";
 import { HttpResponse } from "../Http/Response";
+import { Router } from "../Routing";
 
 export class HttpKernel {
   /**
@@ -84,7 +85,10 @@ export class HttpKernel {
    * @returns The `response` object is being returned.
    *
    */
-  async handle(request: HttpRequest, response: HttpResponse) {
+  async handle(
+    request: HttpRequest,
+    response: HttpResponse
+  ): Promise<HttpResponse> {
     /**
      * Check If The Application Is Under Maintenance
      * --------------------------------------------------------------------------
@@ -98,7 +102,19 @@ export class HttpKernel {
       response,
     });
 
-    // TODO implement handle method
+    // TODO trim slashes from the request url and from every route.
+    const firstMatchedRoute = Router.match(
+      request.method.toLowerCase(),
+      request.url
+    );
+    if (firstMatchedRoute) {
+      // TODO Convert the return of the execute function to a string.
+      response.write(firstMatchedRoute.execute(request, response));
+    } else {
+      // TODO implement handle 404 error.
+      response.write("404 Not Found");
+    }
+
     return response;
   }
 
