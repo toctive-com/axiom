@@ -76,7 +76,11 @@ export class RouteRegistrar extends RouterBase {
     if (typeof uri === "string") uri = [uri];
     if (typeof action === "function") action = [action];
 
+    // TODO add name property to groups => Router.group().named("g1")
     const route = new Route(httpVerb, uri, action);
+    if (this.middlewareLayers) route.middleware(this.middlewareLayers);
+    if (this.prefix) route.prefix(this.prefix);
+
     this.routes.push(route);
     return route;
   }
@@ -96,11 +100,19 @@ export class RouteRegistrar extends RouterBase {
     return routeRegistrar;
   }
 
-  
-  public middleware(
-    callback: Function | Function[] | string | string[]
-  ) {
+/**
+ * Adds middleware layers to a route registrar and returns the registrar.
+ * 
+ * @param {Function | Function[] | string | string[]} callback - The `callback`
+ * parameter can be of type `Function`, `Function[]`, `string`, or `string[]
+ * `.
+ * @returns The `middleware` method returns an instance of the `RouteRegistrar`
+ * class.
+ * 
+ */
+  public middleware(callback: Function | Function[] | string | string[]) {
     const routeRegistrar = new RouteRegistrar({ middleware: callback });
+    routeRegistrar.middlewareLayers.push(...this.middlewareLayers);
     this.addRouteRegistrar(routeRegistrar);
     return routeRegistrar;
   }
@@ -126,6 +138,7 @@ export class RouteRegistrar extends RouterBase {
     }
 
     const routeRegistrar = new RouteRegistrar(attributesOrCallback);
+    routeRegistrar.middlewareLayers = this.middlewareLayers;
     callback(routeRegistrar);
     this.addRouteRegistrar(routeRegistrar);
     return routeRegistrar;
