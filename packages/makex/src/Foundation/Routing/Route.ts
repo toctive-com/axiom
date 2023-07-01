@@ -17,6 +17,14 @@ export class Route {
   protected routeName: string | null = null;
 
   /**
+   * This property is used to store the name of a route.
+   *
+   * @var {string | null}
+   *
+   */
+  protected prefixUri: string | null = null;
+
+  /**
    * Creates a new route
    *
    * @param {string[]} httpVerb - The `httpVerb` parameter is a string array that
@@ -134,6 +142,19 @@ export class Route {
    */
   public named(name: string): this {
     this.routeName = name;
+    return this;
+  }
+
+  /**
+   * Sets the prefixUri property of an object and returns the object itself.
+   *
+   * @param {string} name - a string that represents the prefix URI.
+   *
+   * @returns Route instance.
+   *
+   */
+  public prefix(name: string): this {
+    this.prefixUri = name;
     return this;
   }
 }
