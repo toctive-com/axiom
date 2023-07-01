@@ -108,8 +108,8 @@ export class HttpKernel {
       request.url
     );
     if (firstMatchedRoute) {
-      // TODO Convert the return of the execute function to a string.
-      response.write(firstMatchedRoute.execute(request, response));
+      const result = firstMatchedRoute.execute(request, response);
+      response.prepareToSend(result);
     } else {
       // TODO implement handle 404 error.
       response.write("404 Not Found");
