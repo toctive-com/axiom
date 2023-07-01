@@ -127,11 +127,33 @@ export class Route {
    *
    */
   public execute(request: HttpRequest, response: HttpResponse) {
-    for (let i = 0; i < this.action.length; i++) {
-      const action = this.action[i];
-      const nextAction = this.action[i + 1];
-      return action({ next: nextAction, request, response });
-    }
+    return this.callFunctions(this.action, request, response);
+  }
+
+  /**
+   * Recursively calls a list of functions, passing in the request and response 
+   * objects, until all functions have been called.
+   *
+   * @param {Function[]} functions - An array of functions that will be called 
+   * one by one.
+   * @param {HttpRequest} request
+   * @param {HttpResponse} response 
+   *
+   * @returns The current function is being returned.
+   *
+   */
+  callFunctions(
+    functions: Function[],
+    request: HttpRequest,
+    response: HttpResponse
+  ) {
+    if (functions.length === 0) return;
+    const currentFunc = functions.shift();
+    return currentFunc({
+      next: () => this.callFunctions(functions, request, response),
+      request,
+      response,
+    });
   }
 
   /**
