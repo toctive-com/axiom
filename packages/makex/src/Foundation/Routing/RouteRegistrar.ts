@@ -117,6 +117,29 @@ export class RouteRegistrar extends RouterBase {
     return routeRegistrar;
   }
 
+  /**
+   * Checks if the given HTTP method and URL match the allowed criteria and
+   * returns whether the middleware is allowed or not.
+   *
+   * @param {string} method - The method parameter is a string that represents the
+   * HTTP method of a request, such as "GET", "POST", "PUT", etc.
+   * @param {string} url - The `url` parameter is a string that represents the URL
+   * of the request being made.
+   *
+   * @returns The method is returning a boolean value.
+   *
+   */
+  public match(method: string, url: string): false | Route {
+    for (const route of this.routes) {
+      const isMatched = route.match(method, url);
+      if (!isMatched) continue;
+
+      if (isMatched instanceof Route) return isMatched;
+    }
+
+    // There is no matching route
+    return false;
+  }
 
   /**
    * Creates a new route group.

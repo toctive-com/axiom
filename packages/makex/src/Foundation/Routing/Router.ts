@@ -1,3 +1,4 @@
+import { Route } from "./Route";
 import { RouteRegistrar } from "./RouteRegistrar";
 import { RouterBase } from "./RouterBase";
 
@@ -22,11 +23,11 @@ export class Router extends RouterBase {
   /**
    * The `middleware` function adds a middleware callback or callbacks to a route
    * registrar and returns the registrar.
-   * 
+   *
    * @param {Function | Function[] | string | string[]} callback
-   * 
+   *
    * @returns instance of the `RouteRegistrar` class.
-   * 
+   *
    */
   public static middleware(
     callback: Function | Function[] | string | string[]
@@ -61,5 +62,32 @@ export class Router extends RouterBase {
     callback(routeRegistrar);
     this.addRouteRegistrar(routeRegistrar);
     return routeRegistrar;
+  }
+
+  /**
+   * Checks if the given HTTP method and URL match the allowed criteria and
+   * returns whether the middleware is allowed or not.
+   *
+   * @param {string} method - The method parameter is a string that represents the
+   * HTTP method of a request, such as "GET", "POST", "PUT", etc.
+   * @param {string} url - The `url` parameter is a string that represents the URL
+   * of the request being made.
+   *
+   * @returns The method is returning a boolean value.
+   *
+   */
+  public static match(
+    method: string,
+    url: string
+  ): boolean | Route | RouteRegistrar {
+    for (const route of Router.routes) {
+      const isMatched = route.match(method, url);
+      if (!isMatched) continue;
+      
+      if (isMatched instanceof Route) return isMatched;
+    }
+
+    // There is no matching route
+    return false;
   }
 }
