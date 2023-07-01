@@ -80,7 +80,7 @@ export abstract class RouterBase {
    * Add a route to the underlying route collection.
    *
    * @param {string|string[]} httpVerb
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]|null} action
    *
    * @return Route
@@ -88,13 +88,12 @@ export abstract class RouterBase {
    */
   protected static addRoute(
     httpVerb: string | string[],
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction[] | CallableFunction | null
   ) {
     // TODO create an array facade with wrap method and wrap these params
     if (typeof httpVerb === "string") httpVerb = [httpVerb];
     if (typeof uri === "string") uri = [uri];
-    if (uri instanceof RegExp) uri = [uri];
     if (typeof action === "function") action = [action];
 
     const route = new Route(httpVerb, uri, action);
@@ -120,14 +119,14 @@ export abstract class RouterBase {
   /**
    * Create a new route with all HTTP verbs and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static all(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.any(uri, action);
@@ -136,544 +135,544 @@ export abstract class RouterBase {
   /**
    * Create a new route with all HTTP verbs and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static any(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute(this.httpVerbs, uri, action);
+    return RouterBase.addRoute(this.httpVerbs, uri, action);
   }
 
   /**
    * Create a new Acl route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static acl(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("acl", uri, action);
+    return RouterBase.addRoute("acl", uri, action);
   }
 
   /**
    * Create a new Bind route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static bind(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("bind", uri, action);
+    return RouterBase.addRoute("bind", uri, action);
   }
 
   /**
    * Create a new Checkout route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static checkout(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("checkout", uri, action);
+    return RouterBase.addRoute("checkout", uri, action);
   }
 
   /**
    * Create a new Connect route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static connect(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("connect", uri, action);
+    return RouterBase.addRoute("connect", uri, action);
   }
 
   /**
    * Create a new Copy route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static copy(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("copy", uri, action);
+    return RouterBase.addRoute("copy", uri, action);
   }
 
   /**
    * Create a new Delete route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static delete(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("delete", uri, action);
+    return RouterBase.addRoute("delete", uri, action);
   }
 
   /**
    * Create a new Get route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static get(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("get", uri, action);
+    return RouterBase.addRoute("get", uri, action);
   }
 
   /**
    * Create a new Head route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static head(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("head", uri, action);
+    return RouterBase.addRoute("head", uri, action);
   }
 
   /**
    * Create a new Link route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static link(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("link", uri, action);
+    return RouterBase.addRoute("link", uri, action);
   }
 
   /**
    * Create a new Lock route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static lock(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("lock", uri, action);
+    return RouterBase.addRoute("lock", uri, action);
   }
 
   /**
    * Create a new Merge route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static merge(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("merge", uri, action);
+    return RouterBase.addRoute("merge", uri, action);
   }
 
   /**
    * Create a new Mkactivity route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static mkactivity(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("mkactivity", uri, action);
+    return RouterBase.addRoute("mkactivity", uri, action);
   }
 
   /**
    * Create a new Mkcalendar route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static mkcalendar(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("mkcalendar", uri, action);
+    return RouterBase.addRoute("mkcalendar", uri, action);
   }
 
   /**
    * Create a new Mkcol route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static mkcol(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("mkcol", uri, action);
+    return RouterBase.addRoute("mkcol", uri, action);
   }
 
   /**
    * Create a new Move route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static move(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("move", uri, action);
+    return RouterBase.addRoute("move", uri, action);
   }
 
   /**
    * Create a new Notify route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static notify(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("notify", uri, action);
+    return RouterBase.addRoute("notify", uri, action);
   }
 
   /**
    * Create a new Options route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static options(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("options", uri, action);
+    return RouterBase.addRoute("options", uri, action);
   }
 
   /**
    * Create a new Patch route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static patch(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("patch", uri, action);
+    return RouterBase.addRoute("patch", uri, action);
   }
 
   /**
    * Create a new Post route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static post(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("post", uri, action);
+    return RouterBase.addRoute("post", uri, action);
   }
 
   /**
    * Create a new Propfind route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static propfind(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("propfind", uri, action);
+    return RouterBase.addRoute("propfind", uri, action);
   }
 
   /**
    * Create a new Proppatch route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static proppatch(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("proppatch", uri, action);
+    return RouterBase.addRoute("proppatch", uri, action);
   }
 
   /**
    * Create a new Purge route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static purge(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("purge", uri, action);
+    return RouterBase.addRoute("purge", uri, action);
   }
 
   /**
    * Create a new Put route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static put(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("put", uri, action);
+    return RouterBase.addRoute("put", uri, action);
   }
 
   /**
    * Create a new Rebind route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static rebind(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("rebind", uri, action);
+    return RouterBase.addRoute("rebind", uri, action);
   }
 
   /**
    * Create a new Report route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static report(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("report", uri, action);
+    return RouterBase.addRoute("report", uri, action);
   }
 
   /**
    * Create a new Search route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static search(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("search", uri, action);
+    return RouterBase.addRoute("search", uri, action);
   }
 
   /**
    * Create a new Source route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static source(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("source", uri, action);
+    return RouterBase.addRoute("source", uri, action);
   }
 
   /**
    * Create a new Subscribe route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static subscribe(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("subscribe", uri, action);
+    return RouterBase.addRoute("subscribe", uri, action);
   }
 
   /**
    * Create a new Trace route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static trace(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("trace", uri, action);
+    return RouterBase.addRoute("trace", uri, action);
   }
 
   /**
    * Create a new Unbind route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static unbind(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("unbind", uri, action);
+    return RouterBase.addRoute("unbind", uri, action);
   }
 
   /**
    * Create a new Unlink route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static unlink(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("unlink", uri, action);
+    return RouterBase.addRoute("unlink", uri, action);
   }
 
   /**
    * Create a new Unlock route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static unlock(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("unlock", uri, action);
+    return RouterBase.addRoute("unlock", uri, action);
   }
 
   /**
    * Create a new Unsubscribe route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public static unsubscribe(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute("unsubscribe", uri, action);
+    return RouterBase.addRoute("unsubscribe", uri, action);
   }
 }

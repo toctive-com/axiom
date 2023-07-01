@@ -44,7 +44,7 @@ export class RouteRegistrar extends RouterBase {
    * Add a route to the underlying route collection.
    *
    * @param {string|string[]} httpVerb
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]|null} action
    *
    * @return Route
@@ -52,13 +52,12 @@ export class RouteRegistrar extends RouterBase {
    */
   protected addRoute(
     httpVerb: string | string[],
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction[] | CallableFunction | null
   ) {
     // TODO create an array facade with wrap method and wrap these params
     if (typeof httpVerb === "string") httpVerb = [httpVerb];
     if (typeof uri === "string") uri = [uri];
-    if (uri instanceof RegExp) uri = [uri];
     if (typeof action === "function") action = [action];
 
     const route = new Route(httpVerb, uri, action);
@@ -119,14 +118,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new route with all HTTP verbs and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public all(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.any(uri, action);
@@ -135,14 +134,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new route with all HTTP verbs and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public any(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute(RouteRegistrar.httpVerbs, uri, action);
@@ -151,14 +150,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Acl route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public acl(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("acl", uri, action);
@@ -167,14 +166,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Bind route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public bind(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("bind", uri, action);
@@ -183,14 +182,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Checkout route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public checkout(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("checkout", uri, action);
@@ -199,14 +198,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Connect route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public connect(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("connect", uri, action);
@@ -215,14 +214,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Copy route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public copy(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("copy", uri, action);
@@ -231,14 +230,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Delete route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public delete(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("delete", uri, action);
@@ -247,14 +246,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Get route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public get(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("get", uri, action);
@@ -263,14 +262,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Head route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public head(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("head", uri, action);
@@ -279,14 +278,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Link route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public link(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("link", uri, action);
@@ -295,14 +294,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Lock route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public lock(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("lock", uri, action);
@@ -311,14 +310,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Merge route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public merge(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("merge", uri, action);
@@ -327,14 +326,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Mkactivity route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public mkactivity(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("mkactivity", uri, action);
@@ -343,14 +342,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Mkcalendar route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public mkcalendar(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("mkcalendar", uri, action);
@@ -359,14 +358,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Mkcol route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public mkcol(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("mkcol", uri, action);
@@ -375,14 +374,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Move route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public move(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("move", uri, action);
@@ -391,14 +390,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Notify route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public notify(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("notify", uri, action);
@@ -407,14 +406,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Options route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public options(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("options", uri, action);
@@ -423,14 +422,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Patch route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public patch(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("patch", uri, action);
@@ -439,14 +438,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Post route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public post(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("post", uri, action);
@@ -455,14 +454,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Propfind route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public propfind(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("propfind", uri, action);
@@ -471,14 +470,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Proppatch route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public proppatch(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("proppatch", uri, action);
@@ -487,14 +486,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Purge route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public purge(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("purge", uri, action);
@@ -503,14 +502,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Put route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public put(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("put", uri, action);
@@ -519,14 +518,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Rebind route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public rebind(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("rebind", uri, action);
@@ -535,14 +534,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Report route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public report(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("report", uri, action);
@@ -551,14 +550,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Search route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public search(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("search", uri, action);
@@ -567,14 +566,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Source route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public source(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("source", uri, action);
@@ -583,14 +582,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Subscribe route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public subscribe(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("subscribe", uri, action);
@@ -599,14 +598,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Trace route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public trace(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("trace", uri, action);
@@ -615,14 +614,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Unbind route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public unbind(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("unbind", uri, action);
@@ -631,14 +630,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Unlink route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public unlink(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("unlink", uri, action);
@@ -647,14 +646,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Unlock route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public unlock(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("unlock", uri, action);
@@ -663,14 +662,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Create a new Unsubscribe route and store it in Router routes
    *
-   * @param {string|string[]|RegExp|RegExp[]} uri
+   * @param {string|string[]} uri
    * @param {CallableFunction|CallableFunction[]} action
    *
    * @returns Route
    *
    */
   public unsubscribe(
-    uri: string | string[] | RegExp | RegExp[],
+    uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
     return this.addRoute("unsubscribe", uri, action);

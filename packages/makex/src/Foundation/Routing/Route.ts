@@ -22,7 +22,7 @@ export class Route {
    * @param {string[]} httpVerb - The `httpVerb` parameter is a string array that
    * represents the HTTP verbs (methods) that can be used for the request. For
    * example, it can include values like "GET", "POST", "PUT", "DELETE", etc.
-   * @param {string[] | RegExp[]} uri - The `uri` parameter is a string array or a
+   * @param {string[]} uri - The `uri` parameter is a string array or a
    * regular expression array. It represents the URI or URIs that the route should
    * match.
    * @param {Function[] | null} action - The `action` parameter is an array of
@@ -32,7 +32,7 @@ export class Route {
    */
   constructor(
     protected httpVerb: string[],
-    protected uri: string[] | RegExp[],
+    protected uri: string[],
     protected action: Function[] | null
   ) {}
 
