@@ -4,7 +4,7 @@ export class Route {
    * is matched by the router.
    *
    * @var Function[]
-   * 
+   *
    */
   protected middlewareLayers: Function[] = [];
 
@@ -12,7 +12,7 @@ export class Route {
    * This property is used to store the name of a route.
    *
    * @var {string | null}
-   * 
+   *
    */
   protected routeName: string | null = null;
 
@@ -104,8 +104,19 @@ export class Route {
    * @returns Route instance.
    *
    */
-  public middleware(middleware: Function): this {
-    this.middlewareLayers.push(middleware);
+  public middleware(
+    middleware: Function | Function[] | string | string[]
+  ): this {
+    if (middleware instanceof Function) {
+      this.middlewareLayers.push(middleware);
+    } else if (middleware instanceof Array && middleware.length > 0) {
+      for (const item of middleware) {
+        if (item instanceof Function) {
+          this.middlewareLayers.push(item);
+        }
+        // TODO add support for string middleware
+      }
+    }
     return this;
   }
 
