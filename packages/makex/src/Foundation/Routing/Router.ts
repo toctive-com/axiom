@@ -79,7 +79,7 @@ export class Router extends RouterBase {
   public static match(
     method: string,
     url: string
-  ): boolean | Route | RouteRegistrar {
+  ): false | Route {
     for (const route of Router.routes) {
       const isMatched = route.match(method, url);
       if (!isMatched) continue;
