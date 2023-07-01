@@ -20,21 +20,16 @@ export class RouteRegistrar extends RouterBase {
   protected prefix: string | null = null;
 
   /**
-   * Here we store all registered routes with their actions and URIs
+   * Here we store all registered routes and  router registrar with their
+   * actions and URIs.
    *
-   * @var Route[]
+   * These router registrars are works like a group of routes and other router
+   * registrar together.
    *
-   */
-  protected routes: Route[] = [];
-
-  /**
-   * Here we store all router registrar. These router registrars are works like
-   * a group of routes and other router registrar together.
-   *
-   * @var RouteRegistrar[]
+   * @var Route[] | RouteRegistrar[]
    *
    */
-  protected routeRegistrars: RouteRegistrar[] = [];
+  protected routes: (Route | RouteRegistrar)[] = [];
 
   constructor(attributes?: any) {
     super();
@@ -76,7 +71,7 @@ export class RouteRegistrar extends RouterBase {
    *
    */
   protected addRouteRegistrar(routeRegistrar: RouteRegistrar) {
-    this.routeRegistrars.push(routeRegistrar);
+    this.routes.push(routeRegistrar);
     return routeRegistrar;
   }
 

@@ -60,21 +60,16 @@ export abstract class RouterBase {
     METHODS || RouterBase.defaultSupportedHttpVerbs;
 
   /**
-   * Here we store all registered routes with their actions and URIs
+   * Here we store all registered routes and  router registrar with their
+   * actions and URIs.
    *
-   * @var Route[]
+   * These router registrars are works like a group of routes and other router
+   * registrar together.
    *
-   */
-  protected static routes: Route[] = [];
-
-  /**
-   * Here we store all router registrar. These router registrars are works like
-   * a group of routes and other router registrar together.
-   *
-   * @var RouteRegistrar[]
+   * @var Route[] | RouteRegistrar[]
    *
    */
-  protected static routeRegistrars: RouteRegistrar[] = [];
+  protected static routes: (Route | RouteRegistrar)[] = [];
 
   /**
    * Add a route to the underlying route collection.
@@ -112,7 +107,7 @@ export abstract class RouterBase {
    *
    */
   protected static addRouteRegistrar(routeRegistrar: RouteRegistrar) {
-    RouterBase.routeRegistrars.push(routeRegistrar);
+    RouterBase.routes.push(routeRegistrar);
     return routeRegistrar;
   }
 
