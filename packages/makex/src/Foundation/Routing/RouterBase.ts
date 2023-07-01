@@ -1,5 +1,6 @@
 import { METHODS } from "node:http";
 import { Route } from "./Route";
+import { RouteRegistrar } from "./RouteRegistrar";
 
 export abstract class RouterBase {
   /**
@@ -64,7 +65,16 @@ export abstract class RouterBase {
    * @var Route[]
    *
    */
-  static routes: Route[] = [];
+  protected static routes: Route[] = [];
+
+  /**
+   * Here we store all router registrar. These router registrars are works like
+   * a group of routes and other router registrar together.
+   *
+   * @var RouteRegistrar[]
+   *
+   */
+  protected static routeRegistrars: RouteRegistrar[] = [];
 
   /**
    * Add a route to the underlying route collection.
@@ -81,6 +91,7 @@ export abstract class RouterBase {
     uri: string | string[] | RegExp | RegExp[],
     action: CallableFunction[] | CallableFunction | null
   ) {
+    // TODO create an array facade with wrap method and wrap these params
     if (typeof httpVerb === "string") httpVerb = [httpVerb];
     if (typeof uri === "string") uri = [uri];
     if (uri instanceof RegExp) uri = [uri];
@@ -92,20 +103,18 @@ export abstract class RouterBase {
   }
 
   /**
-   * Loads a file dynamically and returns a Router object.
-   * If the file is already loaded, the file won't be loaded again.
+   * Adds a route registrar to a list of route registrars.
    *
-   * @see https://v8.dev/features/dynamic-import
+   * @param {RouteRegistrar} routeRegistrar - The parameter `routeRegistrar` is an
+   * instance of the `RouteRegistrar` class.
    *
-   * @param {string} file - The "file" parameter is a string that represents the
-   * path or URL of the file that you want to load.
-   *
-   * @returns the `Router` object.
+   * @returns The `addRouteRegistrar` method is returning the `routeRegistrar`
+   * object that was passed as a parameter.
    *
    */
-  public static async loadFile(file: string) {
-    await import(file);
-    return this;
+  protected static addRouteRegistrar(routeRegistrar: RouteRegistrar) {
+    RouterBase.routeRegistrars.push(routeRegistrar);
+    return routeRegistrar;
   }
 
   /**
