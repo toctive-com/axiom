@@ -101,24 +101,29 @@ export class Route {
   /**
    * Extracts variables from a given original URL and current URL by
    * comparing their respective parts.
-   * 
+   *
    * @param {string} originalUrl - The originalUrl parameter is a string that
    * represents the original URL. It is the URL pattern that contains variables in
    * the form of ":variableName". For example, "/users/:userId/posts/:postId".
    * @param {string} currentUrl - The `currentUrl` parameter is the URL that is
    * currently being accessed or visited.
-   * 
+   *
    * @returns an object containing variables extracted from the original URL and
    * their corresponding values from the current URL.
-   * 
+   *
    */
   protected extractVariables(originalUrl: string, currentUrl: string) {
-    const originalUrlParts = originalUrl.split('/');
-    const currentUrlParts = currentUrl.split('/');
+    const originalUrlParts = originalUrl.split("/");
+    const currentUrlParts = currentUrl.split("/");
     const variables = {};
     for (let i = 0; i < originalUrlParts.length; i++) {
-      if (originalUrlParts[i].startsWith(':')) {
-        variables[originalUrlParts[i].substring(1)] = currentUrlParts[i];
+      if (
+        originalUrlParts[i].startsWith("{") &&
+        originalUrlParts[i].endsWith("}")
+      ) {
+        variables[
+          originalUrlParts[i].substring(1, originalUrlParts[i].length - 1)
+        ] = currentUrlParts[i];
       }
     }
     return variables;
@@ -127,17 +132,19 @@ export class Route {
   /**
    * The function `getMatchedUri` takes a current URL and returns the matching URI
    * from a list of URIs.
-   * 
+   *
    * @param {string} currentUrl - The `currentUrl` parameter is a string
    * representing the current URL that you want to match against a list of URIs.
-   * 
+   *
    * @returns the matched URI if it exists in the `this.uri` array. If no match is
    * found, it returns `null`.
-   * 
+   *
    */
   getMatchedUri(currentUrl: string) {
     for (const uri of this.uri) {
-      const regex = new RegExp(`^${uri.replace(/:\w+/g, "\\w+")}$`);
+      const regex = new RegExp(
+        `^${uri.replace(/{[a-zA-Z0-9_-]+}/g, "[a-zA-Z0-9_-]+")}$`
+      );
       if (regex.test(currentUrl)) return uri;
     }
     return null;
@@ -196,7 +203,7 @@ export class Route {
     functions: Function[],
     request: HttpRequest,
     response: HttpResponse,
-    rest: {[key: string]: any}
+    rest: { [key: string]: any }
   ) {
     if (functions.length === 0) return;
     const currentFunc = functions.shift();
@@ -204,7 +211,7 @@ export class Route {
       next: () => this.callFunctions(functions, request, response, rest),
       request,
       response,
-      ...rest
+      ...rest,
     });
   }
 
