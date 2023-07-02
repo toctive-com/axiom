@@ -176,6 +176,7 @@ export class Route {
       this.getMatchedUri(request.url),
       request.url
     );
+    request.params = variables;
     return this.callFunctions(this.action, request, response, variables);
   }
 

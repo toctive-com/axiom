@@ -8,4 +8,12 @@ export class HttpRequest extends IncomingMessage {
   public set locals(value: any) {
     HttpRequest.locals = { ...HttpRequest.locals, value };
   }
+
+  static params: any = {};
+  public get params(): any {
+    return HttpRequest.params;
+  }
+  public set params(value: any) {
+    HttpRequest.params = value;
+  }
 }
