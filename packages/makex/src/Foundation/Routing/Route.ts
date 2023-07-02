@@ -104,7 +104,9 @@ export class Route {
    *
    * @param {string} originalUrl - The originalUrl parameter is a string that
    * represents the original URL. It is the URL pattern that contains variables in
-   * the form of ":variableName". For example, "/users/:userId/posts/:postId".
+   * the form of `:variableName` or `{variableName}`.
+   * For example, `/users/:userId` or `/users/{userId}` 
+   * or `/users/{user-Id}/posts/:postId`
    * @param {string} currentUrl - The `currentUrl` parameter is the URL that is
    * currently being accessed or visited.
    *
@@ -124,6 +126,8 @@ export class Route {
         variables[
           originalUrlParts[i].substring(1, originalUrlParts[i].length - 1)
         ] = currentUrlParts[i];
+      } else if (originalUrlParts[i].startsWith(":")) {
+        variables[originalUrlParts[i].substring(1)] = currentUrlParts[i];
       }
     }
     return variables;
@@ -143,8 +147,11 @@ export class Route {
   getMatchedUri(currentUrl: string) {
     for (const uri of this.uri) {
       const regex = new RegExp(
-        `^${uri.replace(/{[a-zA-Z0-9_-]+}/g, "[a-zA-Z0-9_-]+")}$`
+        `^${uri
+          .replace(/{[a-zA-Z0-9_-]+}/g, "[a-zA-Z0-9_-]+")
+          .replace(/:\w+/g, "\\w+")}$`
       );
+
       if (regex.test(currentUrl)) return uri;
     }
     return null;
