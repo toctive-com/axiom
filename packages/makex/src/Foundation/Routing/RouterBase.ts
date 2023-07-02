@@ -1,6 +1,6 @@
 import { METHODS } from "node:http";
 import { Route } from "./Route";
-import { RouteRegistrar } from "./RouteRegistrar";
+import { RoutesGroup } from "./RoutesGroup";
 
 export abstract class RouterBase {
   /**
@@ -69,7 +69,7 @@ export abstract class RouterBase {
    * @var Route[] | RouteRegistrar[]
    *
    */
-  protected static routes: (Route | RouteRegistrar)[] = [];
+  protected static routes: (Route | RoutesGroup)[] = [];
 
   /**
    * Add a route to the underlying route collection.
@@ -99,14 +99,14 @@ export abstract class RouterBase {
   /**
    * Adds a route registrar to a list of route registrars.
    *
-   * @param {RouteRegistrar} routeRegistrar - The parameter `routeRegistrar` is an
+   * @param {RoutesGroup} routeRegistrar - The parameter `routeRegistrar` is an
    * instance of the `RouteRegistrar` class.
    *
    * @returns The `addRouteRegistrar` method is returning the `routeRegistrar`
    * object that was passed as a parameter.
    *
    */
-  protected static addRouteRegistrar(routeRegistrar: RouteRegistrar) {
+  protected static addRouteRegistrar(routeRegistrar: RoutesGroup) {
     RouterBase.routes.push(routeRegistrar);
     return routeRegistrar;
   }

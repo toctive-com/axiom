@@ -1,5 +1,5 @@
 import { Route } from "./Route";
-import { RouteRegistrar } from "./RouteRegistrar";
+import { RoutesGroup } from "./RoutesGroup";
 import { RouterBase } from "./RouterBase";
 
 export class Router extends RouterBase {
@@ -32,7 +32,7 @@ export class Router extends RouterBase {
   public static middleware(
     callback: Function | Function[] | string | string[]
   ) {
-    const routeRegistrar = new RouteRegistrar({ middleware: callback });
+    const routeRegistrar = new RoutesGroup({ middleware: callback });
     this.addRouteRegistrar(routeRegistrar);
     return routeRegistrar;
   }
@@ -43,22 +43,22 @@ export class Router extends RouterBase {
    */
   // TODO add type for attributes
   public static group(
-    callback: (router: RouteRegistrar) => void
-  ): RouteRegistrar;
+    callback: (router: RoutesGroup) => void
+  ): RoutesGroup;
   public static group(
     attributes: any,
-    callback: (router: RouteRegistrar) => void
-  ): RouteRegistrar;
+    callback: (router: RoutesGroup) => void
+  ): RoutesGroup;
   public static group(
     attributesOrCallback: any,
-    callback?: (router: RouteRegistrar) => void
-  ): RouteRegistrar {
+    callback?: (router: RoutesGroup) => void
+  ): RoutesGroup {
     if (typeof attributesOrCallback === "function") {
       callback = attributesOrCallback;
       attributesOrCallback = {};
     }
 
-    const routeRegistrar = new RouteRegistrar(attributesOrCallback);
+    const routeRegistrar = new RoutesGroup(attributesOrCallback);
     callback(routeRegistrar);
     this.addRouteRegistrar(routeRegistrar);
     return routeRegistrar;

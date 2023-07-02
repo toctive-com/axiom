@@ -1,7 +1,7 @@
 import { Route } from "./Route";
 import { RouterBase } from "./RouterBase";
 
-export class RouteRegistrar extends RouterBase {
+export class RoutesGroup extends RouterBase {
   /**
    * All middleware functions are registered here to be executed when a route
    * is matched by the router.
@@ -29,7 +29,7 @@ export class RouteRegistrar extends RouterBase {
    * @var Route[] | RouteRegistrar[]
    *
    */
-  protected routes: (Route | RouteRegistrar)[] = [];
+  protected routes: (Route | RoutesGroup)[] = [];
 
   constructor(attributes?: any) {
     super();
@@ -88,14 +88,14 @@ export class RouteRegistrar extends RouterBase {
   /**
    * Adds a route registrar to a list of route registrars.
    *
-   * @param {RouteRegistrar} routeRegistrar - The parameter `routeRegistrar` is an
+   * @param {RoutesGroup} routeRegistrar - The parameter `routeRegistrar` is an
    * instance of the `RouteRegistrar` class.
    *
    * @returns The `addRouteRegistrar` method is returning the `routeRegistrar`
    * object that was passed as a parameter.
    *
    */
-  protected addRouteRegistrar(routeRegistrar: RouteRegistrar) {
+  protected addRouteRegistrar(routeRegistrar: RoutesGroup) {
     this.routes.push(routeRegistrar);
     return routeRegistrar;
   }
@@ -111,7 +111,7 @@ export class RouteRegistrar extends RouterBase {
  * 
  */
   public middleware(callback: Function | Function[] | string | string[]) {
-    const routeRegistrar = new RouteRegistrar({ middleware: callback });
+    const routeRegistrar = new RoutesGroup({ middleware: callback });
     routeRegistrar.middlewareLayers.push(...this.middlewareLayers);
     this.addRouteRegistrar(routeRegistrar);
     return routeRegistrar;
@@ -146,21 +146,21 @@ export class RouteRegistrar extends RouterBase {
    *
    */
   // TODO add type for attributes
-  public group(callback: (router: RouteRegistrar) => void): RouteRegistrar;
+  public group(callback: (router: RoutesGroup) => void): RoutesGroup;
   public group(
     attributes: any,
-    callback: (router: RouteRegistrar) => void
-  ): RouteRegistrar;
+    callback: (router: RoutesGroup) => void
+  ): RoutesGroup;
   public group(
     attributesOrCallback: any,
-    callback?: (router: RouteRegistrar) => void
-  ): RouteRegistrar {
+    callback?: (router: RoutesGroup) => void
+  ): RoutesGroup {
     if (typeof attributesOrCallback === "function") {
       callback = attributesOrCallback;
       attributesOrCallback = {};
     }
 
-    const routeRegistrar = new RouteRegistrar(attributesOrCallback);
+    const routeRegistrar = new RoutesGroup(attributesOrCallback);
     routeRegistrar.middlewareLayers = this.middlewareLayers;
     callback(routeRegistrar);
     this.addRouteRegistrar(routeRegistrar);
@@ -196,7 +196,7 @@ export class RouteRegistrar extends RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[]
   ) {
-    return this.addRoute(RouteRegistrar.httpVerbs, uri, action);
+    return this.addRoute(RoutesGroup.httpVerbs, uri, action);
   }
 
   /**
