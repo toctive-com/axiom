@@ -94,8 +94,53 @@ export class Route {
    */
   public isUriMatches(uri: string): boolean {
     return this.uri.some((regex: string | RegExp) =>
-      regex instanceof RegExp ? regex.test(uri) : regex === uri
+      regex instanceof RegExp ? regex.test(uri) : this.getMatchedUri(uri)
     );
+  }
+
+  /**
+   * Extracts variables from a given original URL and current URL by
+   * comparing their respective parts.
+   * 
+   * @param {string} originalUrl - The originalUrl parameter is a string that
+   * represents the original URL. It is the URL pattern that contains variables in
+   * the form of ":variableName". For example, "/users/:userId/posts/:postId".
+   * @param {string} currentUrl - The `currentUrl` parameter is the URL that is
+   * currently being accessed or visited.
+   * 
+   * @returns an object containing variables extracted from the original URL and
+   * their corresponding values from the current URL.
+   * 
+   */
+  protected extractVariables(originalUrl: string, currentUrl: string) {
+    const originalUrlParts = originalUrl.split('/');
+    const currentUrlParts = currentUrl.split('/');
+    const variables = {};
+    for (let i = 0; i < originalUrlParts.length; i++) {
+      if (originalUrlParts[i].startsWith(':')) {
+        variables[originalUrlParts[i].substring(1)] = currentUrlParts[i];
+      }
+    }
+    return variables;
+  }
+
+  /**
+   * The function `getMatchedUri` takes a current URL and returns the matching URI
+   * from a list of URIs.
+   * 
+   * @param {string} currentUrl - The `currentUrl` parameter is a string
+   * representing the current URL that you want to match against a list of URIs.
+   * 
+   * @returns the matched URI if it exists in the `this.uri` array. If no match is
+   * found, it returns `null`.
+   * 
+   */
+  getMatchedUri(currentUrl: string) {
+    for (const uri of this.uri) {
+      const regex = new RegExp(`^${uri.replace(/:\w+/g, "\\w+")}$`);
+      if (regex.test(currentUrl)) return uri;
+    }
+    return null;
   }
 
   /**
@@ -127,17 +172,21 @@ export class Route {
    *
    */
   public execute(request: HttpRequest, response: HttpResponse) {
-    return this.callFunctions(this.action, request, response);
+    const variables = this.extractVariables(
+      this.getMatchedUri(request.url),
+      request.url
+    );
+    return this.callFunctions(this.action, request, response, variables);
   }
 
   /**
-   * Recursively calls a list of functions, passing in the request and response 
+   * Recursively calls a list of functions, passing in the request and response
    * objects, until all functions have been called.
    *
-   * @param {Function[]} functions - An array of functions that will be called 
+   * @param {Function[]} functions - An array of functions that will be called
    * one by one.
    * @param {HttpRequest} request
-   * @param {HttpResponse} response 
+   * @param {HttpResponse} response
    *
    * @returns The current function is being returned.
    *
@@ -145,14 +194,16 @@ export class Route {
   callFunctions(
     functions: Function[],
     request: HttpRequest,
-    response: HttpResponse
+    response: HttpResponse,
+    rest: {[key: string]: any}
   ) {
     if (functions.length === 0) return;
     const currentFunc = functions.shift();
     return currentFunc({
-      next: () => this.callFunctions(functions, request, response),
+      next: () => this.callFunctions(functions, request, response, rest),
       request,
       response,
+      ...rest
     });
   }
 
