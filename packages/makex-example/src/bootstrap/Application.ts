@@ -1,5 +1,6 @@
 import Maintenance from "@/bootstrap/Maintenance";
 import config from "@/config";
+import { AppServiceProvider } from "@/providers/AppServiceProvider";
 import { RouteServiceProvider } from "@/providers/RouteServiceProvider";
 import {
   Application as App,
@@ -14,7 +15,10 @@ export class Application extends App {
    * @var ServiceProvider[]
    *
    */
-  providers: ServiceProvider[] = [new RouteServiceProvider(this)];
+  providers: ServiceProvider[] = [
+    new AppServiceProvider(this),
+    new RouteServiceProvider(this),
+  ];
 
   /**
    * Register project configuration.
