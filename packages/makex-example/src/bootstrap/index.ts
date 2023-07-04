@@ -19,7 +19,7 @@ export * from "./Maintenance";
  */
 export async function runApp(): Promise<Application> {
   // Get instance of Application
-  const app = Application.getInstance({ basePath: resolve("..") });
+  const app = Application.getInstance({ basePath: resolve(__dirname, "../..") });
 
   // Load Service Providers which will load Routes, Middleware ... etc
   await app.registerServiceProviders();
