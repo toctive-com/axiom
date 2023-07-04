@@ -253,7 +253,7 @@ export class Application extends Container {
    * @returns unknown
    *
    */
-  public config(name: string, defaultValue: unknown = null): unknown {
+  public config<T>(name: string, defaultValue: T = null): T {
     let value = this._config;
 
     for (const configName of name.split(".")) {
@@ -261,7 +261,7 @@ export class Application extends Container {
       value = value[configName];
     }
 
-    return value;
+    return value as T;
   }
 
   /**
