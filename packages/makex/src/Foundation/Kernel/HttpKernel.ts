@@ -8,13 +8,22 @@ import { Router } from "../Routing";
 
 export class HttpKernel {
   /**
+   * The `app` property is used to store an instance of the`Application` class, 
+   * which represents the application being served by the HTTP server.
+   * 
+   * @var Application
+   * 
+   */
+  public readonly app: Application;
+
+  /**
    * This property is used to store an instance of the `Server` class, which is
    * used to create an HTTP server.
    *
    * @var Server
    *
    */
-  private server: Server;
+  protected server: Server;
 
   /**
    * The port number on which the HTTP server will listen. It is initialized
@@ -33,7 +42,7 @@ export class HttpKernel {
    * ```
    *
    */
-  private port: number;
+  protected port: number;
 
   /**
    * This property is used to store an instance of the `HttpTerminator` class,
@@ -42,7 +51,7 @@ export class HttpKernel {
    * @var HttpTerminator
    *
    */
-  private httpTerminator: HttpTerminator;
+  protected httpTerminator: HttpTerminator;
 
   /**
    * Creates a server and starts it on port 8000, while also creating
@@ -52,6 +61,7 @@ export class HttpKernel {
    *
    */
   constructor(app: Application) {
+    this.app = app;
     this.server = app.createServer();
     this.port = app.config("server.port", 8000);
 
@@ -64,7 +74,7 @@ export class HttpKernel {
     });
   }
 
-  /**
+  /** 
    * Captures an HTTP request and returns a promise that resolves with
    * the request and its corresponding response.
    *
@@ -80,6 +90,10 @@ export class HttpKernel {
           (req: IncomingMessage, res: ServerResponse) => {
             const request = setPrototypeOf(req, HttpRequest.prototype);
             const response = setPrototypeOf(res, HttpResponse.prototype);
+            
+            request.app = this.app;
+            response.app = this.app;
+
             Application.singleton(HttpRequest, request);
             Application.singleton(HttpResponse, response);
             return resolve({ request, response });
