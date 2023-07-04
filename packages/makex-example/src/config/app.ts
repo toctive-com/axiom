@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { join, resolve } from "node:path";
 
 export default {
   appName: "MakeX Project",
@@ -17,8 +17,8 @@ export default {
    *
    */
   maintenanceMode: {
-    enabled: existsSync(resolve("../down")),
-
+    enabled: existsSync(resolve(join("./down"))),
+    
     title: "Maintenance Mode",
     except: [],
     redirect: null,
@@ -27,6 +27,6 @@ export default {
     secret: null,
     status: 503,
     template:
-      "The application is currently undergoing maintenance. Please try again later.",
+    "The application is currently undergoing maintenance. Please try again later.",
   },
 };

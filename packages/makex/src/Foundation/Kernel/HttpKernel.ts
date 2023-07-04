@@ -112,7 +112,7 @@ export class HttpKernel {
     /**
      * Check If The Application Is Under Maintenance
      * --------------------------------------------------------------------------
-     * If there is a file called `down` in the current working directory,
+     * If there is a file called `down` in this project directory,
      * This means the website is under maintenance and all incoming request will
      * get 503 status code.
      *

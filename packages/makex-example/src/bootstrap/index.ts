@@ -2,7 +2,7 @@ import Application from "@/bootstrap/Application";
 import Maintenance from "@/bootstrap/Maintenance";
 import config from "@/config";
 import { HttpKernel } from "@toctive/makex";
-import { join, resolve } from "node:path";
+import { resolve } from "node:path";
 
 /**
  * Export all bootstrap files. This helps in maintenance mode and creating custom

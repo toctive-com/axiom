@@ -208,7 +208,7 @@ export class Application extends Container {
    *
    */
   async handleMaintenanceMode({ request, response }): Promise<void> {
-    if (!existsSync(join(this.basePath, "down.json"))) return;
+    if (!this.config("app.maintenanceMode.enabled")) return;
 
     const handler: Maintenance = Application.make(Maintenance);
     await handler.handle({ request, response });

@@ -1,5 +1,9 @@
-import { HttpRequest, HttpResponse, MaintenanceConfig } from "@toctive/makex";
-import { existsSync, readFileSync } from "node:fs";
+import {
+  Application,
+  HttpRequest,
+  HttpResponse,
+  MaintenanceConfig,
+} from "@toctive/makex";
 import { exit } from "node:process";
 
 export class Maintenance {
@@ -10,27 +14,22 @@ export class Maintenance {
 
   public isUnderMaintenance: boolean = false;
 
-  constructor(maintenanceConfigFile: string) {
-    if (existsSync(maintenanceConfigFile)) {
-      this.isUnderMaintenance = true;
-      this.loadConfig(maintenanceConfigFile);
-      return;
+  constructor(app: Application) {
+    this.isUnderMaintenance = app.config("app.maintenanceMode.enabled", false);
+    if (this.isUnderMaintenance) {
+      this.loadConfig(
+        app.config<MaintenanceConfig>("app.maintenanceMode", undefined)
+        );
     }
   }
 
-  public loadConfig(config?: string | MaintenanceConfig) {
+  public loadConfig(config?: MaintenanceConfig) {
     // load maintenance mode configurations
-    if (typeof config === "string") {
-      try {
-        return (this.config = JSON.parse(
-          readFileSync(config, { encoding: "utf-8" })
-        ));
-      } catch (error) {
-        console.warn(
-          `Failed to parse contents of ${config}. The application will use the default maintenance mode configurations`
-        );
-        return this.config;
-      }
+    if (!config) {
+      console.warn(
+        `Failed to parse contents of ${config}. The application will use the default maintenance mode configurations`
+      );
+      return this.config;
     }
 
     if (config) {
