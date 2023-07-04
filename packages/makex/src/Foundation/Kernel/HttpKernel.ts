@@ -17,6 +17,25 @@ export class HttpKernel {
   private server: Server;
 
   /**
+   * The port number on which the HTTP server will listen. It is initialized
+   * with the value obtained from the application's configuration file using
+   * `app.config("server.port", 8000)`. If no port number is specified in the
+   * configuration file, it defaults to 8000.
+   *
+   * @var number
+   *
+   * @example
+   *
+   * ```js
+   * const app = new Application();
+   * app.config("server.port", 8000);
+   * const kernel = new HttpKernel(app);
+   * ```
+   *
+   */
+  private port: number;
+
+  /**
    * This property is used to store an instance of the `HttpTerminator` class,
    * which is used to gracefully shut down the HTTP server.
    *
@@ -32,15 +51,16 @@ export class HttpKernel {
    * @param Server
    *
    */
-  constructor({ server, port = 8000 }: { server: Server; port: number }) {
-    this.server = server;
+  constructor(app: Application) {
+    this.server = app.createServer();
+    this.port = app.config("server.port", 8000);
 
     this.httpTerminator = createHttpTerminator({
       server: this.server,
     });
 
-    this.server.listen(port, () => {
-      console.log(`server started on http://localhost:${port}/`);
+    this.server.listen(this.port, () => {
+      console.log(`server started on http://localhost:${this.port}/`);
     });
   }
 

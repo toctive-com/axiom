@@ -21,21 +21,18 @@ export * from "./Maintenance";
  *
  */
 export async function runApp(): Promise<Application> {
+  // The starting point of the application
+  const basePath = resolve("..");
+
   // Get instance of Application
-  const app = Application.getInstance({
-    basePath: resolve(__dirname, "../"),
-    config,
-  });
+  const app = Application.getInstance({ basePath, config });
 
   // Register Kernels in Service Container
-  app.singleton(Maintenance, null, join(__dirname, "../down.json"));
-  app.singleton(HttpKernel, null, {
-    server: app.createServer(),
-    port: app.config("server.port", 8000),
-  });
+  app.singleton(Maintenance, null, app);
+  app.singleton(HttpKernel, null, app);
 
   // Load Service Providers which will load Routes, Middleware ... etc
-  await app.registerServiceProviders()
+  await app.registerServiceProviders();
 
   // Boot the application and return app instance
   return await app.boot();
