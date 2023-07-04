@@ -1,6 +1,11 @@
+import Maintenance from "@/bootstrap/Maintenance";
 import config from "@/config";
 import { RouteServiceProvider } from "@/providers/RouteServiceProvider";
-import { Application as App, ServiceProvider } from "@toctive/makex";
+import {
+  Application as App,
+  HttpKernel,
+  ServiceProvider,
+} from "@toctive/makex";
 
 export class Application extends App {
   /**
@@ -19,6 +24,18 @@ export class Application extends App {
    */
   protected loadConfig(): Object {
     return config;
+  }
+
+  /**
+   * Registers the kernels that will be used to boot the application as
+   * singletons in the service container.
+   *
+   * @returns {void}
+   *
+   */
+  protected registerSingletons(): void {
+    this.singleton(Maintenance, null, this);
+    this.singleton(HttpKernel, null, this);
   }
 }
 

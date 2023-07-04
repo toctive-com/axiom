@@ -88,13 +88,17 @@ export class Application extends Container {
    * @param ApplicationParameters
    *
    */
-  constructor({ basePath }: ApplicationParameters) {
+  constructor({ basePath = process.cwd() }: ApplicationParameters) {
     super();
 
+    // Register the base path of the application
     if (basePath) this.basePath = basePath;
 
-    // Load all config files
+    // Load all project config files
     this._config = this.loadConfig();
+
+    // Register all singletons that are used by the application
+    this.registerSingletons();
   }
 
   /**
@@ -106,6 +110,15 @@ export class Application extends Container {
   protected loadConfig(): Object {
     return {};
   }
+
+  /**
+   * Registers the kernels that will be used to boot the application as
+   * singletons in the service container.
+   *
+   * @returns {void}
+   *
+   */
+  protected registerSingletons(): void {}
 
   /**
    * The boot function checks if the application is already booted and if not,

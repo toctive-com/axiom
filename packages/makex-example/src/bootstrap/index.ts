@@ -1,7 +1,4 @@
 import Application from "@/bootstrap/Application";
-import Maintenance from "@/bootstrap/Maintenance";
-import config from "@/config";
-import { HttpKernel } from "@toctive/makex";
 import { resolve } from "node:path";
 
 /**
@@ -23,10 +20,6 @@ export * from "./Maintenance";
 export async function runApp(): Promise<Application> {
   // Get instance of Application
   const app = Application.getInstance({ basePath: resolve("..") });
-
-  // Register Kernels in Service Container
-  app.singleton(Maintenance, null, app);
-  app.singleton(HttpKernel, null, app);
 
   // Load Service Providers which will load Routes, Middleware ... etc
   await app.registerServiceProviders();
