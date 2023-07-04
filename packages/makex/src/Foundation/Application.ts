@@ -1,11 +1,9 @@
-import { existsSync } from "node:fs";
 import {
   IncomingMessage,
   Server,
   ServerResponse,
   createServer,
 } from "node:http";
-import { join } from "node:path";
 import { ApplicationParameters } from "../Types";
 import { Container } from "./Container";
 import { Maintenance } from "./Maintenance";
@@ -71,7 +69,7 @@ export class Application extends Container {
    * @var Object
    *
    */
-  private _config = {};
+  protected _config = {};
 
   /**
    * It is used to create and manage the HTTP server for the application.
@@ -79,7 +77,7 @@ export class Application extends Container {
    * @var Server
    *
    */
-  private _server: Server;
+  protected _server: Server;
   public get server(): Server {
     return this._server;
   }
@@ -90,13 +88,23 @@ export class Application extends Container {
    * @param ApplicationParameters
    *
    */
-  constructor({ basePath, config = {} }: ApplicationParameters) {
+  constructor({ basePath }: ApplicationParameters) {
     super();
 
     if (basePath) this.basePath = basePath;
 
     // Load all config files
-    this._config = config;
+    this._config = this.loadConfig();
+  }
+
+  /**
+   * made to be override by developer's Application class
+   *
+   * @returns {Object} { }
+   *
+   */
+  protected loadConfig(): Object {
+    return {};
   }
 
   /**
@@ -207,7 +215,7 @@ export class Application extends Container {
    * @param response: The server response object.
    *
    */
-  async handleMaintenanceMode({ request, response }): Promise<void> {
+  public async handleMaintenanceMode({ request, response }): Promise<void> {
     if (!this.config("app.maintenanceMode.enabled")) return;
 
     const handler: Maintenance = Application.make(Maintenance);
@@ -226,7 +234,7 @@ export class Application extends Container {
    * @returns Application
    *
    */
-  public static getInstance(parameters: ApplicationParameters): Application {
+  public static getInstance(parameters: ApplicationParameters) {
     return this.singleton("Application", this, parameters);
   }
 
@@ -271,7 +279,7 @@ export class Application extends Container {
    * @returns The `createServer()` function is being returned.
    *
    */
-  createServer(): Server<typeof IncomingMessage, typeof ServerResponse> {
+  public createServer(): Server<typeof IncomingMessage, typeof ServerResponse> {
     return (this._server = createServer());
   }
 }

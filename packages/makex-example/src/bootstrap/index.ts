@@ -21,11 +21,8 @@ export * from "./Maintenance";
  *
  */
 export async function runApp(): Promise<Application> {
-  // The starting point of the application
-  const basePath = resolve("..");
-
   // Get instance of Application
-  const app = Application.getInstance({ basePath, config });
+  const app = Application.getInstance({ basePath: resolve("..") });
 
   // Register Kernels in Service Container
   app.singleton(Maintenance, null, app);
