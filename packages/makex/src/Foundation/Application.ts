@@ -218,6 +218,8 @@ export class Application extends Container {
     for (const provider of this.providers) {
       await this.register(provider);
     }
+
+    this.providersRegistered = true;
   }
 
   /**
