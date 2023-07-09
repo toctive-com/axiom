@@ -61,7 +61,7 @@ export class Application extends Container {
    *
    * @var string
    */
-  protected basePath: string;
+  private _basePath: string;
 
   /**
    * All application configurations are stored here
@@ -78,9 +78,6 @@ export class Application extends Container {
    *
    */
   protected _server: Server;
-  public get server(): Server {
-    return this._server;
-  }
 
   /**
    * Create Application instance
@@ -121,15 +118,50 @@ export class Application extends Container {
   protected registerSingletons(): void {}
 
   /**
-   * The boot function checks if the application is already booted and if not,
-   * it runs the boot method in all service providers and sets the booted flag
-   * to true.
+   * Returns the value of the `_basePath` property.
    *
-   * @returns The method is returning the current instance of the class.
+   * @returns {string} _basePath property is being returned as a string.
+   *
+   */
+  protected get basePath(): string {
+    return this._basePath;
+  }
+
+  /**
+   * Sets the base path value.
+   *
+   * @param {string} value - Represents the new base path value that will be
+   * assigned to the _basePath property.
+   *
+   */
+  protected set basePath(value: string) {
+    this._basePath = value;
+  }
+
+  /**
+   * Returns the server object.
+   *
+   * @returns {Server} Server - The server object is being returned.
+   *
+   */
+  public get server(): Server {
+    return this._server;
+  }
+
+  /**
+   * Checks if the application is already booted and if not,
+   * it runs the boot method in all service providers.
+   *
+   * @returns {Application} The method is returning the current instance of the class.
    *
    */
   public async boot(): Promise<this> {
     if (this.isBooted()) return this;
+
+    // All service providers must be registered before booting the application.
+    // Booting the application without registering all service providers, may
+    // result many logical errors and bugs. For example, the app will boot 
+    // without loading config files.
     if (!this.isProvidersRegistered()) await this.registerServiceProviders();
 
     // run boot method in all Service Providers
@@ -140,9 +172,9 @@ export class Application extends Container {
   }
 
   /**
-   * Returns a boolean value indicating whether the system is booted or not.
+   * Indicates whether the system is booted or not.
    *
-   * @returns boolean
+   * @returns true, if the application is already booted before.
    *
    */
   public isBooted(): boolean {
@@ -150,9 +182,9 @@ export class Application extends Container {
   }
 
   /**
-   * Checks if providers are registered and returns a boolean value.
+   * Checks if service providers are registered or not.
    *
-   * @returns boolean
+   * @returns true, if the service providers are already registered.
    *
    */
   public isProvidersRegistered(): boolean {
@@ -163,7 +195,7 @@ export class Application extends Container {
    * The `register` function takes a `ServiceProvider` and registers it if it is
    * not already registered, returning the registered provider.
    *
-   * @param {ServiceProvider} provider - The `provider` parameter is an instance of
+   * @param provider - The `provider` parameter is an instance of
    * the `ServiceProvider` class.
    *
    * @returns The method is returning the registered provider.
@@ -173,11 +205,11 @@ export class Application extends Container {
     provider: ServiceProvider
   ): Promise<ServiceProvider> {
     if (this.isRegistered(provider)) {
-      return this.registeredProviders[provider.toString()];
+      return this.registeredProviders[provider.constructor.name];
     }
 
     await provider.register();
-    return (this.registeredProviders[provider.toString()] = provider);
+    return (this.registeredProviders[provider.constructor.name] = provider);
   }
 
   /**
@@ -189,7 +221,9 @@ export class Application extends Container {
    *
    */
   public isRegistered(provider: ServiceProvider): boolean {
-    return Object.keys(this.registeredProviders).includes(provider.toString());
+    return Object.keys(this.registeredProviders).includes(
+      provider.constructor.name
+    );
   }
 
   /**
@@ -233,7 +267,7 @@ export class Application extends Container {
   public async handleMaintenanceMode({ request, response }): Promise<void> {
     if (!this.config("app.maintenanceMode.enabled")) return;
 
-    const handler: Maintenance = Application.make(Maintenance);
+    const handler = Application.make<Maintenance>("Maintenance");
     await handler.handle({ request, response });
   }
 
@@ -250,7 +284,7 @@ export class Application extends Container {
    *
    */
   public static getInstance(parameters: ApplicationParameters) {
-    return this.singleton("Application", this, parameters);
+    return this.set("Application", () => new Application(parameters));
   }
 
   /**
