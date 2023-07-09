@@ -8,11 +8,11 @@ import { Router } from "../Routing";
 
 export class HttpKernel {
   /**
-   * The `app` property is used to store an instance of the`Application` class, 
+   * The `app` property is used to store an instance of the`Application` class,
    * which represents the application being served by the HTTP server.
-   * 
+   *
    * @var Application
-   * 
+   *
    */
   public readonly app: Application;
 
@@ -74,7 +74,7 @@ export class HttpKernel {
     });
   }
 
-  /** 
+  /**
    * Captures an HTTP request and returns a promise that resolves with
    * the request and its corresponding response.
    *
@@ -90,12 +90,12 @@ export class HttpKernel {
           (req: IncomingMessage, res: ServerResponse) => {
             const request = setPrototypeOf(req, HttpRequest.prototype);
             const response = setPrototypeOf(res, HttpResponse.prototype);
-            
+
             request.app = this.app;
             response.app = this.app;
 
-            Application.singleton(HttpRequest, request);
-            Application.singleton(HttpResponse, response);
+            Application.set("HttpRequest", () => request);
+            Application.set("HttpResponse", () => response);
             return resolve({ request, response });
           }
         );
@@ -131,10 +131,7 @@ export class HttpKernel {
      * get 503 status code.
      *
      */
-    await Application.make<Application>(Application).handleMaintenanceMode({
-      request,
-      response,
-    });
+    await request.app.handleMaintenanceMode({ request, response });
 
     // TODO trim slashes from the request url and from every route.
     const firstMatchedRoute = Router.match(

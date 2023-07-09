@@ -1,6 +1,5 @@
 import { runApp } from "@/bootstrap";
 import { HttpKernel } from "@toctive/makex";
-
 console.time("MakeX-FullCycle");
 
 /**
@@ -16,7 +15,7 @@ async function main() {
   const app = await runApp();
 
   // Load framework kernel which includes HTTP server and will handle requests
-  const kernel: HttpKernel = app.make(HttpKernel);
+  const kernel = app.make<HttpKernel>('HttpKernel');
 
   // Wait for incoming request and return it with empty response object
   const { request, response } = await kernel.captureRequest();

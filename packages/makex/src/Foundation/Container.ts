@@ -1,136 +1,135 @@
-import { Instantiable } from "../Types";
+import { Container as BrandiContainer, Token, token } from "brandi";
 import Application from "./Application";
 
-export class Container {
+declare type UnknownConstructor<T extends Object = Object> = new (
+  ...args: never[]
+) => T;
+declare type UnknownFunction<T = unknown> = (...args: never[]) => T;
+export declare type UnknownCreator<T = unknown> =
+  | UnknownConstructor<T>
+  | UnknownFunction<T>;
+
+/**
+ * The `Container` class is a TypeScript implementation of a dependency injection
+ * container that allows for setting and retrieving values based on a given name.
+ *
+ */
+export class Container extends BrandiContainer {
   /**
    * This property is used to store the bindings between abstract
    * classes/interfaces and their concrete implementations in the container.
    *
    */
-  private static bindings: {
-    [key: string]: any;
-  } = {};
+  public static tokens: Record<string, Token<unknown>> = {};
 
   /**
-   * This function binds an abstract class or string to a concrete implementation.
-   *
-   * @param {string | Instantiable} abstract - The "abstract" parameter can either
-   * be a string or an Instantiable (a constructor function). If it is a string, it
-   * represents the name of the abstract class or interface that we want to bind to
-   * a concrete implementation. If it is an Instantiable, it represents the
-   * abstract class or interface itself
-   * @param {Instantiable | null} [contract] - The `contract` parameter is an optional
-   * parameter of type `Instantiable`. It represents the concrete implementation of
-   * the abstract class or interface that is being bound to the container. If this
-   * parameter is not provided, the container will attempt to resolve the
-   * implementation based on the abstract class or interface provided.
-   *
-   * @returns the result of calling the `bind` method with either the `abstract`
-   * and `contract` arguments or the `abstract` argument converted to a string and
-   * used as both the key and value for the `bind` method. The specific value
-   * returned depends on the type and values of the `abstract` and `contract`
-   * arguments passed to the function.
+   * This static property is used to store the instance of the container that 
+   * will be used for dependency injection.
+   * 
+   */
+  public static container = new BrandiContainer();
+
+  /**
+   * Here is how to use this container
+   * 
+   * @example
+   * ```ts
+   * class Kernel { public value = "VALUE" }
+   * Container.set("kernel", Kernel);
+   * const kernelInstance = Container.get<Kernel>("kernel").value;
+   * ```
    *
    */
-  singleton(
-    abstract: string | Instantiable,
-    contract: Instantiable = null,
-    parameters?: {}
-  ) {
-    return Container.singleton(abstract, contract, parameters);
-  }
-
-  static singleton(
-    abstract: string | Instantiable,
-    contract: Object | Instantiable = null,
-    parameters?: {}
-  ) {
-    if (typeof abstract === "string") {
-      if (contract === null) {
-        throw new Error(
-          `${Container.constructor.name}.singleton(): Argument #2 (concrete) can't be null while Argument #1 (abstract) is a string`
-        );
-      }
-
-      if (typeof contract === "object") {
-        return Container.bind(abstract, contract);
-      } else {
-        return Container.bind(abstract, contract, parameters);
-      }
-    }
-
-    if (contract === null) {
-      return Container.bind(abstract.name, abstract, parameters);
-    }
-
-    
-    if (typeof contract === "object") {
-      return Container.bind(abstract.name, contract);
-    } else {
-      return Container.bind(abstract.name, contract, parameters);
-    }
+  constructor() {
+    super();
+    Container.container = this;
   }
 
   /**
-   * This function binds an abstract string to an instantiable class in a
-   * container.
+   * Sets a value of type TClass in the Application class using a given name.
    *
-   * @param {string} abstract - The abstract parameter is a string that represents
-   * the abstract or interface that needs to be bound to a concrete implementation.
-   * In other words, it is the key or identifier that will be used to retrieve the
-   * concrete implementation from the container.
+   * @param name - A string representing the name of the class to be set.
    *
-   * @param {Instantiable} contract - The `contract` parameter is an `Instantiable`
-   * class that will be instantiated and bound to the `abstract` parameter in the
-   * container's bindings. This means that whenever the `abstract` parameter is
-   * resolved from the container, an instance of the `contract` class will be
-   * returned.
+   * @param value - represents a value that can create an instance of the class "TClass", but the
+   * specific implementation is unknown.
+   *
+   * @returns the result of calling the `set` method of the `Application` object
+   * with the provided `name` and `value` arguments.
+   *
    */
-  static bind(abstract: string, contract: {});
-  static bind(abstract: string, contract: Instantiable, parameters: {});
-  static bind(abstract: string, contract: Instantiable, parameters?: {}) {
-    if (Object.keys(Container.bindings).includes(abstract)) {
-      console.warn(
-        `Container.bindings already contains "${abstract}" associated to ${Container.bindings[abstract].constructor.name} class`
-      );
-      return Container.bindings[abstract];
-    }
-
-    if (typeof contract === "object") {
-      Container.bindings[abstract] = contract;
-    } else {
-      Container.bindings[abstract] = new contract(parameters);
-    }
-
-    return Container.bindings[abstract];
+  set<TClass>(name: string, value: UnknownCreator<TClass>) {
+    return Application.set<TClass>(name, value);
+  }
+  
+  /**
+   * Sets a value in a container and returns an instance of the specified class.
+   *
+   * @param name - A string representing the name of the class or value
+   * being set.
+   *
+   * @param value -  represents the value that will be bound to the specified name in the
+   * container. The `UnknownCreator<TClass>` type indicates that the value can be
+   * any type that can be used to create an instance of `TClass`.
+   *
+   * @returns the result of calling the `make` method with the `name` parameter.
+   *
+   */
+  static set<TClass>(name: string, value: UnknownCreator<TClass>) {
+    const token = this.setToken<TClass>(name);
+    this.container.bind(token).toInstance(value).inSingletonScope();
+    return this.make<TClass>(name);
   }
 
   /**
-   * This is a generic function that returns an object of type T or null based on a
-   * given reference string.
+   * The function "make" returns an instance of a generic type TValue from a
+   * container based on the given name.
    *
-   * @param {string} ref - ref is a string parameter that represents the reference
-   * to a binding in the Container.
+   * @param {string} name - A string representing the name of the value to be
+   * created.
    *
-   * @returns The `make` function is returning a value of type `T` or `null`. If
-   * the `ref` parameter exists as a key in the `Container.bindings` object, the
-   * function returns the value associated with that key as type `T`. Otherwise, it
-   * returns `null`.
+   * @returns The `make<TValue>(name: string)` function is returning the result of
+   * calling `Container.make<TValue>(name)`.
+   *
    */
-  public make<T>(ref: Instantiable): T {
-    return Application.make(ref);
+  make<TValue>(name: string) {
+    return Container.make<TValue>(name);
   }
-  public static make<T>(ref: Instantiable): T {
-    if (!Object.keys(Container.bindings).includes(ref.name)) {
-      // try to make a singleton for `ref`, then return it
-      try {
-        return this.singleton(ref, null);
-      } catch (error) {
-        throw new Error(`${ref.name} is not stored in Container`);
-      }
-    }
 
-    return Container.bindings[ref.name];
+  /**
+   * The `make` function in TypeScript returns an instance of a specified type from a
+   * container based on a given name.
+   *
+   * @param {string} name - A string representing the name of the token.
+   *
+   * @returns an instance of the specified type TValue, obtained from the container
+   * using the provided name.
+   *
+   */
+  static make<TValue>(name: string) {
+    const token = Container.getToken<TValue>(name);
+    return Container.container.get<Token<TValue>>(token);
+  }
+
+  /**
+   * The function sets a token with a given name and returns it.
+   * @param {string} name - A string representing the name of the token.
+   *
+   * @returns a Token object.
+   *
+   */
+  static setToken<T>(name: string): Token<T> {
+    return (this.tokens[name] = token<T>(name));
+  }
+
+  /**
+   * The function `getToken` returns a token of type `T` based on the given name.
+   * @param {string} name - A string representing the name of the token.
+   *
+   * @returns a Token of type T.
+   *
+   */
+  static getToken<T>(name: string): Token<T> {
+    return this.tokens[name] as Token<T>;
   }
 }
 

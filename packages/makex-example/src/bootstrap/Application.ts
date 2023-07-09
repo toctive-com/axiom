@@ -38,8 +38,8 @@ export class Application extends App {
    *
    */
   protected registerSingletons(): void {
-    this.singleton(Maintenance, null, this);
-    this.singleton(HttpKernel, null, this);
+    this.set('Maintenance', () => new Maintenance(this));
+    this.set('HttpKernel', () => new HttpKernel(this));
   }
 }
 
