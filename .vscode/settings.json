@@ -6,5 +6,8 @@
     "mkcol",
     "propfind",
     "proppatch"
-  ]
+  ],
+  "docwriter.style": "Auto-detect",
+  "docwriter.progress.trackClasses": false,
+  "docwriter.progress.trackTypes": false
 }
