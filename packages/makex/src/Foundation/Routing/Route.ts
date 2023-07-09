@@ -218,6 +218,9 @@ export class Route {
       next: () => this.callFunctions(functions, request, response, rest),
       request,
       response,
+      req: request,
+      res: response,
+      app: request.app,
       ...rest,
     });
   }
