@@ -11,7 +11,7 @@ import { ServiceProvider } from "./ServiceProvider";
 
 export class Application extends Container {
   /**
-   * Defining a version number for MakeX framework
+   * Defining a version number for Axiom framework
    *
    * @var string
    *

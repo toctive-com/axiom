@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 export default {
-  appName: "MakeX Project",
+  appName: "Axiom Project",
 
   /**
    * Maintenance Mode

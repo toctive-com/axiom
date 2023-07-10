@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "dev": "npx lerna watch -- npx lerna run dev --stream --scope=makex-example"
+    "dev": "npx lerna watch -- npx lerna run dev --stream --scope=axiom-example"
   },
   "workspaces": [
     "packages/*"

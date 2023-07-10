@@ -1,4 +1,4 @@
-import { ServiceProvider } from "@toctive/makex";
+import { ServiceProvider } from "@toctive/axiom";
 
 export class AppServiceProvider extends ServiceProvider {
   public async register(): Promise<void> {

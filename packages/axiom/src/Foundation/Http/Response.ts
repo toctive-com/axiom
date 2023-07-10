@@ -67,7 +67,7 @@ export class HttpResponse extends ServerResponse<IncomingMessage> {
     if (this.headersSent) return;
 
     // TODO add all these headers in config files
-    this.appendHeader("X-Powered-By", "MakeX");
+    this.appendHeader("X-Powered-By", "Axiom");
     this.appendHeader("Access-Control-Allow-Origin", "*");
     this.appendHeader("Access-Control-Allow-Headers", "Content-Type");
     this.appendHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");

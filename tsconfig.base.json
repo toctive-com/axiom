@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@toctive/makex/*": ["./packages/makex/src/*"]
+      "@toctive/axiom/*": ["./packages/axiom/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

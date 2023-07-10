@@ -1,11 +1,11 @@
-# `make-x`
+# `axiom-example`
 
 > TODO: description
 
 ## Usage
 
 ```
-const makeX = require('make-x');
+const axiomExample = require('axiom-example');
 
 // TODO: DEMONSTRATE API
 ```

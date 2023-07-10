@@ -1,6 +1,6 @@
 import { runApp } from "@/bootstrap";
-import { HttpKernel } from "@toctive/makex";
-console.time("MakeX-FullCycle");
+import { HttpKernel } from "@toctive/axiom";
+console.time("Axiom-FullCycle");
 
 /**
  * Run The Application
@@ -30,4 +30,4 @@ async function main() {
   await kernel.terminate(request, response);
 }
 
-main().then(() => console.timeEnd("MakeX-FullCycle"));
+main().then(() => console.timeEnd("Axiom-FullCycle"));
