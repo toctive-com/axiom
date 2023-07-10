@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@toctive/axiom/*": ["./packages/axiom/src/*"]
+      "axiom/*": ["./packages/axiom/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

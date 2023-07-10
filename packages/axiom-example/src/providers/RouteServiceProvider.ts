@@ -1,7 +1,7 @@
 import {
   Router,
   RouteServiceProvider as ServiceProvider
-} from "@toctive/axiom";
+} from "axiom";
 import { join } from "path";
 
 export class RouteServiceProvider extends ServiceProvider {

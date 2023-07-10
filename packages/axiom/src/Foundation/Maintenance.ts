@@ -3,7 +3,7 @@ import {
   HttpRequest,
   HttpResponse,
   MaintenanceConfig,
-} from "@toctive/axiom";
+} from "axiom";
 import { exit } from "node:process";
 
 export class Maintenance {

@@ -6,7 +6,7 @@ import {
   Application as App,
   HttpKernel,
   ServiceProvider,
-} from "@toctive/axiom";
+} from "axiom";
 
 export class Application extends App {
   /**

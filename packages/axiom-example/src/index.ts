@@ -1,5 +1,5 @@
 import { runApp } from "@/bootstrap";
-import { HttpKernel } from "@toctive/axiom";
+import { HttpKernel } from "axiom";
 console.time("Axiom-FullCycle");
 
 /**
