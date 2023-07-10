@@ -144,6 +144,23 @@ export abstract class RouterBase {
   }
 
   /**
+   * Create a new route with one or more HTTP verbs and store it in Router routes
+   *
+   * @param {string|string[]} uri
+   * @param {CallableFunction|CallableFunction[]} action
+   *
+   * @returns Route
+   *
+   */
+  public static anyOf(
+    httpVerbs: string | string[],
+    uri: string | string[],
+    action: CallableFunction | CallableFunction[]
+  ) {
+    return RouterBase.addRoute(httpVerbs, uri, action);
+  }
+
+  /**
    * Create a new Acl route and store it in Router routes
    *
    * @param {string|string[]} uri
