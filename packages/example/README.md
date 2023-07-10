@@ -1,11 +1,11 @@
-# `axiom-example`
+# `example`
 
 > TODO: description
 
 ## Usage
 
 ```
-const axiomExample = require('axiom-example');
+const axiomExample = require('example');
 
 // TODO: DEMONSTRATE API
 ```
