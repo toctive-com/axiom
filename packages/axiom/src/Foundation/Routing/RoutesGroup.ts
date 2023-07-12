@@ -16,14 +16,14 @@ export class RoutesGroup extends RouterBase {
   /**
    * This property is used to store the a prefix for names of all nested routes.
    *
-   * @var {string | null}
+   * @var {string}
    *
    */
-  private _prefix: string | null = null;
-  protected get prefix(): string | null {
+  private _prefix: string = '';
+  protected get prefix(): string {
     return this._prefix;
   }
-  protected set prefix(value: string | null) {
+  protected set prefix(value: string) {
     this._prefix = Url.trim(value);
   }
 
