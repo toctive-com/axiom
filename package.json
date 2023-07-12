@@ -1,6 +1,10 @@
 {
   "name": "root",
   "private": true,
+  "description": "Axios is a backend framework built using TypeScript and implement Express.js functionality from scratch",
+  "keywords": ["axiom", "backend", "TypeScript", "requests", "express"],
+  "author": "Sameh A. Elalfi <sameh.elalfi.mail@gmail.com>",
+  "license": "MIT",
   "scripts": {
     "dev": "npx lerna watch -- npx lerna run dev --stream --scope=example",
     "test": "vitest run",

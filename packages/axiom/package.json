@@ -1,16 +1,28 @@
 {
   "name": "axiom",
-  "version": "0.0.0",
-  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
-  "keywords": [],
+  "version": "0.1.0",
+  "description": "Axios is a backend framework built using TypeScript and implement Express.js functionality from scratch",
+  "keywords": ["axiom", "backend", "TypeScript", "requests", "express"],
   "author": "Sameh A. Elalfi <sameh.elalfi.mail@gmail.com>",
-  "license": "ISC",
-  "main": "src/index.ts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toctive-com/axiom.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toctive-com/axiom/issues"
+  },
+  "homepage": "https://github.com/toctive-com/axiom#readme",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "directories": {
     "lib": "src"
   },
   "files": [
-    "src"
+    "src",
+    "dist",
+    "tests"
   ],
   "scripts": {
     "dev": "nodemon ./src/index.ts",
