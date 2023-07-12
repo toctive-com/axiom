@@ -1,6 +1,5 @@
 import { runApp } from "@/bootstrap";
-import { HttpKernel } from "axiom";
-console.time("Axiom-FullCycle");
+import { HttpKernel, clustering } from "axiom";
 
 /**
  * Run The Application
@@ -15,7 +14,7 @@ async function main() {
   const app = await runApp();
 
   // Load framework kernel which includes HTTP server and will handle requests
-  const kernel = app.make<HttpKernel>('HttpKernel');
+  const kernel = app.make<HttpKernel>("HttpKernel");
 
   // Wait for incoming request and return it with empty response object
   const { request, response } = await kernel.captureRequest();
@@ -30,4 +29,11 @@ async function main() {
   await kernel.terminate(request, response);
 }
 
-main().then(() => console.timeEnd("Axiom-FullCycle"));
+/**
+ * Run The Server In Clusters
+ * --------------------------------------------------------------------------
+ * Create multiple processes to handle incoming requests. This is useful for testing
+ * and debugging. The main process will be opened for every unless killed manually.
+ *
+ */
+clustering(main);
