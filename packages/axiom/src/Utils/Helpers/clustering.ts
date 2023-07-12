@@ -18,7 +18,7 @@ import { sleep } from "./sleep";
  */
 export async function clustering(
   callback: Function,
-  options?: { processes?: number; restartDelay?: number }
+  options?: { processes?: number; restartDelay?: number, respawnAgain?: true }
 ) {
   const numCpus = options?.processes ?? availableParallelism();
   if (cluster.isPrimary) {
@@ -43,12 +43,14 @@ export async function clustering(
       cluster.fork();
     }
 
-    cluster.on("exit", async (worker, code, signal) => {
-      await sleep(options?.restartDelay ?? 0);
-      cluster.fork();
-    });
+    // restart the cluster module if a worker process dies
+    if (options?.respawnAgain) {
+      cluster.on("exit", async (worker, code, signal) => {
+        await sleep(options?.restartDelay ?? 0);
+        cluster.fork();
+      });
+    }
   } else {
     await callback();
-    process.exit(0);
   }
 }
