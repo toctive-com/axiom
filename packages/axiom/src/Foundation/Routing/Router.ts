@@ -1,5 +1,6 @@
 import { Route } from "./Route";
 import { RoutesGroup } from "./RoutesGroup";
+import { RoutesGroupAttributes } from "../../Types/RoutesGroupAttributes";
 import { RouterBase } from "./RouterBase";
 
 export class Router extends RouterBase {
@@ -24,14 +25,12 @@ export class Router extends RouterBase {
    * The `middleware` function adds a middleware callback or callbacks to a route
    * registrar and returns the registrar.
    *
-   * @param {Function | Function[] | string | string[]} callback
+   * @param {Function | Function[]} callback
    *
    * @returns instance of the `RouteRegistrar` class.
    *
    */
-  public static middleware(
-    callback: Function | Function[] | string | string[]
-  ) {
+  public static middleware(callback: Function | Function[]) {
     const routeRegistrar = new RoutesGroup({ middleware: callback });
     this.addRouteRegistrar(routeRegistrar);
     return routeRegistrar;
@@ -41,16 +40,15 @@ export class Router extends RouterBase {
    * Creates a new route group.
    *
    */
-  // TODO add type for attributes
+  public static group(callback: (router: RoutesGroup) => void): RoutesGroup;
   public static group(
+    attributes: RoutesGroupAttributes,
     callback: (router: RoutesGroup) => void
   ): RoutesGroup;
   public static group(
-    attributes: any,
-    callback: (router: RoutesGroup) => void
-  ): RoutesGroup;
-  public static group(
-    attributesOrCallback: any,
+    attributesOrCallback:
+      | RoutesGroupAttributes
+      | ((router: RoutesGroup) => void),
     callback?: (router: RoutesGroup) => void
   ): RoutesGroup {
     if (typeof attributesOrCallback === "function") {
@@ -76,14 +74,11 @@ export class Router extends RouterBase {
    * @returns The method is returning a boolean value.
    *
    */
-  public static match(
-    method: string,
-    url: string
-  ): false | Route {
+  public static match(method: string, url: string): false | Route {
     for (const route of Router.routes) {
       const isMatched = route.match(method, url);
       if (!isMatched) continue;
-      
+
       if (isMatched instanceof Route) return isMatched;
     }
 
