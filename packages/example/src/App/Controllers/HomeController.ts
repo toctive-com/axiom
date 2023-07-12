@@ -1,2 +1,1 @@
-import { HttpRequest, Application, HttpResponse, RouteAction } from "axiom";
-
+import { HttpRequest, Application, HttpResponse, RouteAction } from 'axiom';
