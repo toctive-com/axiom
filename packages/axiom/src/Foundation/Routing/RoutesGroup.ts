@@ -1,3 +1,4 @@
+import { RoutesGroupAttributes } from "../../Types/RoutesGroupAttributes";
 import { Route } from "./Route";
 import { RouterBase } from "./RouterBase";
 
@@ -31,7 +32,7 @@ export class RoutesGroup extends RouterBase {
    */
   protected routes: (Route | RoutesGroup)[] = [];
 
-  constructor(attributes?: any) {
+  constructor(attributes?: RoutesGroupAttributes) {
     super();
 
     this.parseAttributes(attributes);
@@ -44,7 +45,7 @@ export class RoutesGroup extends RouterBase {
    * @param {any} attributes
    *
    */
-  protected parseAttributes(attributes: any) {
+  protected parseAttributes(attributes: RoutesGroupAttributes) {
     if (attributes) {
       if (attributes.middleware) {
         this.middlewareLayers = attributes.middleware;
