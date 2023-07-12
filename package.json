@@ -2,20 +2,25 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "dev": "npx lerna watch -- npx lerna run dev --stream --scope=example"
+    "dev": "npx lerna watch -- npx lerna run dev --stream --scope=example",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
     "@types/node": "^20.3.2",
+    "@vitest/coverage-v8": "^0.33.0",
     "lerna": "^7.1.1",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "tsc": "^2.0.4",
     "tsconfig-paths": "^4.2.0",
     "tslib": "^2.6.0",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vitest": "^0.33.0"
   },
   "dependencies": {
     "brandi": "^5.0.0",
