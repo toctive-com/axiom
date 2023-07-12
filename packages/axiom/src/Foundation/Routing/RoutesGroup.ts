@@ -1,4 +1,5 @@
 import { RoutesGroupAttributes } from "../../Types/RoutesGroupAttributes";
+import { Url } from "../../Utils/Facades/Url";
 import { Route } from "./Route";
 import { RouterBase } from "./RouterBase";
 
@@ -18,7 +19,13 @@ export class RoutesGroup extends RouterBase {
    * @var {string | null}
    *
    */
-  protected prefix: string | null = null;
+  private _prefix: string | null = null;
+  protected get prefix(): string | null {
+    return this._prefix;
+  }
+  protected set prefix(value: string | null) {
+    this._prefix = Url.trim(value);
+  }
 
   /**
    * Here we store all registered routes and  router registrar with their
@@ -48,7 +55,11 @@ export class RoutesGroup extends RouterBase {
   protected parseAttributes(attributes: RoutesGroupAttributes) {
     if (attributes) {
       if (attributes.middleware) {
-        this.middlewareLayers = attributes.middleware;
+        if (!Array.isArray(attributes.middleware)) {
+          attributes.middleware = [attributes.middleware];
+        }
+
+        this.middlewareLayers.push(...attributes.middleware);
       }
 
       if (attributes.prefix) {
@@ -60,25 +71,29 @@ export class RoutesGroup extends RouterBase {
   /**
    * Add a route to the underlying route collection.
    *
-   * @param {string|string[]} httpVerb
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]|null} action
+   * @param {string|string[]} httpVerbs
+   * @param {string|string[]} uris
+   * @param {CallableFunction|CallableFunction[]|null} actions
    *
    * @return Route
    *
    */
   protected addRoute(
-    httpVerb: string | string[],
-    uri: string | string[],
-    action: CallableFunction[] | CallableFunction | null
+    httpVerbs: string | string[],
+    uris: string | string[],
+    actions: CallableFunction[] | CallableFunction | null
   ) {
     // TODO create an array facade with wrap method and wrap these params
-    if (typeof httpVerb === "string") httpVerb = [httpVerb];
-    if (typeof uri === "string") uri = [uri];
-    if (typeof action === "function") action = [action];
+    if (typeof httpVerbs === "string") httpVerbs = [httpVerbs];
+    if (typeof uris === "string") uris = [uris];
+    if (typeof actions === "function") actions = [actions];
+
+    for (let i = 0; i < uris.length; i++) {
+      uris[i] = Url.join(this.prefix, uris[i]);
+    }
 
     // TODO add name property to groups => Router.group().named("g1")
-    const route = new Route(httpVerb, uri, action);
+    const route = new Route(httpVerbs, uris, actions);
     if (this.middlewareLayers) route.middleware(this.middlewareLayers);
     if (this.prefix) route.prefix(this.prefix);
 
@@ -101,17 +116,17 @@ export class RoutesGroup extends RouterBase {
     return routeRegistrar;
   }
 
-/**
- * Adds middleware layers to a route registrar and returns the registrar.
- * 
- * @param {Function | Function[] | string | string[]} callback - The `callback`
- * parameter can be of type `Function`, `Function[]`, `string`, or `string[]
- * `.
- * @returns The `middleware` method returns an instance of the `RouteRegistrar`
- * class.
- * 
- */
-  public middleware(callback: Function | Function[] | string | string[]) {
+  /**
+   * Adds middleware layers to a route registrar and returns the registrar.
+   *
+   * @param {Function | Function[]} callback - The `callback`
+   * parameter can be of type `Function`, or `Function[]`
+   * `.
+   * @returns The `middleware` method returns an instance of the `RouteRegistrar`
+   * class.
+   *
+   */
+  public middleware(callback: Function | Function[]) {
     const routeRegistrar = new RoutesGroup({ middleware: callback });
     routeRegistrar.middlewareLayers.push(...this.middlewareLayers);
     this.addRouteRegistrar(routeRegistrar);
@@ -216,7 +231,6 @@ export class RoutesGroup extends RouterBase {
   ) {
     return RouterBase.addRoute(httpVerbs, uri, action);
   }
-
 
   /**
    * Create a new Acl route and store it in Router routes
