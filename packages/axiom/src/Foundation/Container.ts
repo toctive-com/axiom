@@ -1,5 +1,5 @@
-import { Container as BrandiContainer, Token, token } from "brandi";
-import Application from "./Application";
+import { Container as BrandiContainer, Token, token } from 'brandi';
+import Application from './Application';
 
 declare type UnknownConstructor<T extends Object = Object> = new (
   ...args: never[]
@@ -23,15 +23,15 @@ export class Container extends BrandiContainer {
   public static tokens: Record<string, Token<unknown>> = {};
 
   /**
-   * This static property is used to store the instance of the container that 
+   * This static property is used to store the instance of the container that
    * will be used for dependency injection.
-   * 
+   *
    */
   public static container = new BrandiContainer();
 
   /**
    * Here is how to use this container
-   * 
+   *
    * @example
    * ```ts
    * class Kernel { public value = "VALUE" }
@@ -60,7 +60,7 @@ export class Container extends BrandiContainer {
   set<TClass>(name: string, value: UnknownCreator<TClass>) {
     return Application.set<TClass>(name, value);
   }
-  
+
   /**
    * Sets a value in a container and returns an instance of the specified class.
    *

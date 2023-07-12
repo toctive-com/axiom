@@ -1,5 +1,5 @@
-import { runApp } from "@/bootstrap";
-import { HttpKernel, clustering } from "axiom";
+import { runApp } from '@/bootstrap';
+import { HttpKernel, clustering } from 'axiom';
 
 /**
  * Run The Application
@@ -14,7 +14,7 @@ async function main() {
   const app = await runApp();
 
   // Load framework kernel which includes HTTP server and will handle requests
-  const kernel = app.make<HttpKernel>("HttpKernel");
+  const kernel = app.make<HttpKernel>('HttpKernel');
 
   // Wait for incoming request and return it with empty response object
   const { request, response } = await kernel.captureRequest();

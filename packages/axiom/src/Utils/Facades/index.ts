@@ -1,2 +1,2 @@
-export * from './Str'
-export * from './Url'
+export * from './Str';
+export * from './Url';

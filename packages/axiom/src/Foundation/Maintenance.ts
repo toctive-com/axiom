@@ -3,23 +3,23 @@ import {
   HttpRequest,
   HttpResponse,
   MaintenanceConfig,
-} from "axiom";
-import { exit } from "node:process";
+} from 'axiom';
+import { exit } from 'node:process';
 
 export class Maintenance {
   private config: MaintenanceConfig = {
     status: 503,
-    template: "<h1>Website is under maintenance</h1>",
+    template: '<h1>Website is under maintenance</h1>',
   };
 
   public isUnderMaintenance: boolean = false;
 
   constructor(app: Application) {
-    this.isUnderMaintenance = app.config("app.maintenanceMode.enabled", false);
+    this.isUnderMaintenance = app.config('app.maintenanceMode.enabled', false);
     if (this.isUnderMaintenance) {
       this.loadConfig(
-        app.config<MaintenanceConfig>("app.maintenanceMode", undefined)
-        );
+        app.config<MaintenanceConfig>('app.maintenanceMode', undefined),
+      );
     }
   }
 
@@ -27,7 +27,7 @@ export class Maintenance {
     // load maintenance mode configurations
     if (!config) {
       console.warn(
-        `Failed to parse contents of ${config}. The application will use the default maintenance mode configurations`
+        `Failed to parse contents of ${config}. The application will use the default maintenance mode configurations`,
       );
       return this.config;
     }
@@ -61,20 +61,20 @@ export class Maintenance {
     await response.send(this.config.template);
 
     // handle requests by respond with empty body and status code 503 (depending on maintenance mode config)
-    console.log("(maintenance mode) exiting the app");
+    console.log('(maintenance mode) exiting the app');
     exit();
   }
 
   protected handleRefresh(response: HttpResponse) {
     if (this.config.refresh) {
-      response.appendHeader("Refresh", this.config.refresh.toString());
+      response.appendHeader('Refresh', this.config.refresh.toString());
     }
   }
 
   protected handleRetry(response: HttpResponse) {
     // TODO Add option for `Retry-After: Date`
     if (this.config.retry) {
-      response.appendHeader("Retry-After", this.config.retry.toString());
+      response.appendHeader('Retry-After', this.config.retry.toString());
     }
   }
 
@@ -85,7 +85,7 @@ export class Maintenance {
     // and redirect all other traffic to 'example.com'
 
     if (this.config.redirect && request.url !== this.config.redirect) {
-      response.appendHeader("Location", this.config.redirect);
+      response.appendHeader('Location', this.config.redirect);
       response.writeHead(302);
       response.send();
 

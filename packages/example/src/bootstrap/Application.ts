@@ -1,12 +1,8 @@
-import Maintenance from "@/bootstrap/Maintenance";
-import config from "@/config";
-import { AppServiceProvider } from "@/providers/AppServiceProvider";
-import { RouteServiceProvider } from "@/providers/RouteServiceProvider";
-import {
-  Application as App,
-  HttpKernel,
-  ServiceProvider,
-} from "axiom";
+import Maintenance from '@/bootstrap/Maintenance';
+import config from '@/config';
+import { AppServiceProvider } from '@/providers/AppServiceProvider';
+import { RouteServiceProvider } from '@/providers/RouteServiceProvider';
+import { Application as App, HttpKernel, ServiceProvider } from 'axiom';
 
 export class Application extends App {
   /**

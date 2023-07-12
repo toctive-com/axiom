@@ -1,5 +1,5 @@
-import { HttpRequest } from "../Http/Request";
-import { HttpResponse } from "../Http/Response";
+import { HttpRequest } from '../Http/Request';
+import { HttpResponse } from '../Http/Response';
 
 export class Route {
   /**
@@ -44,7 +44,7 @@ export class Route {
   constructor(
     protected httpVerb: string[],
     protected uri: string[],
-    protected action: Function[] | null
+    protected action: Function[] | null,
   ) {}
 
   /**
@@ -94,7 +94,7 @@ export class Route {
    */
   public isUriMatches(uri: string): boolean {
     return this.uri.some((regex: string | RegExp) =>
-      regex instanceof RegExp ? regex.test(uri) : this.getMatchedUri(uri)
+      regex instanceof RegExp ? regex.test(uri) : this.getMatchedUri(uri),
     );
   }
 
@@ -105,7 +105,7 @@ export class Route {
    * @param {string} originalUrl - The originalUrl parameter is a string that
    * represents the original URL. It is the URL pattern that contains variables in
    * the form of `:variableName` or `{variableName}`.
-   * For example, `/users/:userId` or `/users/{userId}` 
+   * For example, `/users/:userId` or `/users/{userId}`
    * or `/users/{user-Id}/posts/:postId`
    * @param {string} currentUrl - The `currentUrl` parameter is the URL that is
    * currently being accessed or visited.
@@ -115,18 +115,18 @@ export class Route {
    *
    */
   protected extractVariables(originalUrl: string, currentUrl: string) {
-    const originalUrlParts = originalUrl.split("/");
-    const currentUrlParts = currentUrl.split("/");
+    const originalUrlParts = originalUrl.split('/');
+    const currentUrlParts = currentUrl.split('/');
     const variables = {};
     for (let i = 0; i < originalUrlParts.length; i++) {
       if (
-        originalUrlParts[i].startsWith("{") &&
-        originalUrlParts[i].endsWith("}")
+        originalUrlParts[i].startsWith('{') &&
+        originalUrlParts[i].endsWith('}')
       ) {
         variables[
           originalUrlParts[i].substring(1, originalUrlParts[i].length - 1)
         ] = currentUrlParts[i];
-      } else if (originalUrlParts[i].startsWith(":")) {
+      } else if (originalUrlParts[i].startsWith(':')) {
         variables[originalUrlParts[i].substring(1)] = currentUrlParts[i];
       }
     }
@@ -148,8 +148,8 @@ export class Route {
     for (const uri of this.uri) {
       const regex = new RegExp(
         `^${uri
-          .replace(/{[a-zA-Z0-9_-]+}/g, "[a-zA-Z0-9_-]+")
-          .replace(/:\w+/g, "\\w+")}$`
+          .replace(/{[a-zA-Z0-9_-]+}/g, '[a-zA-Z0-9_-]+')
+          .replace(/:\w+/g, '\\w+')}$`,
       );
 
       if (regex.test(currentUrl)) return uri;
@@ -188,7 +188,7 @@ export class Route {
   public execute(request: HttpRequest, response: HttpResponse) {
     const variables = this.extractVariables(
       this.getMatchedUri(request.url),
-      request.url
+      request.url,
     );
     request.params = variables;
     return this.callFunctions(this.action, request, response, variables);
@@ -210,7 +210,7 @@ export class Route {
     functions: Function[],
     request: HttpRequest,
     response: HttpResponse,
-    rest: { [key: string]: any }
+    rest: { [key: string]: any },
   ) {
     if (functions.length === 0) return;
     const currentFunc = functions.shift();
@@ -236,7 +236,7 @@ export class Route {
    *
    */
   public middleware(
-    middleware: Function | Function[] | string | string[]
+    middleware: Function | Function[] | string | string[],
   ): this {
     if (middleware instanceof Function) {
       this.middlewareLayers.push(middleware);

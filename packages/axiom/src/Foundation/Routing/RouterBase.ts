@@ -1,6 +1,6 @@
-import { METHODS } from "node:http";
-import { Route } from "./Route";
-import { RoutesGroup } from "./RoutesGroup";
+import { METHODS } from 'node:http';
+import { Route } from './Route';
+import { RoutesGroup } from './RoutesGroup';
 
 export abstract class RouterBase {
   /**
@@ -11,40 +11,40 @@ export abstract class RouterBase {
    *
    */
   public static readonly defaultSupportedHttpVerbs = [
-    "acl",
-    "bind",
-    "checkout",
-    "connect",
-    "copy",
-    "delete",
-    "get",
-    "head",
-    "link",
-    "lock",
-    "m-search",
-    "merge",
-    "mkactivity",
-    "mkcalendar",
-    "mkcol",
-    "move",
-    "notify",
-    "options",
-    "patch",
-    "post",
-    "propfind",
-    "proppatch",
-    "purge",
-    "put",
-    "rebind",
-    "report",
-    "search",
-    "source",
-    "subscribe",
-    "trace",
-    "unbind",
-    "unlink",
-    "unlock",
-    "unsubscribe",
+    'acl',
+    'bind',
+    'checkout',
+    'connect',
+    'copy',
+    'delete',
+    'get',
+    'head',
+    'link',
+    'lock',
+    'm-search',
+    'merge',
+    'mkactivity',
+    'mkcalendar',
+    'mkcol',
+    'move',
+    'notify',
+    'options',
+    'patch',
+    'post',
+    'propfind',
+    'proppatch',
+    'purge',
+    'put',
+    'rebind',
+    'report',
+    'search',
+    'source',
+    'subscribe',
+    'trace',
+    'unbind',
+    'unlink',
+    'unlock',
+    'unsubscribe',
   ];
 
   /**
@@ -84,12 +84,12 @@ export abstract class RouterBase {
   protected static addRoute(
     httpVerb: string | string[],
     uri: string | string[],
-    action: CallableFunction[] | CallableFunction | null
+    action: CallableFunction[] | CallableFunction | null,
   ) {
     // TODO create an array facade with wrap method and wrap these params
-    if (typeof httpVerb === "string") httpVerb = [httpVerb];
-    if (typeof uri === "string") uri = [uri];
-    if (typeof action === "function") action = [action];
+    if (typeof httpVerb === 'string') httpVerb = [httpVerb];
+    if (typeof uri === 'string') uri = [uri];
+    if (typeof action === 'function') action = [action];
 
     const route = new Route(httpVerb, uri, action);
     RouterBase.routes.push(route);
@@ -122,7 +122,7 @@ export abstract class RouterBase {
    */
   public static all(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
     return this.any(uri, action);
   }
@@ -138,7 +138,7 @@ export abstract class RouterBase {
    */
   public static any(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
     return RouterBase.addRoute(this.httpVerbs, uri, action);
   }
@@ -155,7 +155,7 @@ export abstract class RouterBase {
   public static anyOf(
     httpVerbs: string | string[],
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
     return RouterBase.addRoute(httpVerbs, uri, action);
   }
@@ -171,9 +171,9 @@ export abstract class RouterBase {
    */
   public static acl(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("acl", uri, action);
+    return RouterBase.addRoute('acl', uri, action);
   }
 
   /**
@@ -187,9 +187,9 @@ export abstract class RouterBase {
    */
   public static bind(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("bind", uri, action);
+    return RouterBase.addRoute('bind', uri, action);
   }
 
   /**
@@ -203,9 +203,9 @@ export abstract class RouterBase {
    */
   public static checkout(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("checkout", uri, action);
+    return RouterBase.addRoute('checkout', uri, action);
   }
 
   /**
@@ -219,9 +219,9 @@ export abstract class RouterBase {
    */
   public static connect(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("connect", uri, action);
+    return RouterBase.addRoute('connect', uri, action);
   }
 
   /**
@@ -235,9 +235,9 @@ export abstract class RouterBase {
    */
   public static copy(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("copy", uri, action);
+    return RouterBase.addRoute('copy', uri, action);
   }
 
   /**
@@ -251,9 +251,9 @@ export abstract class RouterBase {
    */
   public static delete(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("delete", uri, action);
+    return RouterBase.addRoute('delete', uri, action);
   }
 
   /**
@@ -267,9 +267,9 @@ export abstract class RouterBase {
    */
   public static get(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("get", uri, action);
+    return RouterBase.addRoute('get', uri, action);
   }
 
   /**
@@ -283,9 +283,9 @@ export abstract class RouterBase {
    */
   public static head(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("head", uri, action);
+    return RouterBase.addRoute('head', uri, action);
   }
 
   /**
@@ -299,9 +299,9 @@ export abstract class RouterBase {
    */
   public static link(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("link", uri, action);
+    return RouterBase.addRoute('link', uri, action);
   }
 
   /**
@@ -315,9 +315,9 @@ export abstract class RouterBase {
    */
   public static lock(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("lock", uri, action);
+    return RouterBase.addRoute('lock', uri, action);
   }
 
   /**
@@ -331,9 +331,9 @@ export abstract class RouterBase {
    */
   public static merge(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("merge", uri, action);
+    return RouterBase.addRoute('merge', uri, action);
   }
 
   /**
@@ -347,9 +347,9 @@ export abstract class RouterBase {
    */
   public static mkactivity(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("mkactivity", uri, action);
+    return RouterBase.addRoute('mkactivity', uri, action);
   }
 
   /**
@@ -363,9 +363,9 @@ export abstract class RouterBase {
    */
   public static mkcalendar(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("mkcalendar", uri, action);
+    return RouterBase.addRoute('mkcalendar', uri, action);
   }
 
   /**
@@ -379,9 +379,9 @@ export abstract class RouterBase {
    */
   public static mkcol(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("mkcol", uri, action);
+    return RouterBase.addRoute('mkcol', uri, action);
   }
 
   /**
@@ -395,9 +395,9 @@ export abstract class RouterBase {
    */
   public static move(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("move", uri, action);
+    return RouterBase.addRoute('move', uri, action);
   }
 
   /**
@@ -411,9 +411,9 @@ export abstract class RouterBase {
    */
   public static notify(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("notify", uri, action);
+    return RouterBase.addRoute('notify', uri, action);
   }
 
   /**
@@ -427,9 +427,9 @@ export abstract class RouterBase {
    */
   public static options(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("options", uri, action);
+    return RouterBase.addRoute('options', uri, action);
   }
 
   /**
@@ -443,9 +443,9 @@ export abstract class RouterBase {
    */
   public static patch(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("patch", uri, action);
+    return RouterBase.addRoute('patch', uri, action);
   }
 
   /**
@@ -459,9 +459,9 @@ export abstract class RouterBase {
    */
   public static post(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("post", uri, action);
+    return RouterBase.addRoute('post', uri, action);
   }
 
   /**
@@ -475,9 +475,9 @@ export abstract class RouterBase {
    */
   public static propfind(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("propfind", uri, action);
+    return RouterBase.addRoute('propfind', uri, action);
   }
 
   /**
@@ -491,9 +491,9 @@ export abstract class RouterBase {
    */
   public static proppatch(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("proppatch", uri, action);
+    return RouterBase.addRoute('proppatch', uri, action);
   }
 
   /**
@@ -507,9 +507,9 @@ export abstract class RouterBase {
    */
   public static purge(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("purge", uri, action);
+    return RouterBase.addRoute('purge', uri, action);
   }
 
   /**
@@ -523,9 +523,9 @@ export abstract class RouterBase {
    */
   public static put(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("put", uri, action);
+    return RouterBase.addRoute('put', uri, action);
   }
 
   /**
@@ -539,9 +539,9 @@ export abstract class RouterBase {
    */
   public static rebind(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("rebind", uri, action);
+    return RouterBase.addRoute('rebind', uri, action);
   }
 
   /**
@@ -555,9 +555,9 @@ export abstract class RouterBase {
    */
   public static report(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("report", uri, action);
+    return RouterBase.addRoute('report', uri, action);
   }
 
   /**
@@ -571,9 +571,9 @@ export abstract class RouterBase {
    */
   public static search(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("search", uri, action);
+    return RouterBase.addRoute('search', uri, action);
   }
 
   /**
@@ -587,9 +587,9 @@ export abstract class RouterBase {
    */
   public static source(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("source", uri, action);
+    return RouterBase.addRoute('source', uri, action);
   }
 
   /**
@@ -603,9 +603,9 @@ export abstract class RouterBase {
    */
   public static subscribe(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("subscribe", uri, action);
+    return RouterBase.addRoute('subscribe', uri, action);
   }
 
   /**
@@ -619,9 +619,9 @@ export abstract class RouterBase {
    */
   public static trace(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("trace", uri, action);
+    return RouterBase.addRoute('trace', uri, action);
   }
 
   /**
@@ -635,9 +635,9 @@ export abstract class RouterBase {
    */
   public static unbind(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("unbind", uri, action);
+    return RouterBase.addRoute('unbind', uri, action);
   }
 
   /**
@@ -651,9 +651,9 @@ export abstract class RouterBase {
    */
   public static unlink(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("unlink", uri, action);
+    return RouterBase.addRoute('unlink', uri, action);
   }
 
   /**
@@ -667,9 +667,9 @@ export abstract class RouterBase {
    */
   public static unlock(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("unlock", uri, action);
+    return RouterBase.addRoute('unlock', uri, action);
   }
 
   /**
@@ -683,8 +683,8 @@ export abstract class RouterBase {
    */
   public static unsubscribe(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return RouterBase.addRoute("unsubscribe", uri, action);
+    return RouterBase.addRoute('unsubscribe', uri, action);
   }
 }

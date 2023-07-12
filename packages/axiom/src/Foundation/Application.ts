@@ -3,11 +3,11 @@ import {
   Server,
   ServerResponse,
   createServer,
-} from "node:http";
-import { ApplicationParameters } from "../Types";
-import { Container } from "./Container";
-import { Maintenance } from "./Maintenance";
-import { ServiceProvider } from "./ServiceProvider";
+} from 'node:http';
+import { ApplicationParameters } from '../Types';
+import { Container } from './Container';
+import { Maintenance } from './Maintenance';
+import { ServiceProvider } from './ServiceProvider';
 
 export class Application extends Container {
   /**
@@ -16,7 +16,7 @@ export class Application extends Container {
    * @var string
    *
    */
-  readonly VERSION = "1.0.0";
+  readonly VERSION = '1.0.0';
 
   /**
    * Indicates if the application is booted or not.
@@ -160,7 +160,7 @@ export class Application extends Container {
 
     // All service providers must be registered before booting the application.
     // Booting the application without registering all service providers, may
-    // result many logical errors and bugs. For example, the app will boot 
+    // result many logical errors and bugs. For example, the app will boot
     // without loading config files.
     if (!this.isProvidersRegistered()) await this.registerServiceProviders();
 
@@ -202,7 +202,7 @@ export class Application extends Container {
    *
    */
   protected async register(
-    provider: ServiceProvider
+    provider: ServiceProvider,
   ): Promise<ServiceProvider> {
     if (this.isRegistered(provider)) {
       return this.registeredProviders[provider.constructor.name];
@@ -222,7 +222,7 @@ export class Application extends Container {
    */
   public isRegistered(provider: ServiceProvider): boolean {
     return Object.keys(this.registeredProviders).includes(
-      provider.constructor.name
+      provider.constructor.name,
     );
   }
 
@@ -265,9 +265,9 @@ export class Application extends Container {
    *
    */
   public async handleMaintenanceMode({ request, response }): Promise<void> {
-    if (!this.config("app.maintenanceMode.enabled")) return;
+    if (!this.config('app.maintenanceMode.enabled')) return;
 
-    const handler = Application.make<Maintenance>("Maintenance");
+    const handler = Application.make<Maintenance>('Maintenance');
     await handler.handle({ request, response });
   }
 
@@ -284,7 +284,7 @@ export class Application extends Container {
    *
    */
   public static getInstance(parameters: ApplicationParameters) {
-    return this.set("Application", () => new Application(parameters));
+    return this.set('Application', () => new Application(parameters));
   }
 
   /**
@@ -313,7 +313,7 @@ export class Application extends Container {
   public config<T>(name: string, defaultValue: T = null): T {
     let value = this._config;
 
-    for (const configName of name.split(".")) {
+    for (const configName of name.split('.')) {
       if (!Object.keys(value).includes(configName)) return defaultValue;
       value = value[configName];
     }

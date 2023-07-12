@@ -1,4 +1,4 @@
-import { ServiceProvider } from "axiom";
+import { ServiceProvider } from 'axiom';
 
 export class AppServiceProvider extends ServiceProvider {
   public async register(): Promise<void> {

@@ -1,7 +1,7 @@
-import { RoutesGroupAttributes } from "../../Types/RoutesGroupAttributes";
-import { Url } from "../../Utils/Facades/Url";
-import { Route } from "./Route";
-import { RouterBase } from "./RouterBase";
+import { RoutesGroupAttributes } from '../../Types/RoutesGroupAttributes';
+import { Url } from '../../Utils/Facades/Url';
+import { Route } from './Route';
+import { RouterBase } from './RouterBase';
 
 export class RoutesGroup extends RouterBase {
   /**
@@ -81,12 +81,12 @@ export class RoutesGroup extends RouterBase {
   protected addRoute(
     httpVerbs: string | string[],
     uris: string | string[],
-    actions: CallableFunction[] | CallableFunction | null
+    actions: CallableFunction[] | CallableFunction | null,
   ) {
     // TODO create an array facade with wrap method and wrap these params
-    if (typeof httpVerbs === "string") httpVerbs = [httpVerbs];
-    if (typeof uris === "string") uris = [uris];
-    if (typeof actions === "function") actions = [actions];
+    if (typeof httpVerbs === 'string') httpVerbs = [httpVerbs];
+    if (typeof uris === 'string') uris = [uris];
+    if (typeof actions === 'function') actions = [actions];
 
     for (let i = 0; i < uris.length; i++) {
       uris[i] = Url.join(this.prefix, uris[i]);
@@ -165,13 +165,13 @@ export class RoutesGroup extends RouterBase {
   public group(callback: (router: RoutesGroup) => void): RoutesGroup;
   public group(
     attributes: any,
-    callback: (router: RoutesGroup) => void
+    callback: (router: RoutesGroup) => void,
   ): RoutesGroup;
   public group(
     attributesOrCallback: any,
-    callback?: (router: RoutesGroup) => void
+    callback?: (router: RoutesGroup) => void,
   ): RoutesGroup {
-    if (typeof attributesOrCallback === "function") {
+    if (typeof attributesOrCallback === 'function') {
       callback = attributesOrCallback;
       attributesOrCallback = {};
     }
@@ -194,7 +194,7 @@ export class RoutesGroup extends RouterBase {
    */
   public all(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
     return this.any(uri, action);
   }
@@ -210,7 +210,7 @@ export class RoutesGroup extends RouterBase {
    */
   public any(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
     return this.addRoute(RoutesGroup.httpVerbs, uri, action);
   }
@@ -227,7 +227,7 @@ export class RoutesGroup extends RouterBase {
   public anyOf(
     httpVerbs: string | string[],
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
     return RouterBase.addRoute(httpVerbs, uri, action);
   }
@@ -243,9 +243,9 @@ export class RoutesGroup extends RouterBase {
    */
   public acl(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("acl", uri, action);
+    return this.addRoute('acl', uri, action);
   }
 
   /**
@@ -259,9 +259,9 @@ export class RoutesGroup extends RouterBase {
    */
   public bind(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("bind", uri, action);
+    return this.addRoute('bind', uri, action);
   }
 
   /**
@@ -275,9 +275,9 @@ export class RoutesGroup extends RouterBase {
    */
   public checkout(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("checkout", uri, action);
+    return this.addRoute('checkout', uri, action);
   }
 
   /**
@@ -291,9 +291,9 @@ export class RoutesGroup extends RouterBase {
    */
   public connect(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("connect", uri, action);
+    return this.addRoute('connect', uri, action);
   }
 
   /**
@@ -307,9 +307,9 @@ export class RoutesGroup extends RouterBase {
    */
   public copy(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("copy", uri, action);
+    return this.addRoute('copy', uri, action);
   }
 
   /**
@@ -323,9 +323,9 @@ export class RoutesGroup extends RouterBase {
    */
   public delete(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("delete", uri, action);
+    return this.addRoute('delete', uri, action);
   }
 
   /**
@@ -339,9 +339,9 @@ export class RoutesGroup extends RouterBase {
    */
   public get(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("get", uri, action);
+    return this.addRoute('get', uri, action);
   }
 
   /**
@@ -355,9 +355,9 @@ export class RoutesGroup extends RouterBase {
    */
   public head(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("head", uri, action);
+    return this.addRoute('head', uri, action);
   }
 
   /**
@@ -371,9 +371,9 @@ export class RoutesGroup extends RouterBase {
    */
   public link(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("link", uri, action);
+    return this.addRoute('link', uri, action);
   }
 
   /**
@@ -387,9 +387,9 @@ export class RoutesGroup extends RouterBase {
    */
   public lock(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("lock", uri, action);
+    return this.addRoute('lock', uri, action);
   }
 
   /**
@@ -403,9 +403,9 @@ export class RoutesGroup extends RouterBase {
    */
   public merge(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("merge", uri, action);
+    return this.addRoute('merge', uri, action);
   }
 
   /**
@@ -419,9 +419,9 @@ export class RoutesGroup extends RouterBase {
    */
   public mkactivity(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("mkactivity", uri, action);
+    return this.addRoute('mkactivity', uri, action);
   }
 
   /**
@@ -435,9 +435,9 @@ export class RoutesGroup extends RouterBase {
    */
   public mkcalendar(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("mkcalendar", uri, action);
+    return this.addRoute('mkcalendar', uri, action);
   }
 
   /**
@@ -451,9 +451,9 @@ export class RoutesGroup extends RouterBase {
    */
   public mkcol(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("mkcol", uri, action);
+    return this.addRoute('mkcol', uri, action);
   }
 
   /**
@@ -467,9 +467,9 @@ export class RoutesGroup extends RouterBase {
    */
   public move(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("move", uri, action);
+    return this.addRoute('move', uri, action);
   }
 
   /**
@@ -483,9 +483,9 @@ export class RoutesGroup extends RouterBase {
    */
   public notify(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("notify", uri, action);
+    return this.addRoute('notify', uri, action);
   }
 
   /**
@@ -499,9 +499,9 @@ export class RoutesGroup extends RouterBase {
    */
   public options(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("options", uri, action);
+    return this.addRoute('options', uri, action);
   }
 
   /**
@@ -515,9 +515,9 @@ export class RoutesGroup extends RouterBase {
    */
   public patch(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("patch", uri, action);
+    return this.addRoute('patch', uri, action);
   }
 
   /**
@@ -531,9 +531,9 @@ export class RoutesGroup extends RouterBase {
    */
   public post(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("post", uri, action);
+    return this.addRoute('post', uri, action);
   }
 
   /**
@@ -547,9 +547,9 @@ export class RoutesGroup extends RouterBase {
    */
   public propfind(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("propfind", uri, action);
+    return this.addRoute('propfind', uri, action);
   }
 
   /**
@@ -563,9 +563,9 @@ export class RoutesGroup extends RouterBase {
    */
   public proppatch(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("proppatch", uri, action);
+    return this.addRoute('proppatch', uri, action);
   }
 
   /**
@@ -579,9 +579,9 @@ export class RoutesGroup extends RouterBase {
    */
   public purge(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("purge", uri, action);
+    return this.addRoute('purge', uri, action);
   }
 
   /**
@@ -595,9 +595,9 @@ export class RoutesGroup extends RouterBase {
    */
   public put(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("put", uri, action);
+    return this.addRoute('put', uri, action);
   }
 
   /**
@@ -611,9 +611,9 @@ export class RoutesGroup extends RouterBase {
    */
   public rebind(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("rebind", uri, action);
+    return this.addRoute('rebind', uri, action);
   }
 
   /**
@@ -627,9 +627,9 @@ export class RoutesGroup extends RouterBase {
    */
   public report(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("report", uri, action);
+    return this.addRoute('report', uri, action);
   }
 
   /**
@@ -643,9 +643,9 @@ export class RoutesGroup extends RouterBase {
    */
   public search(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("search", uri, action);
+    return this.addRoute('search', uri, action);
   }
 
   /**
@@ -659,9 +659,9 @@ export class RoutesGroup extends RouterBase {
    */
   public source(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("source", uri, action);
+    return this.addRoute('source', uri, action);
   }
 
   /**
@@ -675,9 +675,9 @@ export class RoutesGroup extends RouterBase {
    */
   public subscribe(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("subscribe", uri, action);
+    return this.addRoute('subscribe', uri, action);
   }
 
   /**
@@ -691,9 +691,9 @@ export class RoutesGroup extends RouterBase {
    */
   public trace(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("trace", uri, action);
+    return this.addRoute('trace', uri, action);
   }
 
   /**
@@ -707,9 +707,9 @@ export class RoutesGroup extends RouterBase {
    */
   public unbind(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("unbind", uri, action);
+    return this.addRoute('unbind', uri, action);
   }
 
   /**
@@ -723,9 +723,9 @@ export class RoutesGroup extends RouterBase {
    */
   public unlink(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("unlink", uri, action);
+    return this.addRoute('unlink', uri, action);
   }
 
   /**
@@ -739,9 +739,9 @@ export class RoutesGroup extends RouterBase {
    */
   public unlock(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("unlock", uri, action);
+    return this.addRoute('unlock', uri, action);
   }
 
   /**
@@ -755,8 +755,8 @@ export class RoutesGroup extends RouterBase {
    */
   public unsubscribe(
     uri: string | string[],
-    action: CallableFunction | CallableFunction[]
+    action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute("unsubscribe", uri, action);
+    return this.addRoute('unsubscribe', uri, action);
   }
 }

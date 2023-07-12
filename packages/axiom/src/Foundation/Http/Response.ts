@@ -1,16 +1,16 @@
-import { IncomingMessage, ServerResponse } from "node:http";
-import Application from "../Application";
+import { IncomingMessage, ServerResponse } from 'node:http';
+import Application from '../Application';
 
 export class HttpResponse extends ServerResponse<IncomingMessage> {
   /**
-   * The `app` property is used to store an instance of the`Application` class, 
+   * The `app` property is used to store an instance of the`Application` class,
    * which represents the application being served by the HTTP server.
-   * 
+   *
    * @var Application
-   * 
+   *
    */
   public readonly app: Application;
-  
+
   /**
    * Ends the response to prepare it for termination
    *
@@ -67,17 +67,17 @@ export class HttpResponse extends ServerResponse<IncomingMessage> {
     if (this.headersSent) return;
 
     // TODO add all these headers in config files
-    this.appendHeader("X-Powered-By", "Axiom");
-    this.appendHeader("Access-Control-Allow-Origin", "*");
-    this.appendHeader("Access-Control-Allow-Headers", "Content-Type");
-    this.appendHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    this.appendHeader("Cache-Control", "no-cache");
-    this.appendHeader("Pragma", "no-cache");
-    this.appendHeader("Expires", "0");
-    this.appendHeader("Connection", "keep-alive");
-    this.appendHeader("Keep-Alive", "timeout=5, max=1000");
-    this.appendHeader("Transfer-Encoding", "chunked");
-    this.appendHeader("Content-Language", "en-US");
+    this.appendHeader('X-Powered-By', 'Axiom');
+    this.appendHeader('Access-Control-Allow-Origin', '*');
+    this.appendHeader('Access-Control-Allow-Headers', 'Content-Type');
+    this.appendHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    this.appendHeader('Cache-Control', 'no-cache');
+    this.appendHeader('Pragma', 'no-cache');
+    this.appendHeader('Expires', '0');
+    this.appendHeader('Connection', 'keep-alive');
+    this.appendHeader('Keep-Alive', 'timeout=5, max=1000');
+    this.appendHeader('Transfer-Encoding', 'chunked');
+    this.appendHeader('Content-Language', 'en-US');
 
     // TODO check if the client accepts gzip
     // if (this.isAcceptsGzip()) {
@@ -98,17 +98,17 @@ export class HttpResponse extends ServerResponse<IncomingMessage> {
    */
   protected prepareBody(contents?: unknown): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (typeof contents === "object") {
+      if (typeof contents === 'object') {
         // FIXME JSON.stringify is slow. Replace it with something faster like Typia
         // @see https://typia.io/docs/json/stringify/
         this.write(JSON.stringify(contents), (err) =>
-          err ? reject(err) : resolve()
+          err ? reject(err) : resolve(),
         );
-      } else if (typeof contents === "undefined") {
-        this.write("", (err) => (err ? reject(err) : resolve()));
+      } else if (typeof contents === 'undefined') {
+        this.write('', (err) => (err ? reject(err) : resolve()));
       } else {
         this.write(contents.toString(), (err) =>
-          err ? reject(err) : resolve()
+          err ? reject(err) : resolve(),
         );
       }
     });
@@ -128,19 +128,19 @@ export class HttpResponse extends ServerResponse<IncomingMessage> {
    */
   protected prepareContentType(contents?: unknown): void {
     // if the response has already been sent, do nothing
-    if (this.hasHeader("Content-Type")) return;
+    if (this.hasHeader('Content-Type')) return;
 
     // if the content is undefined, do nothing
-    if (typeof contents === "undefined") return;
+    if (typeof contents === 'undefined') return;
 
-    if (typeof contents === "object") {
-      this.appendHeader("Content-Type", "application/json; charset=utf-8");
-    } else if (typeof contents === "object" && "html" in contents) {
-      this.appendHeader("Content-Type", "text/html; charset=utf-8");
-    } else if (typeof contents === "object" && "xml" in contents) {
-      this.appendHeader("Content-Type", "application/xml; charset=utf-8");
+    if (typeof contents === 'object') {
+      this.appendHeader('Content-Type', 'application/json; charset=utf-8');
+    } else if (typeof contents === 'object' && 'html' in contents) {
+      this.appendHeader('Content-Type', 'text/html; charset=utf-8');
+    } else if (typeof contents === 'object' && 'xml' in contents) {
+      this.appendHeader('Content-Type', 'application/xml; charset=utf-8');
     } else {
-      this.appendHeader("Content-Type", "text/plain; charset=utf-8");
+      this.appendHeader('Content-Type', 'text/plain; charset=utf-8');
     }
   }
 }

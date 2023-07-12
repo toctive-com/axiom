@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "ts-node": {
     "compilerOptions": {
-      "module": "Node16",
+      "module": "Node16"
     },
     "require": ["tsconfig-paths/register"]
   },
@@ -11,6 +11,6 @@
     "esModuleInterop": true,
     "rootDir": "./",
     "baseUrl": "./",
-    "paths": { "@/*": ["./src/*"]}
+    "paths": { "@/*": ["./src/*"] }
   }
 }

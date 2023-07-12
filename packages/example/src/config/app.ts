@@ -1,8 +1,8 @@
-import { existsSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 
 export default {
-  appName: "Axiom Project",
+  appName: 'Axiom Project',
 
   /**
    * Maintenance Mode
@@ -22,15 +22,15 @@ export default {
    */
   maintenanceMode: {
     /**
-     * Indicates whether the application is in maintenance mode or not by 
+     * Indicates whether the application is in maintenance mode or not by
      * checking if a file named "down" exists in the current working directory.
-     * 
+     *
      * The current working directory is where you run the application.
-     * 
+     *
      * @var boolean
-     * 
+     *
      */
-    enabled: existsSync(resolve(join("./down"))),
+    enabled: existsSync(resolve(join('./down'))),
 
     /**
      * All routes that will remain working even in maintenance mode.
@@ -128,6 +128,6 @@ export default {
      *
      */
     template:
-      "The application is currently undergoing maintenance. Please try again later.",
+      'The application is currently undergoing maintenance. Please try again later.',
   },
 };

@@ -1,24 +1,24 @@
-import cluster from "cluster";
-import { availableParallelism } from "os";
-import { sleep } from "./sleep";
+import cluster from 'cluster';
+import { availableParallelism } from 'os';
+import { sleep } from './sleep';
 
 /**
  * The `clustering` function allows for running a callback function in parallel
  * across multiple processes using Node.js cluster module.
- * 
+ *
  * @param {Function} callback - The `callback` parameter is a function that will be
  * executed in each worker process. It can be any function that you want to run in
  * parallel.
- * 
+ *
  * @param [options] - The `options` parameter is an optional object that can
  * contain the following properties:
  * - processes: The number of processes to spawn. Defaults to the number of CPUs
  * - restartDelay: The number of milliseconds to wait before restarting a worker
- * 
+ *
  */
 export async function clustering(
   callback: Function,
-  options?: { processes?: number; restartDelay?: number, respawnAgain?: true }
+  options?: { processes?: number; restartDelay?: number; respawnAgain?: true },
 ) {
   const numCpus = options?.processes ?? availableParallelism();
   if (cluster.isPrimary) {
@@ -29,10 +29,10 @@ export async function clustering(
     // processes, then use the `processes` option.
     // For example, if you want to run the callback function in parallel across
     // 4 processes, then use the following:
-    // 
+    //
     // clustering(callback, { processes: 4 }
-    // 
-    if(numCpus === 1) {
+    //
+    if (numCpus === 1) {
       await callback();
       return;
     }
@@ -45,7 +45,7 @@ export async function clustering(
 
     // restart the cluster module if a worker process dies
     if (options?.respawnAgain) {
-      cluster.on("exit", async (worker, code, signal) => {
+      cluster.on('exit', async (worker, code, signal) => {
         await sleep(options?.restartDelay ?? 0);
         cluster.fork();
       });

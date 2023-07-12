@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, Application } from "../Foundation";
+import { HttpRequest, HttpResponse, Application } from '../Foundation';
 
 export type RouteActionParameters = {
   next?: Function;
@@ -6,10 +6,10 @@ export type RouteActionParameters = {
   req?: HttpRequest;
   response?: HttpResponse;
   res?: HttpResponse;
-  app?:Application;
+  app?: Application;
   [key: string]: unknown;
 };
 
 export type RouteAction = (
-  params: RouteActionParameters
+  params: RouteActionParameters,
 ) => unknown | Promise<unknown>;

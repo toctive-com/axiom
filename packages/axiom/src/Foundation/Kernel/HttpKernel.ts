@@ -1,10 +1,10 @@
-import { HttpTerminator, createHttpTerminator } from "http-terminator";
-import { IncomingMessage, Server, ServerResponse } from "node:http";
-import setPrototypeOf from "setprototypeof";
-import Application from "../Application";
-import { HttpRequest } from "../Http/Request";
-import { HttpResponse } from "../Http/Response";
-import { Router } from "../Routing";
+import { HttpTerminator, createHttpTerminator } from 'http-terminator';
+import { IncomingMessage, Server, ServerResponse } from 'node:http';
+import setPrototypeOf from 'setprototypeof';
+import Application from '../Application';
+import { HttpRequest } from '../Http/Request';
+import { HttpResponse } from '../Http/Response';
+import { Router } from '../Routing';
 
 export class HttpKernel {
   /**
@@ -63,7 +63,7 @@ export class HttpKernel {
   constructor(app: Application) {
     this.app = app;
     this.server = app.createServer();
-    this.port = app.config("server.port", 8000);
+    this.port = app.config('server.port', 8000);
 
     this.httpTerminator = createHttpTerminator({
       server: this.server,
@@ -86,7 +86,7 @@ export class HttpKernel {
     return new Promise<{ request: HttpRequest; response: HttpResponse }>(
       (resolve, reject) => {
         this.server.on(
-          "request",
+          'request',
           (req: IncomingMessage, res: ServerResponse) => {
             const request = setPrototypeOf(req, HttpRequest.prototype);
             const response = setPrototypeOf(res, HttpResponse.prototype);
@@ -94,14 +94,14 @@ export class HttpKernel {
             request.app = this.app;
             response.app = this.app;
 
-            Application.set("HttpRequest", () => request);
-            Application.set("HttpResponse", () => response);
+            Application.set('HttpRequest', () => request);
+            Application.set('HttpResponse', () => response);
             return resolve({ request, response });
-          }
+          },
         );
 
-        this.server.on("error", (error) => reject(error));
-      }
+        this.server.on('error', (error) => reject(error));
+      },
     );
   }
 
@@ -121,7 +121,7 @@ export class HttpKernel {
    */
   async handle(
     request: HttpRequest,
-    response: HttpResponse
+    response: HttpResponse,
   ): Promise<HttpResponse> {
     /**
      * Check If The Application Is Under Maintenance
@@ -136,14 +136,14 @@ export class HttpKernel {
     // TODO trim slashes from the request url and from every route.
     const firstMatchedRoute = Router.match(
       request.method.toLowerCase(),
-      request.url
+      request.url,
     );
     if (firstMatchedRoute) {
       const result = firstMatchedRoute.execute(request, response);
       response.prepareToSend(result);
     } else {
       // TODO implement handle 404 error.
-      response.write("404 Not Found");
+      response.write('404 Not Found');
     }
 
     return response;

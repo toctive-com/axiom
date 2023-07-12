@@ -1,2 +1,2 @@
-export * from "./ConsoleKernel"
-export * from "./HttpKernel"
+export * from './ConsoleKernel';
+export * from './HttpKernel';

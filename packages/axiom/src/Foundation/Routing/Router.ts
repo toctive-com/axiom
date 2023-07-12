@@ -1,7 +1,7 @@
-import { Route } from "./Route";
-import { RoutesGroup } from "./RoutesGroup";
-import { RoutesGroupAttributes } from "../../Types/RoutesGroupAttributes";
-import { RouterBase } from "./RouterBase";
+import { Route } from './Route';
+import { RoutesGroup } from './RoutesGroup';
+import { RoutesGroupAttributes } from '../../Types/RoutesGroupAttributes';
+import { RouterBase } from './RouterBase';
 
 export class Router extends RouterBase {
   /**
@@ -43,15 +43,15 @@ export class Router extends RouterBase {
   public static group(callback: (router: RoutesGroup) => void): RoutesGroup;
   public static group(
     attributes: RoutesGroupAttributes,
-    callback: (router: RoutesGroup) => void
+    callback: (router: RoutesGroup) => void,
   ): RoutesGroup;
   public static group(
     attributesOrCallback:
       | RoutesGroupAttributes
       | ((router: RoutesGroup) => void),
-    callback?: (router: RoutesGroup) => void
+    callback?: (router: RoutesGroup) => void,
   ): RoutesGroup {
-    if (typeof attributesOrCallback === "function") {
+    if (typeof attributesOrCallback === 'function') {
       callback = attributesOrCallback;
       attributesOrCallback = {};
     }
