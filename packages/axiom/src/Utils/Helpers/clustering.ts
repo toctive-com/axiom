@@ -22,6 +22,22 @@ export async function clustering(
 ) {
   const numCpus = options?.processes ?? availableParallelism();
   if (cluster.isPrimary) {
+    // if there's only one CPU, just run the callback function and exit.
+    // This is to prevent the cluster module from spawning another process.
+    // This is useful for debugging purposes.
+    // If you want to run the callback function in parallel across multiple
+    // processes, then use the `processes` option.
+    // For example, if you want to run the callback function in parallel across
+    // 4 processes, then use the following:
+    // 
+    // clustering(callback, { processes: 4 }
+    // 
+    if(numCpus === 1) {
+      await callback();
+      return;
+    }
+
+    // spawn the cluster module with the number of CPUs specified in the options
     for (let i = 0; i < numCpus; i++) {
       await sleep(options?.restartDelay ?? 0);
       cluster.fork();
