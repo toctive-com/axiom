@@ -1,0 +1,26 @@
+{
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    },
+    "require": ["tsconfig-paths/register"]
+  },
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ESNext",
+    "module": "CommonJS",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "axiom/*": ["./src/*"]
+    },
+    "esModuleInterop": true
+  },
+  "exclude": ["node_modules", "dist"]
+}

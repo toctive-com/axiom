@@ -1,0 +1,10 @@
+src
+tests
+tsconfig.json
+.editorconfig
+.eslintignore
+.eslintrc.js
+.prettierignore
+.prettierrc.json
+.vscode/launch.json
+.vscode/settings.json

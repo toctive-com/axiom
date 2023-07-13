@@ -1,6 +1,7 @@
 {
-  "name": "root",
-  "private": true,
+  "name": "@toctive/axiom",
+  "version": "0.1.1-alpha.1",
+  "private": false,
   "description": "Axios is a backend framework built using TypeScript and implement Express.js functionality from scratch",
   "keywords": [
     "axiom",
@@ -11,19 +12,33 @@
   ],
   "author": "Sameh A. Elalfi <sameh.elalfi.mail@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toctive-com/axiom.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toctive-com/axiom/issues"
+  },
+  "homepage": "https://github.com/toctive-com/axiom#readme",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "dev": "npx lerna watch -- npx lerna run dev --stream --scope=example",
+    "dev": "nodemon ./src/index.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build:watch": "tsup src/index.ts --watch --format cjs,esm --dts",
+    "lint": "tsup ./src",
     "prettier": "prettier . --check --ignore-path .prettierignore",
     "prettier:fix": "prettier . --write --ignore-path .prettierignore",
     "eslint": "eslint .",
     "eslint:fix": "eslint . --fix"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "devDependencies": {
     "@types/node": "^20.3.2",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
@@ -35,7 +50,7 @@
     "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-promise": "^6.1.1",
     "lerna": "^7.1.1",
-    "nodemon": "^2.0.22",
+    "nodemon": "^3.0.1",
     "prettier": "3.0.0",
     "ts-node": "^10.9.1",
     "tsc": "^2.0.4",
