@@ -1,3 +1,3 @@
 export * from './Types';
-export * from './Foundation';
+export * from './Core';
 export * from './Utils';

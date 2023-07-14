@@ -5,9 +5,9 @@ import {
   createServer,
 } from 'node:http';
 import { ApplicationParameters } from '@/Types';
-import { Container } from '@/Foundation/Container';
-import { Maintenance } from '@/Foundation/Maintenance';
-import { ServiceProvider } from '@/Foundation/ServiceProvider';
+import { Container } from '@/Core/Container';
+import { Maintenance } from '@/Core/Maintenance';
+import { ServiceProvider } from '@/Core/ServiceProvider';
 
 export class Application extends Container {
   /**

@@ -1,5 +1,5 @@
 import { IncomingMessage } from 'node:http';
-import Application from '@/Foundation/Application';
+import Application from '@/Core/Application';
 
 export class HttpRequest extends IncomingMessage {
   /**

@@ -1,4 +1,4 @@
-import { Application, HttpRequest, HttpResponse } from '@/Foundation';
+import { Application, HttpRequest, HttpResponse } from '@/Core';
 import { MaintenanceConfig } from '@/Types';
 import { exit } from 'node:process';
 

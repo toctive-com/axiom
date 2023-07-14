@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, Application } from '@/Foundation';
+import { HttpRequest, HttpResponse, Application } from '@/Core';
 
 export type RouteActionParameters = {
   next?: Function;

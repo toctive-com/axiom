@@ -1,10 +1,10 @@
 import { HttpTerminator, createHttpTerminator } from 'http-terminator';
 import { Server } from 'node:http';
 import setPrototypeOf from 'setprototypeof';
-import Application from '@/Foundation/Application';
-import { HttpRequest } from '@/Foundation/Http/Request';
-import { HttpResponse } from '@/Foundation/Http/Response';
-import { Router } from '@/Foundation/Routing';
+import Application from '@/Core/Application';
+import { HttpRequest } from '@/Core/Http/Request';
+import { HttpResponse } from '@/Core/Http/Response';
+import { Router } from '@/Core/Routing';
 
 export class HttpKernel {
   /**
