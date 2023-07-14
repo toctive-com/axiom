@@ -4,10 +4,10 @@ import {
   ServerResponse,
   createServer,
 } from 'node:http';
-import { ApplicationParameters } from '../Types';
-import { Container } from './Container';
-import { Maintenance } from './Maintenance';
-import { ServiceProvider } from './ServiceProvider';
+import { ApplicationParameters } from '@/Types';
+import { Container } from '@/Foundation/Container';
+import { Maintenance } from '@/Foundation/Maintenance';
+import { ServiceProvider } from '@/Foundation/ServiceProvider';
 
 export class Application extends Container {
   /**

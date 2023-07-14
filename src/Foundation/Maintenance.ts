@@ -1,4 +1,5 @@
-import { Application, HttpRequest, HttpResponse, MaintenanceConfig } from '..';
+import { Application, HttpRequest, HttpResponse } from '@/Foundation';
+import { MaintenanceConfig } from '@/Types';
 import { exit } from 'node:process';
 
 export class Maintenance {

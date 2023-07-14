@@ -1,5 +1,5 @@
 import { Container as BrandiContainer, Token, token } from 'brandi';
-import Application from './Application';
+import Application from '@/Foundation/Application';
 
 declare type UnknownConstructor<T extends Object = Object> = new (
   ...args: never[]

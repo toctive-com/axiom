@@ -1,4 +1,4 @@
-import Application from './Application';
+import Application from '@/Foundation/Application';
 
 type callback = (app: Application) => unknown;
 
