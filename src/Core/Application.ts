@@ -1,13 +1,16 @@
+import { Container } from '@/Core/Container';
+import { Maintenance } from '@/Core/Maintenance';
+import { ServiceProvider } from '@/Core/ServiceProvider';
+import { ApplicationParameters } from '@/Types';
 import {
   IncomingMessage,
   Server,
   ServerResponse,
   createServer,
 } from 'node:http';
-import { ApplicationParameters } from '@/Types';
-import { Container } from '@/Core/Container';
-import { Maintenance } from '@/Core/Maintenance';
-import { ServiceProvider } from '@/Core/ServiceProvider';
+
+import { config } from 'dotenv';
+import { join } from 'path';
 
 export class Application extends Container {
   /**
@@ -94,6 +97,8 @@ export class Application extends Container {
     // Load all project config files
     this._config = this.loadConfig();
 
+    this.loadEnv();
+
     // Register all singletons that are used by the application
     this.registerSingletons();
   }
@@ -106,6 +111,19 @@ export class Application extends Container {
    */
   protected loadConfig(): Object {
     return {};
+  }
+
+  /**
+   * Loads environment variables from a .env file and returns the parsed output.
+   *
+   * @returns The loadEnv() function returns an Object.
+   *
+   */
+  protected loadEnv(): Object {
+    const output = config({ path: join(this._basePath, './.env') });
+    if (output.error) console.error(output.error);
+
+    return output.parsed;
   }
 
   /**
