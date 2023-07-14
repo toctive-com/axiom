@@ -83,7 +83,10 @@ export class HttpKernel {
       });
 
       server.on('error', (error: Error & { code: string }) => {
-        if (error.code === 'EADDRINUSE' && this.app.config('server.incrementalPort', true)) {
+        if (
+          error.code === 'EADDRINUSE' &&
+          this.app.config('server.incrementalPort', true)
+        ) {
           console.log(
             `The port ${port} is already in use. Axiom will try the port ${
               port + 1
