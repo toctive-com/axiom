@@ -56,6 +56,7 @@ export class HttpKernel {
   async captureRequest() {
     return new Promise<void>(async (resolve, reject) => {
       let port = this.app.config('server.port', 8000);
+      const hostname = this.app.config('server.host', 'localhost');
 
       const server = (this.server = this.app.createServer(async (req, res) => {
         const request: HttpRequest = setPrototypeOf(req, HttpRequest.prototype);
@@ -77,19 +78,19 @@ export class HttpKernel {
 
       this.httpTerminator = createHttpTerminator({ server });
 
-      server.listen(port, () => {
-        console.log(`server started on http://localhost:${port}/about`);
+      server.listen(port, hostname, () => {
+        console.log(`server started on http://${hostname}:${port}/`);
       });
 
       server.on('error', (error: Error & { code: string }) => {
-        if (error.code === 'EADDRINUSE') {
+        if (error.code === 'EADDRINUSE' && this.app.config('server.incrementalPort', true)) {
           console.log(
             `The port ${port} is already in use. Axiom will try the port ${
               port + 1
             }`,
           );
           port++;
-          server.listen(port);
+          server.listen(port, hostname);
         } else {
           reject(error);
         }
