@@ -122,9 +122,18 @@ export class Application extends Container {
    *
    */
   protected loadEnv(): Object {
-    const output = config({ path: join(this._basePath, './.env') });
+    // importing based on NODE_ENV
+    let envFile = '.env';
+    if (['test', 'testing'].includes(process.env.NODE_ENV)) {
+      envFile = '.env.test';
+    }
+
+    const output = config({ path: join(this._basePath, envFile) });
     if (output.error) console.error(output.error);
-    expand(output)
+
+    // extend env variables allowing to use variables inside env variables
+    // @see https://github.com/motdotla/dotenv-expand/
+    expand(output);
 
     return output.parsed;
   }
