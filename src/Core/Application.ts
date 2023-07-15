@@ -95,11 +95,12 @@ export class Application extends Container {
     // Register the base path of the application
     if (basePath) this.basePath = basePath;
 
+    // load env variables before developer config. Allowing to use env variables
+    // inside config files.
+    this.loadEnv();
+
     // Load all project config files
     this._config = this.loadConfig();
-
-    // load env variables
-    this.loadEnv();
 
     // Register all singletons that are used by the application
     this.registerSingletons();
