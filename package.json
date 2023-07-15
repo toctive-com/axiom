@@ -64,6 +64,7 @@
   "dependencies": {
     "brandi": "^5.0.0",
     "dotenv": "^16.3.1",
+    "dotenv-expand": "^10.0.0",
     "http-terminator": "^3.2.0",
     "setprototypeof": "^1.2.0"
   }

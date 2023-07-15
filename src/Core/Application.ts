@@ -10,6 +10,7 @@ import {
 } from 'node:http';
 
 import { config } from 'dotenv';
+import { expand } from 'dotenv-expand';
 import { join } from 'path';
 
 export class Application extends Container {
@@ -97,6 +98,7 @@ export class Application extends Container {
     // Load all project config files
     this._config = this.loadConfig();
 
+    // load env variables
     this.loadEnv();
 
     // Register all singletons that are used by the application
@@ -122,6 +124,7 @@ export class Application extends Container {
   protected loadEnv(): Object {
     const output = config({ path: join(this._basePath, './.env') });
     if (output.error) console.error(output.error);
+    expand(output)
 
     return output.parsed;
   }
