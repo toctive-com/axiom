@@ -172,7 +172,7 @@ export type LogEnvVariables = {
    * log files will be stored.
    *
    * @see {@link https://en.wikipedia.org/wiki/Log_rotation | Wikipedia Log Rotation}
-   * 
+   *
    */
   LOG_FILE?: string;
 

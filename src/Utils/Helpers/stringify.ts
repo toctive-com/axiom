@@ -13,7 +13,7 @@ export const stringify = (obj: Object, space?: string | number) => {
 
   let str = JSON.stringify(
     obj,
-    function (key, value) {
+    function (_key, value) {
       if (typeof value === 'object' && value !== null) {
         // circular reference found, discard key
         if (cache.indexOf(value) !== -1) return;
