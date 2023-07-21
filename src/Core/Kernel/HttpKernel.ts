@@ -1,10 +1,9 @@
-import { HttpTerminator, createHttpTerminator } from 'http-terminator';
-import { Server } from 'node:http';
-import setPrototypeOf from 'setprototypeof';
 import Application from '@/Core/Application';
 import { HttpRequest } from '@/Core/Http/Request';
 import { HttpResponse } from '@/Core/Http/Response';
-import { Router } from '@/Core/Routing';
+import { HttpTerminator, createHttpTerminator } from 'http-terminator';
+import { Server } from 'node:http';
+import setPrototypeOf from 'setprototypeof';
 
 export class HttpKernel {
   /**
@@ -129,20 +128,23 @@ export class HttpKernel {
      */
     await request.app.handleMaintenanceMode({ request, response });
 
-    // TODO trim slashes from the request url and from every route.
-    const firstMatchedRoute = Router.match(
-      request.method.toLowerCase(),
-      request.url,
-    );
-    if (firstMatchedRoute !== false) {
-      const result = firstMatchedRoute.execute(request, response);
-      response.prepareToSend(result);
-    } else {
-      // TODO implement handle 404 error.
-      response.write('404 Not Found');
-    }
+    await this.executeSequence(this.app.middleware, request, response);
 
     return response;
+  }
+
+  async executeSequence(
+    functions: Function[],
+    request: HttpRequest,
+    response: HttpResponse,
+  ) {
+    const tempFunctionArray = [...functions];
+    const func = tempFunctionArray.shift();
+    if (func !== undefined && typeof func === 'function') {
+      await func(request, response, async () => {
+        return await this.executeSequence(tempFunctionArray, request, response);
+      });
+    }
   }
 
   /**

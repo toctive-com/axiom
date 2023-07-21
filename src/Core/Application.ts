@@ -12,6 +12,8 @@ import {
 import { config } from 'dotenv';
 import { expand } from 'dotenv-expand';
 import { join } from 'path';
+import { HttpRequest } from './Http/Request';
+import { HttpResponse } from './Http/Response';
 
 export class Application extends Container {
   /**
@@ -82,6 +84,23 @@ export class Application extends Container {
    *
    */
   protected _server: Server;
+
+  private _middleware: ((
+    req?: HttpRequest,
+    res?: HttpResponse,
+    next?: Function
+  ) => any)[] = [];
+  public get middleware(): ((
+    req?: HttpRequest,
+    res?: HttpResponse,
+    next?: Function
+  ) => any)[] {
+    return this._middleware;
+  }
+
+  public add(middleware: (res: HttpRequest, req: HttpResponse, next?: Function) => any) { 
+    this.middleware.push(middleware);
+  }
 
   /**
    * Create Application instance
