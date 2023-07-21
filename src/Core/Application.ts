@@ -22,7 +22,7 @@ export class Application extends Container {
    * @var string
    *
    */
-  readonly VERSION = '0.1.1';
+  readonly VERSION = '0.1.2';
 
   /**
    * Indicates if the application is booted or not.
