@@ -1,8 +1,8 @@
-import { Route } from './Route';
-import { RoutesGroup } from './RoutesGroup';
 import { RoutesGroupAttributes } from '../../Types/RoutesGroupAttributes';
+import { HttpRequest } from '../Http/Request';
+import { Route } from './Route';
 import { RouterBase } from './RouterBase';
-import { join } from 'node:path';
+import { RoutesGroup } from './RoutesGroup';
 
 export class Router extends RouterBase {
   /**
@@ -17,7 +17,7 @@ export class Router extends RouterBase {
    * @returns the `Router` object.
    *
    */
-  public static async loadFile(file: string) {
+  public async loadFile(file: string) {
     await require(file);
     return this;
   }
@@ -28,25 +28,25 @@ export class Router extends RouterBase {
    *
    * @param {Function | Function[]} callback
    *
-   * @returns instance of the `RouteRegistrar` class.
+   * @returns instance of the `RoutesGroup` class.
    *
    */
-  public static middleware(callback: Function | Function[]) {
-    const routeRegistrar = new RoutesGroup({ middleware: callback });
-    this.addRouteRegistrar(routeRegistrar);
-    return routeRegistrar;
+  public middleware(callback: Function | Function[]) {
+    const routesGroup = new RoutesGroup({ middleware: callback });
+    this.addRoutesGroup(routesGroup);
+    return routesGroup;
   }
 
   /**
    * Creates a new route group.
    *
    */
-  public static group(callback: (router: RoutesGroup) => void): RoutesGroup;
-  public static group(
+  public group(callback: (router: RoutesGroup) => void): RoutesGroup;
+  public group(
     attributes: RoutesGroupAttributes,
     callback: (router: RoutesGroup) => void,
   ): RoutesGroup;
-  public static group(
+  public group(
     attributesOrCallback:
       | RoutesGroupAttributes
       | ((router: RoutesGroup) => void),
@@ -57,10 +57,10 @@ export class Router extends RouterBase {
       attributesOrCallback = {};
     }
 
-    const routeRegistrar = new RoutesGroup(attributesOrCallback);
-    callback(routeRegistrar);
-    this.addRouteRegistrar(routeRegistrar);
-    return routeRegistrar;
+    const routesGroup = new RoutesGroup(attributesOrCallback);
+    callback(routesGroup);
+    this.addRoutesGroup(routesGroup);
+    return routesGroup;
   }
 
   /**
@@ -75,12 +75,12 @@ export class Router extends RouterBase {
    * @returns The method is returning a boolean value.
    *
    */
-  public static match(method: string, url: string): false | Route {
-    for (const route of Router.routes) {
-      const isMatched = route.match(method, url);
+  public match(request: HttpRequest): false | Route {
+    for (const route of this.routes) {
+      const isMatched = route.match(request);
       if (!isMatched) continue;
 
-      if (isMatched instanceof Route) return isMatched;
+      return isMatched;
     }
 
     // There is no matching route

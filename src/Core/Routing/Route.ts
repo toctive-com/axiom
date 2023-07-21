@@ -1,3 +1,4 @@
+import { Url } from '@/Utils';
 import { HttpRequest } from '../Http/Request';
 import { HttpResponse } from '../Http/Response';
 
@@ -60,12 +61,15 @@ export class Route {
    * @returns The method is returning a boolean value.
    *
    */
-  public match(method: string, url: string): this | false {
+  public match(request: HttpRequest): this | false {
+    const { method, url } = request;
+
     // `isMiddlewareAllowed()` must be called after all other checker. So, we
     // don't call every middleware on every route
     return this.isHttpMethodAllowed(method) &&
-      this.isUriMatches(url) &&
-      this.isMiddlewareAllowed()
+      this.isMatchPrefix(request) &&
+      this.isUriMatches(request) &&
+      this.isMiddlewareAllowed(request)
       ? this
       : false;
   }
@@ -80,7 +84,7 @@ export class Route {
    *
    */
   public isHttpMethodAllowed(httpMethod: string): boolean {
-    return this.httpVerb.includes(httpMethod);
+    return this.httpVerb.includes(httpMethod.toLowerCase());
   }
 
   /**
@@ -93,11 +97,17 @@ export class Route {
    * @returns a boolean value.
    *
    */
-  public isUriMatches(uri: string): boolean {
+  public isUriMatches(request: HttpRequest): boolean {
+    const url = Url.trim(request.url).split(this.prefixUri).slice(1).join(this.prefixUri);
+    console.log('🚀  file: Route.ts:103  url:', url);
+
     return this.uri.some((regex: string | RegExp) =>
-      regex instanceof RegExp ? regex.test(uri) : this.getMatchedUri(uri),
+      regex instanceof RegExp ? regex.test(url) : this.getMatchedUri(url),
     );
   }
+
+  public isMatchPrefix = (request: HttpRequest) =>
+    Url.trim(request.url).startsWith(this.prefixUri);
 
   /**
    * Extracts variables from a given original URL and current URL by
@@ -164,13 +174,12 @@ export class Route {
    * @returns A boolean value
    *
    */
-  public isMiddlewareAllowed(): boolean {
-    return this.middlewareLayers.every((middleware: Function) => middleware());
+  public isMiddlewareAllowed(request: HttpRequest): boolean {
+    return this.middlewareLayers.every((middleware: Function) =>
+      middleware(request),
+    );
   }
 
-  /**
-   * execute
-   */
   /**
    * The execute function iterates over a list of actions and calls each action with
    * the next action, request, and response objects.
@@ -187,9 +196,11 @@ export class Route {
    *
    */
   public execute(request: HttpRequest, response: HttpResponse) {
+    const url = Url.trim(request.url).split(this.prefixUri).slice(1).join(this.prefixUri);
+    
     const variables = this.extractVariables(
-      this.getMatchedUri(request.url),
-      request.url,
+      this.getMatchedUri(url),
+      url,
     );
 
     // register tne variables in the request object
@@ -279,13 +290,19 @@ export class Route {
   /**
    * Sets the prefixUri property of an object and returns the object itself.
    *
-   * @param {string} name - a string that represents the prefix URI.
+   * @param {string} prefix - a string that represents the prefix URI.
    *
    * @returns Route instance.
    *
    */
-  public prefix(name: string): this {
-    this.prefixUri = name;
+  public prefix(prefix: string): this {
+    prefix = Url.trim(prefix);
+    // const newUriArr = [];
+    // for (const uri of this.uri) {
+    //   newUriArr.push('/' + Url.trim(uri) + '/' + prefix);
+    // }
+    // this.uri = newUriArr;
+    this.prefixUri = prefix;
     return this;
   }
 }
