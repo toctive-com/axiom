@@ -1,6 +1,6 @@
 import Application from '@/Core/Application';
-import { HttpRequest } from '@/Core/Http/Request';
-import { HttpResponse } from '@/Core/Http/Response';
+import { Request } from '@/Core/Http/Request';
+import { Response } from '@/Core/Http/Response';
 import { HttpTerminator, createHttpTerminator } from 'http-terminator';
 import { Server } from 'node:http';
 import setPrototypeOf from 'setprototypeof';
@@ -58,10 +58,10 @@ export class HttpKernel {
       const hostname = this.app.config('server.host', 'localhost');
 
       const server = (this.server = this.app.createServer(async (req, res) => {
-        const request: HttpRequest = setPrototypeOf(req, HttpRequest.prototype);
-        const response: HttpResponse = setPrototypeOf(
+        const request: Request = setPrototypeOf(req, Request.prototype);
+        const response: Response = setPrototypeOf(
           res,
-          HttpResponse.prototype,
+          Response.prototype,
         );
 
         request.app = this.app;
@@ -103,10 +103,10 @@ export class HttpKernel {
   /**
    * Handles an HTTP request and returns an HTTP response.
    *
-   * @param {HttpRequest} request - HttpRequest is an object that represents an HTTP
+   * @param {Request} request - HttpRequest is an object that represents an HTTP
    * request made by a client to a server. It contains information such as the
    * request method, headers, and body.
-   * @param {HttpResponse} response - The `response` parameter is an instance of the
+   * @param {Response} response - The `response` parameter is an instance of the
    * `HttpResponse` class, which is used to send a response back to the client that
    * made the HTTP request. It contains information such as the status code, headers,
    * and body of the response. In the given code snippet, the `handle` function
@@ -115,9 +115,9 @@ export class HttpKernel {
    *
    */
   async handle(
-    request: HttpRequest,
-    response: HttpResponse,
-  ): Promise<HttpResponse> {
+    request: Request,
+    response: Response,
+  ): Promise<Response> {
     /**
      * Check If The Application Is Under Maintenance
      * --------------------------------------------------------------------------
@@ -135,8 +135,8 @@ export class HttpKernel {
 
   async executeSequence(
     functions: Function[],
-    request: HttpRequest,
-    response: HttpResponse,
+    request: Request,
+    response: Response,
   ) {
     const tempFunctionArray = [...functions];
     const func = tempFunctionArray.shift();
@@ -150,17 +150,17 @@ export class HttpKernel {
   /**
    * Terminates an HTTP server using an HTTP terminator.
    *
-   * @param {HttpRequest} request - HttpRequest is an object that represents an
+   * @param {Request} request - HttpRequest is an object that represents an
    * incoming HTTP request. It contains information such as the request method,
    * headers, URL, and body.
-   * @param {HttpResponse} response - The `response` parameter is an instance of the
+   * @param {Response} response - The `response` parameter is an instance of the
    * `HttpResponse` class, which represents the HTTP response that will be sent back
    * to the client. It contains information such as the status code, headers, and
    * body of the response. In this case, it is not being used directly in the
    * `terminate
    *
    */
-  async terminate(request: HttpRequest, response: HttpResponse) {
+  async terminate(request: Request, response: Response) {
     await this.httpTerminator.terminate();
   }
 }

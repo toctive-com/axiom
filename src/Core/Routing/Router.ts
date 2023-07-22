@@ -1,5 +1,4 @@
-import { RoutesGroupAttributes } from '../../Types/RoutesGroupAttributes';
-import { HttpRequest } from '../Http/Request';
+import { Request } from '@/Core/Http/Request';
 import { Route } from './Route';
 import { RouterBase } from './RouterBase';
 import { RoutesGroup } from './RoutesGroup';
@@ -75,7 +74,7 @@ export class Router extends RouterBase {
    * @returns The method is returning a boolean value.
    *
    */
-  public match(request: HttpRequest): false | Route {
+  public match(request: Request): false | Route {
     for (const route of this.routes) {
       const isMatched = route.match(request);
       if (!isMatched) continue;

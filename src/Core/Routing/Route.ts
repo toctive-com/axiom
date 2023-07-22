@@ -1,3 +1,5 @@
+import { Request } from '@/Core/Http/Request';
+import { Response } from '@/Core/Http/Response';
 import { Url } from '@/Utils';
 import { HttpRequest } from '../Http/Request';
 import { HttpResponse } from '../Http/Response';
@@ -61,7 +63,7 @@ export class Route {
    * @returns The method is returning a boolean value.
    *
    */
-  public match(request: HttpRequest): this | false {
+  public match(request: Request): this | false {
     const { method, url } = request;
 
     // `isMiddlewareAllowed()` must be called after all other checker. So, we
@@ -97,17 +99,13 @@ export class Route {
    * @returns a boolean value.
    *
    */
-  public isUriMatches(request: HttpRequest): boolean {
-    const url = Url.trim(request.url).split(this.prefixUri).slice(1).join(this.prefixUri);
-    console.log('🚀  file: Route.ts:103  url:', url);
-
+  public isUriMatches(request: Request): boolean {
     return this.uri.some((regex: string | RegExp) =>
       regex instanceof RegExp ? regex.test(url) : this.getMatchedUri(url),
     );
   }
 
-  public isMatchPrefix = (request: HttpRequest) =>
-    Url.trim(request.url).startsWith(this.prefixUri);
+  public isMatchPrefix = (request: Request) => {
 
   /**
    * Extracts variables from a given original URL and current URL by
@@ -174,7 +172,7 @@ export class Route {
    * @returns A boolean value
    *
    */
-  public isMiddlewareAllowed(request: HttpRequest): boolean {
+  public isMiddlewareAllowed(request: Request): boolean {
     return this.middlewareLayers.every((middleware: Function) =>
       middleware(request),
     );
@@ -184,11 +182,11 @@ export class Route {
    * The execute function iterates over a list of actions and calls each action with
    * the next action, request, and response objects.
    *
-   * @param {HttpRequest} request - The `request` parameter is an object that
+   * @param {Request} request - The `request` parameter is an object that
    * represents the incoming HTTP request. It typically contains information such as
    * the request method (GET, POST, etc.), headers, query parameters, and request
    * body.
-   * @param {HttpResponse} response - The `response` parameter is an object that
+   * @param {Response} response - The `response` parameter is an object that
    * represents the HTTP response that will be sent back to the client. It typically
    * contains information such as the status code, headers, and the response body.
    *
@@ -222,16 +220,16 @@ export class Route {
    *
    * @param {Function[]} functions - An array of functions that will be called
    * one by one.
-   * @param {HttpRequest} request
-   * @param {HttpResponse} response
+   * @param {Request} request
+   * @param {Response} response
    *
    * @returns The current function is being returned.
    *
    */
   callFunctions(
     functions: Function[],
-    request: HttpRequest,
-    response: HttpResponse,
+    request: Request,
+    response: Response,
     rest: { [key: string]: any },
   ) {
     if (functions.length === 0) return;

@@ -3,7 +3,7 @@ import Application from '@/Core/Application';
 import { Jsonable } from '@/Types/Jsonable';
 import { stringify } from '@/Utils/Helpers/stringify';
 
-export class HttpRequest extends IncomingMessage implements Jsonable {
+export class Request extends IncomingMessage implements Jsonable {
   /**
    * The `app` property is used to store an instance of the`Application` class,
    * which represents the application being served by the HTTP server.
@@ -15,18 +15,18 @@ export class HttpRequest extends IncomingMessage implements Jsonable {
 
   static locals: any = {};
   public get locals(): any {
-    return HttpRequest.locals;
+    return Request.locals;
   }
   public set locals(value: any) {
-    HttpRequest.locals = { ...HttpRequest.locals, value };
+    Request.locals = { ...Request.locals, value };
   }
 
   static params: any = {};
   public get params(): any {
-    return HttpRequest.params;
+    return Request.params;
   }
   public set params(value: any) {
-    HttpRequest.params = value;
+    Request.params = value;
   }
 
   /**

@@ -1,11 +1,11 @@
-import { HttpRequest, HttpResponse, Application } from '@/Core';
+import { Request, Response, Application } from '@/Core';
 
 export type RouteActionParameters = {
   next?: Function;
-  request?: HttpRequest;
-  req?: HttpRequest;
-  response?: HttpResponse;
-  res?: HttpResponse;
+  request?: Request;
+  req?: Request;
+  response?: Response;
+  res?: Response;
   app?: Application;
   [key: string]: unknown;
 };

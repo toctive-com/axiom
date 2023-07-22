@@ -1,6 +1,6 @@
+import { Request } from '@/Core/Http/Request';
 import { RoutesGroupAttributes } from '@/Types/RoutesGroupAttributes';
 import { Url } from '@/Utils/Facades/Url';
-import { HttpRequest } from '@/Core/Http/Request';
 import { Route } from './Route';
 import { RouterBase } from './RouterBase';
 
@@ -138,15 +138,13 @@ export class RoutesGroup extends RouterBase {
    * Checks if the given HTTP method and URL match the allowed criteria and
    * returns whether the middleware is allowed or not.
    *
-   * @param {string} method - The method parameter is a string that represents the
-   * HTTP method of a request, such as "GET", "POST", "PUT", etc.
-   * @param {string} url - The `url` parameter is a string that represents the URL
-   * of the request being made.
+   * @param request - The HTTP request. We will use the url property in this
+   * Request.
    *
    * @returns The method is returning a boolean value.
    *
    */
-  public match(request: HttpRequest): false | Route {
+  public match(request: Request): false | Route {
     for (const route of this.routes) {
       const isMatched = route.match(request);
       if (!isMatched) continue;

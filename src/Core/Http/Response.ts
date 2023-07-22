@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'node:http';
 import Application from '@/Core/Application';
 
-export class HttpResponse extends ServerResponse<IncomingMessage> {
+export class Response extends ServerResponse<IncomingMessage> {
   /**
    * The `app` property is used to store an instance of the`Application` class,
    * which represents the application being served by the HTTP server.
