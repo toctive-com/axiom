@@ -1,4 +1,6 @@
 import { Request } from '@/Core/Http/Request';
+import { RoutesGroupAttributes } from '@/Types/RoutesGroupAttributes';
+import { RoutesGroupCallback } from '@/Types/RoutesGroupCallback';
 import { Route } from './Route';
 import { RouterBase } from './RouterBase';
 import { RoutesGroup } from './RoutesGroup';
@@ -7,8 +9,6 @@ export class Router extends RouterBase {
   /**
    * Loads a file dynamically and returns a Router object.
    * If the file is already loaded, the file won't be loaded again.
-   *
-   * @see https://v8.dev/features/dynamic-import
    *
    * @param {string} file - The "file" parameter is a string that represents the
    * path or URL of the file that you want to load.
@@ -40,16 +40,14 @@ export class Router extends RouterBase {
    * Creates a new route group.
    *
    */
-  public group(callback: (router: RoutesGroup) => void): RoutesGroup;
+  public group(callback: RoutesGroupCallback): RoutesGroup;
   public group(
     attributes: RoutesGroupAttributes,
-    callback: (router: RoutesGroup) => void,
+    callback: RoutesGroupCallback,
   ): RoutesGroup;
   public group(
-    attributesOrCallback:
-      | RoutesGroupAttributes
-      | ((router: RoutesGroup) => void),
-    callback?: (router: RoutesGroup) => void,
+    attributesOrCallback: RoutesGroupAttributes | RoutesGroupCallback,
+    callback?: RoutesGroupCallback,
   ): RoutesGroup {
     if (typeof attributesOrCallback === 'function') {
       callback = attributesOrCallback;
