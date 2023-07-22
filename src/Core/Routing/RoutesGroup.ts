@@ -160,14 +160,15 @@ export class RoutesGroup extends RouterBase {
    * Creates a new route group.
    *
    */
-  // TODO add type for attributes
   public group(callback: (router: RoutesGroup) => void): RoutesGroup;
   public group(
-    attributes: any,
+    attributes: RoutesGroupAttributes,
     callback: (router: RoutesGroup) => void,
   ): RoutesGroup;
   public group(
-    attributesOrCallback: any,
+    attributesOrCallback:
+      | RoutesGroupAttributes
+      | ((router: RoutesGroup) => void),
     callback?: (router: RoutesGroup) => void,
   ): RoutesGroup {
     if (typeof attributesOrCallback === 'function') {
