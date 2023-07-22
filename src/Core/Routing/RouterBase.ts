@@ -1,3 +1,4 @@
+import { Url } from '@/Utils';
 import { METHODS } from 'node:http';
 import { Route } from './Route';
 import { RoutesGroup } from './RoutesGroup';
@@ -91,8 +92,10 @@ export abstract class RouterBase {
     if (typeof uri === 'string') uri = [uri];
     if (typeof action === 'function') action = [action];
 
+    // remove leading and trailing slashes
+    uri = uri.map(Url.trim)
+
     const route = new Route(httpVerb, uri, action);
-    console.log('🚀  file: RouterBase.ts:95  httpVerb, uri, action:', httpVerb, uri, action);
     this.routes.push(route);
     return route;
   }
