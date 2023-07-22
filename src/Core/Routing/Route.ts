@@ -1,8 +1,6 @@
 import { Request } from '@/Core/Http/Request';
 import { Response } from '@/Core/Http/Response';
 import { Url } from '@/Utils';
-import { HttpRequest } from '../Http/Request';
-import { HttpResponse } from '../Http/Response';
 
 export class Route {
   /**
@@ -28,7 +26,7 @@ export class Route {
    * @var {string | null}
    *
    */
-  protected prefixUri: string | null = null;
+  protected prefixUri: string | null = '';
 
   private _tempActions: typeof this.action;
   /**
@@ -64,7 +62,7 @@ export class Route {
    *
    */
   public match(request: Request): this | false {
-    const { method, url } = request;
+    const { method } = request;
 
     // `isMiddlewareAllowed()` must be called after all other checker. So, we
     // don't call every middleware on every route
@@ -93,19 +91,23 @@ export class Route {
    * The function checks if a given URI matches any of the regular expressions or
    * strings in an array.
    *
-   * @param {string} uri - The `uri` parameter is a string that represents a URI
+   * @param uri - The `uri` parameter is a string that represents a URI
    * (Uniform Resource Identifier).
    *
    * @returns a boolean value.
    *
    */
   public isUriMatches(request: Request): boolean {
+    const url = Url.trim(request.url).replace(this.prefixUri, '');
+    const matchedRoute = this.getMatchedUri(url);
     return this.uri.some((regex: string | RegExp) =>
-      regex instanceof RegExp ? regex.test(url) : this.getMatchedUri(url),
+      regex instanceof RegExp ? regex.test(url) : matchedRoute !== null,
     );
   }
 
   public isMatchPrefix = (request: Request) => {
+    return Url.trim(request.url).startsWith(this.prefixUri);
+  };
 
   /**
    * Extracts variables from a given original URL and current URL by
@@ -193,13 +195,14 @@ export class Route {
    * @returns The result of calling action functions.
    *
    */
-  public execute(request: HttpRequest, response: HttpResponse) {
-    const url = Url.trim(request.url).split(this.prefixUri).slice(1).join(this.prefixUri);
-    
-    const variables = this.extractVariables(
-      this.getMatchedUri(url),
-      url,
-    );
+  public execute(
+    request: Request,
+    response: Response,
+    next: Function = () => {},
+  ) {
+    const url = Url.trim(request.url).replace(this.prefixUri, '');
+
+    const variables = this.extractVariables(this.getMatchedUri(url), url);
 
     // register tne variables in the request object
     // so that the action functions can access them
@@ -209,7 +212,7 @@ export class Route {
     // prevent removing the action from the original array
     // this is to prevent the action from being removed
     // from the original array
-    this._tempActions = [...this.action];
+    this._tempActions = [...this.action, next];
 
     return this.callFunctions(this._tempActions, request, response, variables);
   }
