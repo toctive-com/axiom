@@ -84,21 +84,9 @@ export class RoutesGroup extends RouterBase {
     uris: string | string[],
     actions: CallableFunction[] | CallableFunction | null,
   ) {
-    // TODO create an array facade with wrap method and wrap these params
-    if (typeof httpVerbs === 'string') httpVerbs = [httpVerbs];
-    if (typeof uris === 'string') uris = [uris];
-    if (typeof actions === 'function') actions = [actions];
-
-    // for (let i = 0; i < uris.length; i++) {
-    //   uris[i] = Url.join(this.prefix, uris[i]);
-    // }
-
-    // TODO add name property to groups => Router.group().named("g1")
-    const route = new Route(httpVerbs, uris, actions);
+    const route = super.addRoute(httpVerbs, uris, actions);
     if (this.middlewareLayers) route.middleware(this.middlewareLayers);
     if (this.prefix) route.prefix(this.prefix);
-
-    this.routes.push(route);
     return route;
   }
 
