@@ -1,6 +1,6 @@
-import { RoutesGroupAttributes } from '../../Types/RoutesGroupAttributes';
-import { Url } from '../../Utils/Facades/Url';
-import { HttpRequest } from '../Http/Request';
+import { RoutesGroupAttributes } from '@/Types/RoutesGroupAttributes';
+import { Url } from '@/Utils/Facades/Url';
+import { HttpRequest } from '@/Core/Http/Request';
 import { Route } from './Route';
 import { RouterBase } from './RouterBase';
 

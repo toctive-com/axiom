@@ -270,6 +270,22 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
+    return this.addRoute(['get', 'head'], uri, action);
+  }
+
+  /**
+   * Create a new Get route without HEAD HTTP method and store it in Router routes
+   *
+   * @param {string|string[]} uri
+   * @param {CallableFunction|CallableFunction[]} action
+   *
+   * @returns Route
+   *
+   */
+  public getOnly(
+    uri: string | string[],
+    action: CallableFunction | CallableFunction[],
+  ) {
     return this.addRoute('get', uri, action);
   }
 
