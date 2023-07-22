@@ -1,6 +1,7 @@
-import { Application, HttpRequest, HttpResponse } from '@/Core';
+import { Application, Request, Response } from '@/Core';
 import { MaintenanceConfig } from '@/Types';
 import { exit } from 'node:process';
+import { Url } from '..';
 
 export class Maintenance {
   private config: MaintenanceConfig = {
@@ -37,14 +38,11 @@ export class Maintenance {
     request,
     response,
   }: {
-    request: HttpRequest;
-    response: HttpResponse;
+    request: Request;
+    response: Response;
   }) {
     for (const path of this.config.except) {
-      // FIXME trim '/' from path
-      // `/api/test/` => `api/test`
-      // const except = path !== "/" ? path : path;
-      if (path == request.url) return;
+      if (Url.trim(path) === Url.trim(request.url)) return;
     }
 
     this.handleRedirect(request, response);
@@ -61,20 +59,20 @@ export class Maintenance {
     exit();
   }
 
-  protected handleRefresh(response: HttpResponse) {
+  protected handleRefresh(response: Response) {
     if (this.config.refresh) {
       response.appendHeader('Refresh', this.config.refresh.toString());
     }
   }
 
-  protected handleRetry(response: HttpResponse) {
+  protected handleRetry(response: Response) {
     // TODO Add option for `Retry-After: Date`
     if (this.config.retry) {
       response.appendHeader('Retry-After', this.config.retry.toString());
     }
   }
 
-  protected handleRedirect(request: HttpRequest, response: HttpResponse) {
+  protected handleRedirect(request: Request, response: Response) {
     // TODO add option to redirect some URLs to specific websites
     // For example:
     // redirect all traffic from '/dashboard/*' to 'admin.example.com'
