@@ -29,6 +29,7 @@ export class RouteServiceProvider extends ServiceProvider {
         if (typeof result === 'string') {
           return res.write(result);
         } else if (typeof result === 'object') {
+          res.appendHeader('Content-Type', 'application/json; charset=utf-8');
           return res.write(stringify(result));
         } else if (typeof result === 'undefined') {
           return res;
