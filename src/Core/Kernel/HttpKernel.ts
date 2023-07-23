@@ -59,10 +59,7 @@ export class HttpKernel {
 
       const server = (this.server = this.app.createServer(async (req, res) => {
         const request: Request = setPrototypeOf(req, Request.prototype);
-        const response: Response = setPrototypeOf(
-          res,
-          Response.prototype,
-        );
+        const response: Response = setPrototypeOf(res, Response.prototype);
 
         request.app = this.app;
         response.app = this.app;
@@ -78,7 +75,8 @@ export class HttpKernel {
       this.httpTerminator = createHttpTerminator({ server });
 
       server.listen(port, hostname, () => {
-        console.log(`server started on http://${hostname}:${port}/`);
+        if (!['testing', 'test'].includes(process.env.NODE_ENV))
+          console.log(`server started on http://${hostname}:${port}/`);
       });
 
       server.on('error', (error: Error & { code: string }) => {
@@ -114,10 +112,7 @@ export class HttpKernel {
    * @returns The `response` object is being returned.
    *
    */
-  async handle(
-    request: Request,
-    response: Response,
-  ): Promise<Response> {
+  async handle(request: Request, response: Response): Promise<Response> {
     /**
      * Check If The Application Is Under Maintenance
      * --------------------------------------------------------------------------
