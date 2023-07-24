@@ -37,6 +37,20 @@ export class Router extends RouterBase {
   }
 
   /**
+   * Adds a prefix to a route and returns a routes group.
+   *
+   * @param {string} prefix
+   *
+   * @returns instance of the `RoutesGroup` class.
+   *
+   */
+  public prefix(prefix: string) {
+    const routesGroup = new RoutesGroup({ prefix });
+    this.addRoutesGroup(routesGroup);
+    return routesGroup;
+  }
+
+  /**
    * Creates a new route group.
    *
    */
