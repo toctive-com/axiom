@@ -32,12 +32,14 @@ export class RouteServiceProvider extends ServiceProvider {
           res.appendHeader('Content-Type', 'application/json; charset=utf-8');
           return res.write(stringify(result));
         } else if (typeof result === 'undefined') {
-          return res;
+          // if the route action didn't return anything call the next function
+          return next();
         } else {
           return res.write(result?.toString() ?? result);
         }
       }
 
+      // If there is no matched route call the next function
       return next();
     });
   }
