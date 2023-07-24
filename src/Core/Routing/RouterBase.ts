@@ -70,7 +70,7 @@ export abstract class RouterBase {
    * @var Route[] | RouteRegistrar[]
    *
    */
-  protected routes: (Route | RoutesGroup)[] = [];
+  routes: (Route | RoutesGroup)[] = [];
 
   /**
    * Add a route to the underlying route collection.
@@ -593,7 +593,23 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('search', uri, action);
+    return this.addRoute('m-search', uri, action);
+  }
+
+  /**
+   * Create a new Search route and store it in Router routes
+   *
+   * @param {string|string[]} uri
+   * @param {CallableFunction|CallableFunction[]} action
+   *
+   * @returns Route
+   *
+   */
+  public mSearch(
+    uri: string | string[],
+    action: CallableFunction | CallableFunction[],
+  ) {
+    return this.addRoute('m-search', uri, action);
   }
 
   /**
