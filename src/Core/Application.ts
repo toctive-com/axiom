@@ -88,17 +88,19 @@ export class Application extends Container {
   private _middleware: ((
     req?: Request,
     res?: Response,
-    next?: Function
+    next?: Function,
   ) => any)[] = [];
   public get middleware(): ((
     req?: Request,
     res?: Response,
-    next?: Function
+    next?: Function,
   ) => any)[] {
     return this._middleware;
   }
 
-  public add(middleware: (res: Request, req: Response, next?: Function) => any) { 
+  public add(
+    middleware: (res: Request, req: Response, next?: Function) => any,
+  ) {
     this.middleware.push(middleware);
   }
 

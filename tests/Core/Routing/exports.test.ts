@@ -34,7 +34,7 @@ describe('exports from Router', () => {
 
   it('should have method to match a route with the request', () => {
     const router = new Router();
-    expect(router.match).toBeDefined(); 
+    expect(router.match).toBeDefined();
     expect(router.match).toBeTypeOf('function');
   });
 
