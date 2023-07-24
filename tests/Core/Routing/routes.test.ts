@@ -1,5 +1,6 @@
 import { Request, Route, Router } from '@/Core';
-import { Socket } from 'net';
+import { METHODS } from 'node:http';
+import { Socket } from 'node:net';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('Make routes and test if they works as expected', () => {
@@ -98,5 +99,41 @@ describe('Make routes and test if they works as expected', () => {
     (matchedRoute as Route).execute(request, null, next);
     expect(func).toHaveBeenCalledTimes(1);
     expect(next).toHaveBeenCalledTimes(1);
+  });
+
+  it('should add all methods to the router', () => {
+    const router = new Router();
+    router.all('/test', () => 'response value');
+    router.any('/test-2', () => 'response value');
+
+    const routeAll = router.routes[0];
+    const routeAny = router.routes[1];
+
+    expect(routeAll).toBeInstanceOf(Route);
+    expect((routeAll as Route).httpVerb).toEqual(METHODS);
+
+    expect(routeAny).toBeInstanceOf(Route);
+    expect((routeAny as Route).httpVerb).toEqual(METHODS);
+  });
+
+  it('should add all routes with all methods', () => {
+    const router = new Router();
+    const allMethods = [
+      ...METHODS.filter((m) => m !== 'M-SEARCH').map((m) => m.toLowerCase()),
+    ];
+
+    // add a route for every HTTP method
+    for (const method of allMethods) {
+      router[method.toLowerCase()]('/test', () => 'response value');
+    }
+
+    expect(router.routes.length).toBe(allMethods.length);
+
+    for (const route of router.routes) {
+      for (const method of (route as Route).httpVerb) {
+        if (method === 'm-search') continue;
+        expect(allMethods.includes(method)).toBeTruthy();
+      }
+    }
   });
 });
