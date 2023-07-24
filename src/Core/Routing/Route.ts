@@ -44,9 +44,9 @@ export class Route {
    *
    */
   constructor(
-    protected httpVerb: string[],
-    protected uri: string[],
-    protected action: Function[] | null,
+    public httpVerb: string[],
+    public uri: string[],
+    public action: Function[] | null,
   ) {}
 
   /**
