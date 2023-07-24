@@ -38,7 +38,7 @@ export class RoutesGroup extends RouterBase {
    * @var Route[] | RouteRegistrar[]
    *
    */
-  protected routes: (Route | RoutesGroup)[] = [];
+  public routes: (Route | RoutesGroup)[] = [];
 
   constructor(attributes?: RoutesGroupAttributes) {
     super();
