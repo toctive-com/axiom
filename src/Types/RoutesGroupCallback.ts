@@ -1,3 +1,3 @@
-import { RoutesGroup } from '@/Core/Routing/RoutesGroup';
+import { RoutesGroup } from '@/Core';
 
 export type RoutesGroupCallback = (router: RoutesGroup) => void;
