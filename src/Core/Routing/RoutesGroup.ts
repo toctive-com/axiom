@@ -1,6 +1,6 @@
 import { Request } from '@/Core/Http/Request';
 import { RoutesGroupAttributes } from '@/Types/RoutesGroupAttributes';
-import { Url } from '@/Utils/Facades/Url';
+import { Arr, Url } from '@/Utils';
 import { Route } from './Route';
 import { RouterBase } from './RouterBase';
 
@@ -47,26 +47,18 @@ export class RoutesGroup extends RouterBase {
   }
 
   /**
-   * Parses attributes and assigns values to the middlewareLayers and
-   * prefix properties if they exist in the attributes object.
+   * Parses attributes and assigns values to the middlewareLayers and prefix
+   * properties if they exist in the attributes object.
    *
-   * @param {any} attributes
+   * @param attributes
    *
    */
   protected parseAttributes(attributes: RoutesGroupAttributes) {
-    if (attributes) {
-      if (attributes.middleware) {
-        if (!Array.isArray(attributes.middleware)) {
-          attributes.middleware = [attributes.middleware];
-        }
-
-        this.middlewareLayers.push(...attributes.middleware);
-      }
-
-      if (attributes.prefix) {
-        this.prefix = attributes.prefix;
-      }
+    if (attributes.middleware) {
+      this.middlewareLayers.push(...Arr.wrap(attributes.middleware));
     }
+
+    if (attributes.prefix) this.prefix = attributes.prefix;
   }
 
   /**

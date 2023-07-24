@@ -1,4 +1,4 @@
-import { Url } from '@/Utils';
+import { Arr, Url } from '@/Utils';
 import { METHODS } from 'node:http';
 import { Route } from './Route';
 import { RoutesGroup } from './RoutesGroup';
@@ -87,13 +87,12 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction[] | CallableFunction | null,
   ) {
-    // TODO create an array facade with wrap method and wrap these params
-    if (typeof httpVerb === 'string') httpVerb = [httpVerb];
-    if (typeof uri === 'string') uri = [uri];
-    if (typeof action === 'function') action = [action];
+    httpVerb = Arr.wrap(httpVerb);
+    uri = Arr.wrap(uri);
+    action = Arr.wrap(action);
 
     // remove leading and trailing slashes
-    uri = uri.map(Url.trim)
+    uri = uri.map(Url.trim);
 
     const route = new Route(httpVerb, uri, action);
     this.routes.push(route);
