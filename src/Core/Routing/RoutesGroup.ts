@@ -4,6 +4,12 @@ import { Arr, Url } from '@/Utils';
 import { Route } from './Route';
 import { RouterBase } from './RouterBase';
 
+/**
+ * The `RoutesGroup` class is a subclass of `RouterBase` that represents a group
+ * of routes and provides methods for adding routes, middleware, and nested
+ * route groups.
+ *
+ */
 export class RoutesGroup extends RouterBase {
   /**
    * All middleware functions are registered here to be executed when a route
@@ -64,19 +70,19 @@ export class RoutesGroup extends RouterBase {
   /**
    * Add a route to the underlying route collection.
    *
-   * @param {string|string[]} httpVerbs
-   * @param {string|string[]} uris
-   * @param {CallableFunction|CallableFunction[]|null} actions
+   * @param httpMethods
+   * @param uris
+   * @param actions
    *
    * @return Route
    *
    */
   protected addRoute(
-    httpVerbs: string | string[],
+    httpMethods: string | string[],
     uris: string | string[],
     actions: CallableFunction[] | CallableFunction | null,
   ) {
-    const route = super.addRoute(httpVerbs, uris, actions);
+    const route = super.addRoute(httpMethods, uris, actions);
     if (this.middlewareLayers) route.middleware(this.middlewareLayers);
     if (this.prefix) route.prefix(this.prefix);
     return route;

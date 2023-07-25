@@ -32,19 +32,12 @@ export class Route {
   /**
    * Creates a new route
    *
-   * @param {string[]} httpVerb - The `httpVerb` parameter is a string array that
-   * represents the HTTP verbs (methods) that can be used for the request. For
-   * example, it can include values like "GET", "POST", "PUT", "DELETE", etc.
-   * @param {string[]} uri - The `uri` parameter is a string array or a
-   * regular expression array. It represents the URI or URIs that the route should
-   * match.
-   * @param {Function[] | null} action - The `action` parameter is an array of
-   * functions that will be executed when the route is matched. It can be `null` if
-   * no action is required for the route.
+   * @param httpMethods - The HTTP verbs (methods) that can be used for the
+   * request. For example, it can include values like "GET", "POST", "PUT",
    *
    */
   constructor(
-    public httpVerb: string[],
+    public httpMethods: string[],
     public uri: string[],
     public action: Function[] | null,
   ) {}
@@ -84,7 +77,7 @@ export class Route {
    *
    */
   public isHttpMethodAllowed(httpMethod: string): boolean {
-    return this.httpVerb.includes(httpMethod.toLowerCase());
+    return this.httpMethods.includes(httpMethod.toLowerCase());
   }
 
   /**

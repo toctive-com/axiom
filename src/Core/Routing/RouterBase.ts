@@ -11,7 +11,7 @@ export abstract class RouterBase {
    * @var string[]
    *
    */
-  public static readonly defaultSupportedHttpVerbs = [
+  public static readonly defaultSupportedHttpMethods = [
     'acl',
     'bind',
     'checkout',
@@ -57,8 +57,8 @@ export abstract class RouterBase {
    * @var string[]
    *
    */
-  public static readonly httpVerbs: string[] =
-    METHODS || RouterBase.defaultSupportedHttpVerbs;
+  public static readonly httpMethods: string[] =
+    METHODS || RouterBase.defaultSupportedHttpMethods;
 
   /**
    * Here we store all registered routes and  router registrar with their
@@ -75,26 +75,27 @@ export abstract class RouterBase {
   /**
    * Add a route to the underlying route collection.
    *
-   * @param {string|string[]} httpVerb
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]|null} action
+   * @param httpMethods - one or more of HTTP methods supported by Node.js
+   * @param uris - one or more of string routes. May includes route variables.
+   * @param actions - functions that will be executed when route match the
+   * request.
    *
-   * @return Route
+   * @return Route instance
    *
    */
   protected addRoute(
-    httpVerb: string | string[],
-    uri: string | string[],
-    action: CallableFunction[] | CallableFunction | null,
+    httpMethods: string | string[],
+    uris: string | string[],
+    actions: CallableFunction[] | CallableFunction,
   ) {
-    httpVerb = Arr.wrap(httpVerb);
-    uri = Arr.wrap(uri);
-    action = Arr.wrap(action);
+    httpMethods = Arr.wrap(httpMethods).map((method) => method.toLowerCase());
+    uris = Arr.wrap(uris).map((uri) => Url.trim(uri));
+    actions = Arr.wrap(actions);
 
     // remove leading and trailing slashes
-    uri = uri.map(Url.trim);
+    uris = uris.map(Url.trim);
 
-    const route = new Route(httpVerb, uri, action);
+    const route = new Route(httpMethods, uris, actions);
     this.routes.push(route);
     return route;
   }
@@ -143,24 +144,26 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute(RouterBase.httpVerbs, uri, action);
+    return this.addRoute(RouterBase.httpMethods, uri, action);
   }
 
   /**
-   * Create a new route with one or more HTTP verbs and store it in Router routes
+   * Create a new route with one or more HTTP verbs and store it in Router
+   * routes
    *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
+   * @param httpMethods
+   * @param uri
+   * @param action
    *
    * @returns Route
    *
    */
   public anyOf(
-    httpVerbs: string | string[],
+    httpMethods: string | string[],
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute(httpVerbs, uri, action);
+    return this.addRoute(httpMethods, uri, action);
   }
 
   /**
