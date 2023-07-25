@@ -2,6 +2,12 @@ import { Request } from '@/Core/Http/Request';
 import { Response } from '@/Core/Http/Response';
 import { Url } from '@/Utils';
 
+/**
+ * The `Route` class represents a route in a web application and provides
+ * methods for matching the route, executing actions, and adding middleware
+ * layers.
+ *
+ */
 export class Route {
   /**
    * All middleware functions are registered here to be executed when the route
@@ -23,23 +29,27 @@ export class Route {
   /**
    * This property is used to store the name of a route.
    *
-   * @var {string | null}
-   *
    */
-  protected prefixUri: string | null = '';
+  protected prefixUri: string = '';
 
-  private _tempActions: typeof this.action;
+  private _tempActions: typeof this.actions;
   /**
    * Creates a new route
    *
    * @param httpMethods - The HTTP verbs (methods) that can be used for the
    * request. For example, it can include values like "GET", "POST", "PUT",
+   * "DELETE", etc.
+   * @param uri - The `uri` parameter is a string array or a regular expression
+   * array. It represents the URI or URIs that the route should match.
+   * @param actions - The `action` parameter is an array of functions that will
+   * be executed when the route is matched. It can be `null` if no action is
+   * required for the route.
    *
    */
   constructor(
     public httpMethods: string[],
     public uri: string[],
-    public action: Function[] | null,
+    public actions: Function[],
   ) {}
 
   /**
@@ -205,7 +215,7 @@ export class Route {
     // prevent removing the action from the original array
     // this is to prevent the action from being removed
     // from the original array
-    this._tempActions = [...this.action, next];
+    this._tempActions = [...this.actions, next];
 
     return this.callFunctions(this._tempActions, request, response, variables);
   }
@@ -277,6 +287,8 @@ export class Route {
    *
    */
   public named(name: string): this {
+    // TODO log a warning if the route includes multiple URIs
+    // to tell the developer that he should add a name for every route
     this.routeName = name;
     return this;
   }
