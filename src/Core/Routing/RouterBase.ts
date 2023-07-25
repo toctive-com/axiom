@@ -101,18 +101,18 @@ export abstract class RouterBase {
   }
 
   /**
-   * Adds a route registrar to a list of route registrars.
+   * Adds a route group to a list of route groups.
    *
-   * @param {RoutesGroup} routeRegistrar - The parameter `routeRegistrar` is an
-   * instance of the `RouteRegistrar` class.
+   * @param {RoutesGroup} routesGroup - The parameter `routesGroup` is an
+   * instance of the `RoutesGroup` class.
    *
-   * @returns The `addRoutesGroup` method is returning the `routeRegistrar`
-   * object that was passed as a parameter.
+   * @returns The `addRoutesGroup` method is returning the `routesGroup` object
+   * that was passed as a parameter.
    *
    */
-  protected addRoutesGroup(routeRegistrar: RoutesGroup) {
-    this.routes.push(routeRegistrar);
-    return routeRegistrar;
+  protected addRoutesGroup(routesGroup: RoutesGroup) {
+    this.routes.push(routesGroup);
+    return routesGroup;
   }
 
   /**
