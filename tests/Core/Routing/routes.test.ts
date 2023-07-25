@@ -1,4 +1,5 @@
 import { Request, Route, Router } from '@/Core';
+import { makeFunctionsChain } from '@/Utils/Helpers/makeFunctionsChain';
 import { METHODS } from 'node:http';
 import { Socket } from 'node:net';
 import { describe, expect, it, vi } from 'vitest';
@@ -26,13 +27,13 @@ describe('Make routes and test if they works as expected', () => {
 
     const getRoute = router.routes[0];
     expect((getRoute as Route).uri).toEqual(['test']);
-    expect((getRoute as Route).httpVerb).toEqual(['get', 'head']);
-    expect((getRoute as Route).action).toEqual([func]);
+    expect((getRoute as Route).httpMethods).toEqual(['get', 'head']);
+    expect((getRoute as Route).actions).toEqual([func]);
 
     const postRoute = router.routes[1];
     expect((postRoute as Route).uri).toEqual(['test']);
-    expect((postRoute as Route).httpVerb).toEqual(['post']);
-    expect((postRoute as Route).action).toEqual([func]);
+    expect((postRoute as Route).httpMethods).toEqual(['post']);
+    expect((postRoute as Route).actions).toEqual([func]);
   });
 
   it('should return the matched routes when making the request', () => {
@@ -48,10 +49,10 @@ describe('Make routes and test if they works as expected', () => {
     request.url = '/test';
 
     request.method = 'get';
-    expect(router.match(request)).toBe(getRoute);
+    expect(router.match(request)).toEqual([getRoute]);
 
     request.method = 'post';
-    expect(router.match(request)).toBe(postRoute);
+    expect(router.match(request)).toEqual([postRoute]);
   });
 
   it('should return false when making the request and no routes match', () => {
@@ -78,8 +79,9 @@ describe('Make routes and test if they works as expected', () => {
     request.url = '/test';
     request.method = 'get';
 
-    const matchedRoute = router.match(request);
-    (matchedRoute as Route).execute(request, null);
+    const matchedRoutes = router.match(request);
+    expect(matchedRoutes).toHaveLength(1);
+    (matchedRoutes[0] as Route).execute(request, null);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
@@ -95,8 +97,9 @@ describe('Make routes and test if they works as expected', () => {
     request.url = '/test';
     request.method = 'get';
 
-    const matchedRoute = router.match(request);
-    (matchedRoute as Route).execute(request, null, next);
+    const matchedRoutes = router.match(request);
+    expect(matchedRoutes).toHaveLength(1);
+    (matchedRoutes[0] as Route).execute(request, null, next);
     expect(func).toHaveBeenCalledTimes(1);
     expect(next).toHaveBeenCalledTimes(1);
   });
@@ -109,11 +112,13 @@ describe('Make routes and test if they works as expected', () => {
     const routeAll = router.routes[0];
     const routeAny = router.routes[1];
 
+    const methods = METHODS.map(m => m.toLowerCase())
+
     expect(routeAll).toBeInstanceOf(Route);
-    expect((routeAll as Route).httpVerb).toEqual(METHODS);
+    expect((routeAll as Route).httpMethods).toEqual(methods);
 
     expect(routeAny).toBeInstanceOf(Route);
-    expect((routeAny as Route).httpVerb).toEqual(METHODS);
+    expect((routeAny as Route).httpMethods).toEqual(methods);
   });
 
   it('should add all routes with all methods', () => {
@@ -130,10 +135,114 @@ describe('Make routes and test if they works as expected', () => {
     expect(router.routes.length).toBe(allMethods.length);
 
     for (const route of router.routes) {
-      for (const method of (route as Route).httpVerb) {
+      for (const method of (route as Route).httpMethods) {
         if (method === 'm-search') continue;
         expect(allMethods.includes(method)).toBeTruthy();
       }
     }
+  });
+
+  it('should return false if there is no matched route', () => {
+    const router = new Router();
+    router.get('/test', () => 'response value');
+    const request = new Request(new Socket());
+    request.url = '/another-url';
+    request.method = 'get';
+
+    expect(router.match(request)).toBeFalsy();
+  });
+
+  it('should return false if there is no matched route for any method', () => {
+    const router = new Router();
+    router.get('/test', () => 'response value');
+    const request = new Request(new Socket());
+    request.url = '/test';
+    request.method = 'post';
+
+    expect(router.match(request)).toBeFalsy();
+  });
+
+  it('should not stack overflow with a large sync stack of routes', () => {
+    const router = new Router();
+    const stackSize = 10000;
+    const testFunc = vi.fn()
+
+    router.get('/test', ({ req, next }) => {
+      req.locals.counter = 0;
+      next();
+    });
+
+    for (var i = 0; i < stackSize; i++) {
+      const r = router.any('/test', ({ req, next }) => {
+        req.locals.counter++;
+        testFunc();
+        return next();
+      });
+    }
+
+    router.get('/test', ({ req }) => {
+      req.locals.called = true;
+    });
+
+    const request = new Request(new Socket());
+    request.url = '/test';
+    request.method = 'get';
+    const matchedRoutes = router.match(request);
+    expect(matchedRoutes).toHaveLength(stackSize + 2);
+
+    if (matchedRoutes === false) return;
+
+    const nextFunctions = matchedRoutes
+      .slice(1)
+      .map((r) => r.actions)
+      .flat();
+    expect(nextFunctions).toHaveLength(stackSize + 1);
+
+    const nextFunctionsStack = makeFunctionsChain(nextFunctions, {
+      req: request,
+      res: null,
+    });
+
+    (matchedRoutes[0] as Route).execute(
+      request,
+      null,
+      nextFunctionsStack,
+    );
+    expect(request.locals.counter).toBe(stackSize);
+    expect(request.locals.called).toBeTruthy();
+    expect(matchedRoutes).toBeTruthy();
+    expect(testFunc).toBeCalledTimes(stackSize);
+  });
+
+  it('should not stack overflow with a large sync stacked functions', () => {
+    const router = new Router();
+
+    const middleware = [];
+    for (var i = 0; i < 6000; i++) {
+      middleware.push(({ req, next }) => {
+        req.locals.counter++;
+        next();
+      });
+    }
+
+    router.get('/test', [
+      ({ req, next }) => {
+        req.locals.counter = 0;
+        next();
+      },
+      ...middleware,
+      ({ req }) => (req.locals.called = true),
+    ]);
+
+    const request = new Request(new Socket());
+    request.url = '/test';
+    request.method = 'get';
+    const matchedRoutes = router.match(request);
+    expect(matchedRoutes).toHaveLength(1);
+
+    (matchedRoutes[0] as Route).execute(request, null);
+    expect(request.locals.counter).toBe(6000);
+    expect(request.locals.called).toBeTruthy();
+    expect(matchedRoutes).toBeTruthy();
   });
 });

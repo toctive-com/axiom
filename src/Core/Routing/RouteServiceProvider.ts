@@ -1,6 +1,7 @@
 import { stringify } from '@/Utils';
 import { ServiceProvider } from '../ServiceProvider';
 import { Router } from './Router';
+import { makeFunctionsChain } from '@/Utils/Helpers/makeFunctionsChain';
 
 export class RouteServiceProvider extends ServiceProvider {
   /**
@@ -14,12 +15,22 @@ export class RouteServiceProvider extends ServiceProvider {
    */
   protected registerRoutes(router: Router): void {
     this.app.add((req, res, next) => {
-      const matchedRoute = router.match(req);
+      const matchedRoutes = router.match(req);
       let result = null;
 
-      if (matchedRoute) {
+      if (matchedRoutes) {
         try {
-          result = matchedRoute.execute(req, res);
+          const nextFunctions = matchedRoutes
+            .slice(1)
+            .map((r) => r.actions)
+            .flat();
+          nextFunctions.push(next);
+          const nextFunctionsStack = makeFunctionsChain(nextFunctions, {
+            req,
+            res,
+          });
+
+          result = matchedRoutes[0].execute(req, res, nextFunctionsStack);
         } catch (error) {
           // TODO add error handler object
           return res.write('Error: ' + error.message);
@@ -32,8 +43,8 @@ export class RouteServiceProvider extends ServiceProvider {
           res.appendHeader('Content-Type', 'application/json; charset=utf-8');
           return res.write(stringify(result));
         } else if (typeof result === 'undefined') {
-          // if the route action didn't return anything call the next function
-          return next();
+          // if the route action didn't return anything, end the function
+          return;
         } else {
           return res.write(result?.toString() ?? result);
         }

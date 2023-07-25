@@ -86,15 +86,16 @@ export class Router extends RouterBase {
    * @returns The method is returning a boolean value.
    *
    */
-  public match(request: Request): false | Route {
+  public match(request: Request): false | Route[] {
+    const matchedRoutes = [];
     for (const route of this.routes) {
       const isMatched = route.match(request);
       if (!isMatched) continue;
 
-      return isMatched;
+      matchedRoutes.push(isMatched);
     }
 
     // There is no matching route
-    return false;
+    return matchedRoutes.length ? matchedRoutes : false;
   }
 }
