@@ -1,4 +1,4 @@
-import { Application, HttpKernel } from '@/Core';
+import { Application, HttpKernel } from '@/core';
 
 /**
  * Runs an application, captures a request using the HttpKernel, and returns the
