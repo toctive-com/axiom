@@ -143,4 +143,12 @@ export class Response extends ServerResponse<IncomingMessage> {
       this.appendHeader('Content-Type', 'text/plain; charset=utf-8');
     }
   }
+
+  public addHeader(name: string, value: string): this {
+    if (!this.headersSent) {
+      return this.appendHeader(name, value);
+    }
+    console.warn("headers already sent and can't be modified.");
+    return this;
+  }
 }
