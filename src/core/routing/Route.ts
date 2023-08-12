@@ -198,7 +198,7 @@ export class Route {
    * @returns The result of calling action functions.
    *
    */
-  public async execute(
+  public async dispatch(
     request: Request,
     response: Response,
     next: Function = () => {},

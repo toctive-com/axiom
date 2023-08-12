@@ -30,7 +30,7 @@ export class RouteServiceProvider extends ServiceProvider {
             res,
           });
 
-          result = await matchedRoutes[0].execute(req, res, nextFunctionsStack);
+          result = await matchedRoutes[0].dispatch(req, res, nextFunctionsStack);
         } catch (error) {
           // TODO add error handler object
           return res.write('Error: ' + error.message);

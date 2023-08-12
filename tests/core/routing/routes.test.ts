@@ -81,7 +81,7 @@ describe('Make routes and test if they works as expected', () => {
 
     const matchedRoutes = router.match(request);
     expect(matchedRoutes).toHaveLength(1);
-    (matchedRoutes[0] as Route).execute(request, null);
+    (matchedRoutes[0] as Route).dispatch(request, null);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
@@ -99,7 +99,7 @@ describe('Make routes and test if they works as expected', () => {
 
     const matchedRoutes = router.match(request);
     expect(matchedRoutes).toHaveLength(1);
-    (matchedRoutes[0] as Route).execute(request, null, next);
+    (matchedRoutes[0] as Route).dispatch(request, null, next);
     expect(func).toHaveBeenCalledTimes(1);
     expect(next).toHaveBeenCalledTimes(1);
   });
@@ -203,7 +203,7 @@ describe('Make routes and test if they works as expected', () => {
       res: null,
     });
 
-    (matchedRoutes[0] as Route).execute(
+    (matchedRoutes[0] as Route).dispatch(
       request,
       null,
       nextFunctionsStack,
@@ -240,7 +240,7 @@ describe('Make routes and test if they works as expected', () => {
     const matchedRoutes = router.match(request);
     expect(matchedRoutes).toHaveLength(1);
 
-    (matchedRoutes[0] as Route).execute(request, null);
+    (matchedRoutes[0] as Route).dispatch(request, null);
     expect(request.locals.counter).toBe(6000);
     expect(request.locals.called).toBeTruthy();
     expect(matchedRoutes).toBeTruthy();
