@@ -93,33 +93,30 @@ export class RoutesGroup extends RouterBase {
   /**
    * Adds a route registrar to a list of route registrars.
    *
-   * @param {RoutesGroup} routeRegistrar - The parameter `routeRegistrar` is an
+   * @param {RoutesGroup} routesGroup - The parameter `routesGroup` is an
    * instance of the `RouteRegistrar` class.
    *
-   * @returns The `addRouteGroup` method is returning the `routeRegistrar`
+   * @returns The `addRouteGroup` method is returning the `routesGroup`
    * object that was passed as a parameter.
    *
    */
-  protected addRouteGroup(routeRegistrar: RoutesGroup) {
-    this.routes.push(routeRegistrar);
-    return routeRegistrar;
+  protected addRouteGroup(routesGroup: RoutesGroup) {
+    this.routes.push(routesGroup);
+    return routesGroup;
   }
 
   /**
-   * Adds middleware layers to a route registrar and returns the registrar.
+   * Adds middleware layers to a routes group. and returns the new group.
    *
-   * @param {Function | Function[]} callback - The `callback`
-   * parameter can be of type `Function`, or `Function[]`
-   * `.
-   * @returns The `middleware` method returns an instance of the `RouteRegistrar`
-   * class.
+   * @param {Function | Function[]} callback
+   *
+   * @returns an instance of the `RouteRegistrar` class.
    *
    */
-  public middleware(callback: Function | Function[]) {
-    const routeRegistrar = new RoutesGroup({ middleware: callback });
-    routeRegistrar.middlewareLayers.push(...this.middlewareLayers);
-    this.addRouteGroup(routeRegistrar);
-    return routeRegistrar;
+  public middleware(callback: Function) {
+    const routesGroup = new RoutesGroup({ middleware: callback });
+    this.setRoutesGroupAttributes(routesGroup);
+    return this.addRouteGroup(routesGroup);
   }
 
   /**
@@ -164,10 +161,25 @@ export class RoutesGroup extends RouterBase {
       attributesOrCallback = {};
     }
 
-    const routeRegistrar = new RoutesGroup(attributesOrCallback);
-    routeRegistrar.middlewareLayers = this.middlewareLayers;
-    callback(routeRegistrar);
-    this.addRouteGroup(routeRegistrar);
-    return routeRegistrar;
+    const routesGroup = new RoutesGroup(attributesOrCallback);
+    this.setRoutesGroupAttributes(routesGroup);
+    callback(routesGroup);
+    this.addRouteGroup(routesGroup);
+    return routesGroup;
+  }
+
+  /**
+   * sets the attributes of a routes group by adding middleware layers and
+   * joining the prefix with the routes group's prefix.
+   *
+   * @param {RoutesGroup} routesGroup
+   *
+   */
+  private setRoutesGroupAttributes(routesGroup: RoutesGroup) {
+    routesGroup.middlewareLayers.push(...this.middlewareLayers);
+    routesGroup.prefix = Url.join(
+      Url.trim(this.prefix),
+      Url.trim(routesGroup.prefix),
+    );
   }
 }
