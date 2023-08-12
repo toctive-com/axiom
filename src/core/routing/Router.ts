@@ -139,24 +139,38 @@ export class Router extends RouterBase {
     res: Response,
     next?: Function,
   ): Promise<unknown> {
-    const matchedRoutes = this.match(req);
-    if (!matchedRoutes) {
-      // If there is no matched route call the next function
-      if (next) return await next();
-      return null;
+    try {
+      const matchedRoutes = this.match(req);
+      if (!matchedRoutes) {
+        // If there is no matched route call the next function
+        if (next) return await next();
+        return null;
+      }
+
+      const nextFunctions = matchedRoutes
+        .slice(1)
+        .map((r) => r.actions)
+        .flat();
+      if (next) nextFunctions.push(next);
+
+      const nextFunctionsStack = makeFunctionsChain(nextFunctions, {
+        req,
+        res,
+      });
+
+      return await matchedRoutes[0].dispatch(req, res, nextFunctionsStack);
+    } catch (error) {
+      // TODO add error handler object
+      console.error('Something went wrong when dispatching a route', error);
+
+      res.statusCode = 500;
+      res.statusMessage = 'Internal Server Error';
+
+      return {
+        success: false,
+        message: error.message,
+        stack: error.stack?.split('\n'),
+      };
     }
-
-    const nextFunctions = matchedRoutes
-      .slice(1)
-      .map((r) => r.actions)
-      .flat();
-    if (next) nextFunctions.push(next);
-
-    const nextFunctionsStack = makeFunctionsChain(nextFunctions, {
-      req,
-      res,
-    });
-
-    return await matchedRoutes[0].dispatch(req, res, nextFunctionsStack);
   }
 }

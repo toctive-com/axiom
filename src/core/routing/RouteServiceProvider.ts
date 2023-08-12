@@ -15,14 +15,7 @@ export class RouteServiceProvider extends ServiceProvider {
    */
   protected registerRoutes(router: Router): void {
     this.app.add(async (req, res, next) => {
-      let result = null;
-
-      try {
-        result = router.dispatch(req, res, next);
-      } catch (error) {
-        // TODO add error handler object
-        return res.write('Error: ' + error.message);
-      }
+      let result = await router.dispatch(req, res, next);
 
       if (typeof result === 'string') {
         // if result is string write it to response
