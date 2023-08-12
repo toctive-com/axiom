@@ -102,6 +102,21 @@ export class Router extends RouterBase {
   }
 
   /**
+   * Adds a new router as a sub-router. This is done by creating a RoutesGroup
+   * of the sub-router.
+   *
+   * @param {Router} router
+   *
+   * @returns {RoutesGroup} instance of RoutesGroup class
+   *
+   */
+  public use(router: Router): RoutesGroup {
+    const routesGroup = new RoutesGroup();
+    routesGroup.routes = router.routes;
+    return this.addRoutesGroup(routesGroup);
+  }
+
+  /**
    * Handles the routing logic by matching the request to a route, executing the
    * corresponding actions, and calling the next function in the middleware
    * chain if no route is matched.
