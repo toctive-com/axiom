@@ -20,8 +20,8 @@ export const makeFunctionsChain = (
   next = Arr.wrap(next);
 
   const currentFunc = next.shift();
-  return () =>
-    currentFunc({
+  return async () =>
+    await currentFunc({
       next: makeFunctionsChain(next, rest),
       ...rest,
     });
