@@ -1,6 +1,8 @@
 import { Request } from '@/core/http/Request';
 import { RoutesGroupAttributes } from '@/types/RoutesGroupAttributes';
 import { RoutesGroupCallback } from '@/types/RoutesGroupCallback';
+import { makeFunctionsChain } from '@/utils';
+import { Response } from '../http/Response';
 import { Route } from './Route';
 import { RouterBase } from './RouterBase';
 import { RoutesGroup } from './RoutesGroup';
@@ -97,5 +99,49 @@ export class Router extends RouterBase {
 
     // There is no matching route
     return matchedRoutes.length ? matchedRoutes : false;
+  }
+
+  /**
+   * Handles the routing logic by matching the request to a route, executing the
+   * corresponding actions, and calling the next function in the middleware
+   * chain if no route is matched.
+   *
+   * @param {Request} req - Object representing the HTTP request received by the
+   * server. It contains information such as the request method, URL, headers,
+   * and body.
+   * @param {Response} res - Object representing the HTTP response that will be
+   * sent back to the client. It contains methods and properties that allow you
+   * to manipulate the response, set headers, and send data back to the client.
+   * @param {Function} [next] - Function that represents the next middleware
+   * function in the request-response cycle. It is optional and can be used to
+   * pass control to the next middleware function. If provided, the `dispatch`
+   * function will call this `next` function if there is no matched route.
+   *
+   * @returns a Promise that resolves to an unknown value.
+   */
+  public async dispatch(
+    req: Request,
+    res: Response,
+    next?: Function,
+  ): Promise<unknown> {
+    const matchedRoutes = this.match(req);
+    if (!matchedRoutes) {
+      // If there is no matched route call the next function
+      if (next) return await next();
+      return null;
+    }
+
+    const nextFunctions = matchedRoutes
+      .slice(1)
+      .map((r) => r.actions)
+      .flat();
+    if (next) nextFunctions.push(next);
+
+    const nextFunctionsStack = makeFunctionsChain(nextFunctions, {
+      req,
+      res,
+    });
+
+    return await matchedRoutes[0].dispatch(req, res, nextFunctionsStack);
   }
 }

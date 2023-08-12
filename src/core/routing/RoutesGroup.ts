@@ -59,12 +59,14 @@ export class RoutesGroup extends RouterBase {
    * @param attributes
    *
    */
-  protected parseAttributes(attributes: RoutesGroupAttributes) {
-    if (attributes.middleware) {
-      this.middlewareLayers.push(...Arr.wrap(attributes.middleware));
-    }
+  protected parseAttributes(attributes?: RoutesGroupAttributes) {
+    if (attributes) {
+      if (attributes.middleware) {
+        this.middlewareLayers.push(...Arr.wrap(attributes.middleware));
+      }
 
-    if (attributes.prefix) this.prefix = attributes.prefix;
+      if (attributes.prefix) this.prefix = attributes.prefix;
+    }
   }
 
   /**
