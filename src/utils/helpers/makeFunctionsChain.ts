@@ -20,6 +20,10 @@ export const makeFunctionsChain = (
   next = Arr.wrap(next);
 
   const currentFunc = next.shift();
+  if (typeof currentFunc !== 'function') {
+    throw new Error('All items in the stack must be functions.');
+  }
+
   return async () =>
     await currentFunc({
       next: makeFunctionsChain(next, rest),
