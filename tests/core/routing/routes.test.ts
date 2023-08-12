@@ -1,4 +1,4 @@
-import { Request, Route, Router } from '@/core';
+import { Request, Response, Route, Router } from '@/core';
 import { makeFunctionsChain } from '@/utils/helpers/makeFunctionsChain';
 import exp from 'node:constants';
 import { METHODS } from 'node:http';
@@ -309,5 +309,20 @@ describe('Make routes and test if they works as expected', () => {
 
     expect(testFunc).toBeCalledTimes(3);
     expect(request.locals.counter).toBe(2);
+  });
+
+  it('should handle errors thrown by the action', async () => {
+    const router = new Router();
+    router.get('/test', () => {
+      throw new Error('test error');
+    });
+
+    const request = new Request(new Socket());
+    request.url = '/test';
+    request.method = 'get';
+    
+    const result = await router.dispatch(request, new Response(request));
+    expect(result).toHaveProperty('message', 'test error');
+    expect(result).toHaveProperty('success', false);
   });
 });
