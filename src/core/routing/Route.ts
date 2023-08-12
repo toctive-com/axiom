@@ -198,7 +198,7 @@ export class Route {
    * @returns The result of calling action functions.
    *
    */
-  public execute(
+  public async execute(
     request: Request,
     response: Response,
     next: Function = () => {},
@@ -217,7 +217,7 @@ export class Route {
     // from the original array
     this._tempActions = [...this.actions, next];
 
-    return this.callFunctions(this._tempActions, request, response, variables);
+    return await this.callFunctions(this._tempActions, request, response, variables);
   }
 
   /**
@@ -232,7 +232,7 @@ export class Route {
    * @returns The current function is being returned.
    *
    */
-  callFunctions(
+  async callFunctions(
     functions: Function[],
     request: Request,
     response: Response,
@@ -240,8 +240,8 @@ export class Route {
   ) {
     if (functions.length === 0) return;
     const currentFunc = functions.shift();
-    return currentFunc({
-      next: () => this.callFunctions(functions, request, response, rest),
+    return await currentFunc({
+      next: async () => await this.callFunctions(functions, request, response, rest),
       request,
       response,
       req: request,

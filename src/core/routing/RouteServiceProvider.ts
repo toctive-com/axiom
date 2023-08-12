@@ -1,7 +1,7 @@
 import { stringify } from '@/utils';
+import { makeFunctionsChain } from '@/utils/helpers/makeFunctionsChain';
 import { ServiceProvider } from '../ServiceProvider';
 import { Router } from './Router';
-import { makeFunctionsChain } from '@/utils/helpers/makeFunctionsChain';
 
 export class RouteServiceProvider extends ServiceProvider {
   /**
@@ -14,7 +14,7 @@ export class RouteServiceProvider extends ServiceProvider {
    *
    */
   protected registerRoutes(router: Router): void {
-    this.app.add((req, res, next) => {
+    this.app.add(async (req, res, next) => {
       const matchedRoutes = router.match(req);
       let result = null;
 
@@ -30,28 +30,34 @@ export class RouteServiceProvider extends ServiceProvider {
             res,
           });
 
-          result = matchedRoutes[0].execute(req, res, nextFunctionsStack);
+          result = await matchedRoutes[0].execute(req, res, nextFunctionsStack);
         } catch (error) {
           // TODO add error handler object
           return res.write('Error: ' + error.message);
         }
 
-        // if result is string write it to response
         if (typeof result === 'string') {
-          return res.write(result);
-        } else if (typeof result === 'object') {
-          res.appendHeader('Content-Type', 'application/json; charset=utf-8');
-          return res.write(stringify(result));
-        } else if (typeof result === 'undefined') {
+          // if result is string write it to response
+          res.write(result);
+        } else if (
+          (typeof result === 'object' && result === null) ||
+          typeof result === 'undefined'
+        ) {
           // if the route action didn't return anything, end the function
-          return;
-        } else {
-          return res.write(result?.toString() ?? result);
-        }
-      }
+        } else if (typeof result === 'object') {
+          res.addHeader('Content-Type', 'application/json; charset=utf-8');
 
-      // If there is no matched route call the next function
-      return next();
+          if (result['toJSON']) result = result['toJSON']();
+          else result = stringify(result);
+
+          res.write(result);
+        } else {
+          res.write(result?.toString() ?? result);
+        }
+      } else {
+        // If there is no matched route call the next function
+        return await next();
+      }
     });
   }
 
