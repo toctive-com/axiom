@@ -18,7 +18,10 @@ export class RoutesGroup extends RouterBase {
    * @var Function[]
    *
    */
-  protected middlewareLayers: Function[] = [];
+  private _middlewareLayers: Function[] = [];
+  public get middlewareLayers(): Function[] {
+    return this._middlewareLayers;
+  }
 
   /**
    * This property is used to store the a prefix for names of all nested routes.
@@ -27,7 +30,7 @@ export class RoutesGroup extends RouterBase {
    *
    */
   private _prefix: string = '';
-  protected get prefix(): string {
+  public get prefix(): string {
     return this._prefix;
   }
   protected set prefix(value: string) {
@@ -79,7 +82,7 @@ export class RoutesGroup extends RouterBase {
    * @return Route
    *
    */
-  protected addRoute(
+  public addRoute(
     httpMethods: string | string[],
     uris: string | string[],
     actions: CallableFunction[] | CallableFunction | null,
