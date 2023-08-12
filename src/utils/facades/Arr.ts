@@ -9,7 +9,7 @@ export class Arr {
    * @returns an array.
    *
    */
-  static wrap(value: any): any[] {
+  static wrap<T = unknown>(value: T | T[]): T[] {
     if (Array.isArray(value)) return value;
     if (value === undefined || value === null) return [];
     return [value];
