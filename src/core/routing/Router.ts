@@ -9,21 +9,6 @@ import { RoutesGroup } from './RoutesGroup';
 
 export class Router extends RouterBase {
   /**
-   * Loads a file dynamically and returns a Router object.
-   * If the file is already loaded, the file won't be loaded again.
-   *
-   * @param {string} file - The "file" parameter is a string that represents the
-   * path or URL of the file that you want to load.
-   *
-   * @returns the `Router` object.
-   *
-   */
-  public async loadFile(file: string) {
-    await require(file);
-    return this;
-  }
-
-  /**
    * The `middleware` function adds a middleware callback or callbacks to a route
    * registrar and returns the registrar.
    *
@@ -77,15 +62,14 @@ export class Router extends RouterBase {
   }
 
   /**
-   * Checks if the given HTTP method and URL match the allowed criteria and
-   * returns whether the middleware is allowed or not.
+   * Checks if a given request matches any of the routes and returns an array of
+   * matched routes or false if there is no matching route.
    *
-   * @param {string} method - The method parameter is a string that represents the
-   * HTTP method of a request, such as "GET", "POST", "PUT", etc.
-   * @param {string} url - The `url` parameter is a string that represents the URL
-   * of the request being made.
+   * @param {Request} request - object that represents the incoming request. It
+   * typically contains information such as the HTTP method (e.g., GET, POST), the
+   * URL path, query parameters, and headers.
    *
-   * @returns The method is returning a boolean value.
+   * @returns either an array of matched routes or false.
    *
    */
   public match(request: Request): false | Route[] {
