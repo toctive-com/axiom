@@ -1,53 +1,9 @@
+import { HttpMethod } from '@/types';
 import { Arr, Url } from '@/utils';
-import { METHODS } from 'node:http';
 import { Route } from './Route';
 import { RoutesGroup } from './RoutesGroup';
 
 export abstract class RouterBase {
-  /**
-   * There are all supported HTTP verbs in node.js v18
-   * We use these verbs as a fallback if http.METHODS are removed in the future
-   *
-   * @var string[]
-   *
-   */
-  public static readonly defaultSupportedHttpMethods = [
-    'acl',
-    'bind',
-    'checkout',
-    'connect',
-    'copy',
-    'delete',
-    'get',
-    'head',
-    'link',
-    'lock',
-    'm-search',
-    'merge',
-    'mkactivity',
-    'mkcalendar',
-    'mkcol',
-    'move',
-    'notify',
-    'options',
-    'patch',
-    'post',
-    'propfind',
-    'proppatch',
-    'purge',
-    'put',
-    'rebind',
-    'report',
-    'search',
-    'source',
-    'subscribe',
-    'trace',
-    'unbind',
-    'unlink',
-    'unlock',
-    'unsubscribe',
-  ];
-
   /**
    * All HTTP verbs that are supported by the node.js HTTP server
    *
@@ -57,8 +13,42 @@ export abstract class RouterBase {
    * @var string[]
    *
    */
-  public static readonly httpMethods: string[] =
-    METHODS || RouterBase.defaultSupportedHttpMethods;
+  public static readonly httpMethods: HttpMethod[] = [
+    'ACL',
+    'BIND',
+    'CHECKOUT',
+    'CONNECT',
+    'COPY',
+    'DELETE',
+    'GET',
+    'HEAD',
+    'LINK',
+    'LOCK',
+    'M-SEARCH',
+    'MERGE',
+    'MKACTIVITY',
+    'MKCALENDAR',
+    'MKCOL',
+    'MOVE',
+    'NOTIFY',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PROPFIND',
+    'PROPPATCH',
+    'PURGE',
+    'PUT',
+    'REBIND',
+    'REPORT',
+    'SEARCH',
+    'SOURCE',
+    'SUBSCRIBE',
+    'TRACE',
+    'UNBIND',
+    'UNLINK',
+    'UNLOCK',
+    'UNSUBSCRIBE',
+  ];
 
   /**
    * Here we store all registered routes and  router registrar with their
@@ -84,11 +74,11 @@ export abstract class RouterBase {
    *
    */
   protected addRoute(
-    httpMethods: string | string[],
+    httpMethods: HttpMethod | HttpMethod[],
     uris: string | string[],
     actions: CallableFunction[] | CallableFunction,
   ) {
-    httpMethods = Arr.wrap(httpMethods).map((method) => method.toLowerCase());
+    httpMethods = Arr.wrap(httpMethods);
     uris = Arr.wrap(uris).map((uri) => Url.trim(uri));
     actions = Arr.wrap(actions);
 
@@ -159,7 +149,7 @@ export abstract class RouterBase {
    *
    */
   public anyOf(
-    httpMethods: string | string[],
+    httpMethods: HttpMethod | HttpMethod[],
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
@@ -179,7 +169,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('acl', uri, action);
+    return this.addRoute('ACL', uri, action);
   }
 
   /**
@@ -195,7 +185,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('bind', uri, action);
+    return this.addRoute('BIND', uri, action);
   }
 
   /**
@@ -211,7 +201,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('checkout', uri, action);
+    return this.addRoute('CHECKOUT', uri, action);
   }
 
   /**
@@ -227,7 +217,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('connect', uri, action);
+    return this.addRoute('CONNECT', uri, action);
   }
 
   /**
@@ -243,7 +233,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('copy', uri, action);
+    return this.addRoute('COPY', uri, action);
   }
 
   /**
@@ -259,7 +249,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('delete', uri, action);
+    return this.addRoute('DELETE', uri, action);
   }
 
   /**
@@ -275,7 +265,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute(['get', 'head'], uri, action);
+    return this.addRoute(['GET', 'HEAD'], uri, action);
   }
 
   /**
@@ -291,7 +281,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('get', uri, action);
+    return this.addRoute('GET', uri, action);
   }
 
   /**
@@ -307,7 +297,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('head', uri, action);
+    return this.addRoute('HEAD', uri, action);
   }
 
   /**
@@ -323,7 +313,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('link', uri, action);
+    return this.addRoute('LINK', uri, action);
   }
 
   /**
@@ -339,7 +329,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('lock', uri, action);
+    return this.addRoute('LOCK', uri, action);
   }
 
   /**
@@ -355,7 +345,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('merge', uri, action);
+    return this.addRoute('MERGE', uri, action);
   }
 
   /**
@@ -371,7 +361,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('mkactivity', uri, action);
+    return this.addRoute('MKACTIVITY', uri, action);
   }
 
   /**
@@ -387,7 +377,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('mkcalendar', uri, action);
+    return this.addRoute('MKCALENDAR', uri, action);
   }
 
   /**
@@ -403,7 +393,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('mkcol', uri, action);
+    return this.addRoute('MKCOL', uri, action);
   }
 
   /**
@@ -419,7 +409,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('move', uri, action);
+    return this.addRoute('MOVE', uri, action);
   }
 
   /**
@@ -435,7 +425,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('notify', uri, action);
+    return this.addRoute('NOTIFY', uri, action);
   }
 
   /**
@@ -451,7 +441,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('options', uri, action);
+    return this.addRoute('OPTIONS', uri, action);
   }
 
   /**
@@ -467,7 +457,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('patch', uri, action);
+    return this.addRoute('PATCH', uri, action);
   }
 
   /**
@@ -483,7 +473,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('post', uri, action);
+    return this.addRoute('POST', uri, action);
   }
 
   /**
@@ -499,7 +489,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('propfind', uri, action);
+    return this.addRoute('PROPFIND', uri, action);
   }
 
   /**
@@ -515,7 +505,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('proppatch', uri, action);
+    return this.addRoute('PROPPATCH', uri, action);
   }
 
   /**
@@ -531,7 +521,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('purge', uri, action);
+    return this.addRoute('PURGE', uri, action);
   }
 
   /**
@@ -547,7 +537,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('put', uri, action);
+    return this.addRoute('PUT', uri, action);
   }
 
   /**
@@ -563,7 +553,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('rebind', uri, action);
+    return this.addRoute('REBIND', uri, action);
   }
 
   /**
@@ -579,7 +569,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('report', uri, action);
+    return this.addRoute('REPORT', uri, action);
   }
 
   /**
@@ -595,7 +585,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('m-search', uri, action);
+    return this.addRoute('M-SEARCH', uri, action);
   }
 
   /**
@@ -611,7 +601,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('m-search', uri, action);
+    return this.addRoute('M-SEARCH', uri, action);
   }
 
   /**
@@ -627,7 +617,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('source', uri, action);
+    return this.addRoute('SOURCE', uri, action);
   }
 
   /**
@@ -643,7 +633,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('subscribe', uri, action);
+    return this.addRoute('SUBSCRIBE', uri, action);
   }
 
   /**
@@ -659,7 +649,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('trace', uri, action);
+    return this.addRoute('TRACE', uri, action);
   }
 
   /**
@@ -675,7 +665,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('unbind', uri, action);
+    return this.addRoute('UNBIND', uri, action);
   }
 
   /**
@@ -691,7 +681,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('unlink', uri, action);
+    return this.addRoute('UNLINK', uri, action);
   }
 
   /**
@@ -707,7 +697,7 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('unlock', uri, action);
+    return this.addRoute('UNLOCK', uri, action);
   }
 
   /**
@@ -723,6 +713,6 @@ export abstract class RouterBase {
     uri: string | string[],
     action: CallableFunction | CallableFunction[],
   ) {
-    return this.addRoute('unsubscribe', uri, action);
+    return this.addRoute('UNSUBSCRIBE', uri, action);
   }
 }

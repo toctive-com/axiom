@@ -90,7 +90,7 @@ export class Route {
    *
    */
   public isHttpMethodAllowed(httpMethod: string): boolean {
-    return this.httpMethods.includes(httpMethod.toLowerCase());
+    return this.httpMethods.includes(httpMethod.toUpperCase());
   }
 
   /**

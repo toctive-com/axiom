@@ -1,6 +1,5 @@
 import { Request, Response, Route, Router } from '@/core';
 import { makeFunctionsChain } from '@/utils/helpers/makeFunctionsChain';
-import exp from 'node:constants';
 import { METHODS } from 'node:http';
 import { Socket } from 'node:net';
 import { describe, expect, it, vi } from 'vitest';
@@ -28,12 +27,12 @@ describe('Make routes and test if they works as expected', () => {
 
     const getRoute = router.routes[0];
     expect((getRoute as Route).uri).toEqual(['test']);
-    expect((getRoute as Route).httpMethods).toEqual(['get', 'head']);
+    expect((getRoute as Route).httpMethods).toEqual(['GET', 'HEAD']);
     expect((getRoute as Route).actions).toEqual([func]);
 
     const postRoute = router.routes[1];
     expect((postRoute as Route).uri).toEqual(['test']);
-    expect((postRoute as Route).httpMethods).toEqual(['post']);
+    expect((postRoute as Route).httpMethods).toEqual(['POST']);
     expect((postRoute as Route).actions).toEqual([func]);
   });
 
@@ -49,10 +48,10 @@ describe('Make routes and test if they works as expected', () => {
     const request = new Request(new Socket());
     request.url = '/test';
 
-    request.method = 'get';
+    request.method = 'GET';
     expect(router.match(request)).toEqual([getRoute]);
 
-    request.method = 'post';
+    request.method = 'POST';
     expect(router.match(request)).toEqual([postRoute]);
   });
 
@@ -65,7 +64,7 @@ describe('Make routes and test if they works as expected', () => {
     const request = new Request(new Socket());
     request.url = '/test';
 
-    request.method = 'put';
+    request.method = 'PUT';
     expect(router.match(request)).toBeFalsy();
   });
 
@@ -78,7 +77,7 @@ describe('Make routes and test if they works as expected', () => {
 
     const request = new Request(new Socket());
     request.url = '/test';
-    request.method = 'get';
+    request.method = 'GET';
 
     const matchedRoutes = router.match(request);
     expect(matchedRoutes).toHaveLength(1);
@@ -96,7 +95,7 @@ describe('Make routes and test if they works as expected', () => {
 
     const request = new Request(new Socket());
     request.url = '/test';
-    request.method = 'get';
+    request.method = 'GET';
 
     const matchedRoutes = router.match(request);
     expect(matchedRoutes).toHaveLength(1);
@@ -113,7 +112,7 @@ describe('Make routes and test if they works as expected', () => {
     const routeAll = router.routes[0];
     const routeAny = router.routes[1];
 
-    const methods = METHODS.map((m) => m.toLowerCase());
+    const methods = METHODS;
 
     expect(routeAll).toBeInstanceOf(Route);
     expect((routeAll as Route).httpMethods).toEqual(methods);
@@ -125,7 +124,7 @@ describe('Make routes and test if they works as expected', () => {
   it('should add all routes with all methods', () => {
     const router = new Router();
     const allMethods = [
-      ...METHODS.filter((m) => m !== 'M-SEARCH').map((m) => m.toLowerCase()),
+      ...METHODS.filter((m) => m !== 'M-SEARCH'),
     ];
 
     // add a route for every HTTP method
@@ -137,10 +136,37 @@ describe('Make routes and test if they works as expected', () => {
 
     for (const route of router.routes) {
       for (const method of (route as Route).httpMethods) {
-        if (method === 'm-search') continue;
+        if (method === 'M-SEARCH') continue;
         expect(allMethods.includes(method)).toBeTruthy();
       }
     }
+  });
+
+  it('should add route with m-search HTTP method', () => {
+    const router = new Router();
+    router.mSearch('/test', () => 'response value');
+
+    const route = router.routes[0];
+    expect(route).toBeInstanceOf(Route);
+    expect((route as Route).httpMethods).toEqual(['M-SEARCH']);
+  });
+
+  it('should add route with all wanted methods', () => {
+    const router = new Router();
+    router.anyOf(['GET', 'POST', 'ACL'], '/test', () => 'response value');
+
+    const route = router.routes[0];
+    expect(route).toBeInstanceOf(Route);
+    expect((route as Route).httpMethods).toEqual(['GET', 'POST', 'ACL']);
+  });
+
+  it('should add route with get only http method', () => {
+    const router = new Router();
+    router.getOnly('/test', () => 'response value');
+
+    const route = router.routes[0];
+    expect(route).toBeInstanceOf(Route);
+    expect((route as Route).httpMethods).toEqual(['GET']);
   });
 
   it('should return false if there is no matched route', () => {
@@ -148,7 +174,7 @@ describe('Make routes and test if they works as expected', () => {
     router.get('/test', () => 'response value');
     const request = new Request(new Socket());
     request.url = '/another-url';
-    request.method = 'get';
+    request.method = 'GET';
 
     expect(router.match(request)).toBeFalsy();
   });
@@ -187,7 +213,7 @@ describe('Make routes and test if they works as expected', () => {
 
     const request = new Request(new Socket());
     request.url = '/test';
-    request.method = 'get';
+    request.method = 'GET';
     const matchedRoutes = router.match(request);
     expect(matchedRoutes).toHaveLength(stackSize + 2);
 
@@ -233,7 +259,7 @@ describe('Make routes and test if they works as expected', () => {
 
     const request = new Request(new Socket());
     request.url = '/test';
-    request.method = 'get';
+    request.method = 'GET';
     const matchedRoutes = router.match(request);
     expect(matchedRoutes).toHaveLength(1);
 
@@ -246,7 +272,7 @@ describe('Make routes and test if they works as expected', () => {
   it('should call a stack of actions with the same request', () => {
     const request = new Request(new Socket());
     request.url = '/test-stack';
-    request.method = 'get';
+    request.method = 'GET';
     const stack = [
       ({ req, next }) => {
         req.locals.counter = 0;
@@ -273,7 +299,7 @@ describe('Make routes and test if they works as expected', () => {
   it('should call a stack of routes from multiple routers with the same request', () => {
     const request = new Request(new Socket());
     request.url = '/test-stack';
-    request.method = 'get';
+    request.method = 'GET';
 
     const testFunc = vi.fn();
     const stack = [
@@ -319,10 +345,49 @@ describe('Make routes and test if they works as expected', () => {
 
     const request = new Request(new Socket());
     request.url = '/test';
-    request.method = 'get';
-    
+    request.method = 'GET';
+
     const result = await router.dispatch(request, new Response(request));
     expect(result).toHaveProperty('message', 'test error');
     expect(result).toHaveProperty('success', false);
+  });
+
+  it('should have all HTTP methods', () => {
+    expect(Router.httpMethods).toEqual([
+      'ACL',
+      'BIND',
+      'CHECKOUT',
+      'CONNECT',
+      'COPY',
+      'DELETE',
+      'GET',
+      'HEAD',
+      'LINK',
+      'LOCK',
+      'M-SEARCH',
+      'MERGE',
+      'MKACTIVITY',
+      'MKCALENDAR',
+      'MKCOL',
+      'MOVE',
+      'NOTIFY',
+      'OPTIONS',
+      'PATCH',
+      'POST',
+      'PROPFIND',
+      'PROPPATCH',
+      'PURGE',
+      'PUT',
+      'REBIND',
+      'REPORT',
+      'SEARCH',
+      'SOURCE',
+      'SUBSCRIBE',
+      'TRACE',
+      'UNBIND',
+      'UNLINK',
+      'UNLOCK',
+      'UNSUBSCRIBE',
+    ]);
   });
 });
