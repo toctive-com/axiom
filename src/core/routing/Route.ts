@@ -30,7 +30,10 @@ export class Route {
    * This property is used to store the name of a route.
    *
    */
-  protected prefixUri: string = '';
+  private _prefixUri: string = '';
+  public get prefixUri(): string {
+    return this._prefixUri;
+  }
 
   private _tempActions: typeof this.actions;
   /**
@@ -217,7 +220,12 @@ export class Route {
     // from the original array
     this._tempActions = [...this.actions, next];
 
-    return await this.callFunctions(this._tempActions, request, response, variables);
+    return await this.callFunctions(
+      this._tempActions,
+      request,
+      response,
+      variables,
+    );
   }
 
   /**
@@ -241,7 +249,8 @@ export class Route {
     if (functions.length === 0) return;
     const currentFunc = functions.shift();
     return await currentFunc({
-      next: async () => await this.callFunctions(functions, request, response, rest),
+      next: async () =>
+        await this.callFunctions(functions, request, response, rest),
       request,
       response,
       req: request,
@@ -302,13 +311,7 @@ export class Route {
    *
    */
   public prefix(prefix: string): this {
-    prefix = Url.trim(prefix);
-    // const newUriArr = [];
-    // for (const uri of this.uri) {
-    //   newUriArr.push('/' + Url.trim(uri) + '/' + prefix);
-    // }
-    // this.uri = newUriArr;
-    this.prefixUri = prefix;
+    this._prefixUri = Url.trim(prefix);
     return this;
   }
 }
