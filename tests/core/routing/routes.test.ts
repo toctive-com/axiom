@@ -123,9 +123,7 @@ describe('Make routes and test if they works as expected', () => {
 
   it('should add all routes with all methods', () => {
     const router = new Router();
-    const allMethods = [
-      ...METHODS.filter((m) => m !== 'M-SEARCH'),
-    ];
+    const allMethods = [...METHODS.filter((m) => m !== 'M-SEARCH')];
 
     // add a route for every HTTP method
     for (const method of allMethods) {

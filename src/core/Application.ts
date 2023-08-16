@@ -98,13 +98,13 @@ export class Application extends Container {
     return this._middleware;
   }
 
-/**
- * Adds a middleware function to an array of middleware functions that will be
- * executed on incoming requests.
- *
- * @param middleware
- *
- */
+  /**
+   * Adds a middleware function to an array of middleware functions that will be
+   * executed on incoming requests.
+   *
+   * @param middleware
+   *
+   */
   public add(
     middleware: (res: Request, req: Response, next?: Function) => any,
   ) {
