@@ -3,6 +3,7 @@ import { RoutesGroupAttributes } from '@/types/RoutesGroupAttributes';
 import { Arr, Url } from '@/utils';
 import { Route } from './Route';
 import { RouterBase } from './RouterBase';
+import { HttpMethod } from '@/types';
 
 /**
  * The `RoutesGroup` class is a subclass of `RouterBase` that represents a group
@@ -83,7 +84,7 @@ export class RoutesGroup extends RouterBase {
    *
    */
   public addRoute(
-    httpMethods: string | string[],
+    httpMethods: HttpMethod | HttpMethod[],
     uris: string | string[],
     actions: CallableFunction[] | CallableFunction | null,
   ) {
