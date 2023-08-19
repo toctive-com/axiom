@@ -26,13 +26,16 @@
   "publishConfig": {
     "access": "public"
   },
+  "bin": {
+    "axiom": "./dist/cli.js"
+  },
   "scripts": {
     "dev": "nodemon ./src/index.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "build:watch": "tsup src/index.ts --watch --format cjs,esm --dts",
+    "build": "tsup --config ./tsup.config.ts",
+    "build:watch": "tsup --config ./tsup.config.ts --watch",
     "lint": "tsup ./src",
     "prettier": "prettier . --check --ignore-path .prettierignore",
     "prettier:fix": "prettier . --write --ignore-path .prettierignore",
