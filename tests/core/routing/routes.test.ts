@@ -1,12 +1,17 @@
-import { Request, Response, Route, Router } from '@/core';
+import { Request, Response, Route, Router, RoutesGroup } from '@/core';
 import { makeFunctionsChain } from '@/utils/helpers/makeFunctionsChain';
 import { METHODS } from 'node:http';
 import { Socket } from 'node:net';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('Make routes and test if they works as expected', () => {
+  let router: Router;
+
+  beforeEach(() => {
+    router = new Router(); // Create a new Router instance before each test
+  });
+
   it('should make routes and store them in routes property', () => {
-    const router = new Router();
     router.get('/test', () => 'GET - response value');
     router.post('/test', () => 'POST - response value');
     router.put('/test', () => 'PUT - response value');
@@ -20,7 +25,6 @@ describe('Make routes and test if they works as expected', () => {
   });
 
   it('should make routes and make the URI, Actions & HTTP method as arrays', () => {
-    const router = new Router();
     const func = vi.fn();
     router.get('/test', func);
     router.post('/test', func);
@@ -37,7 +41,6 @@ describe('Make routes and test if they works as expected', () => {
   });
 
   it('should return the matched routes when making the request', () => {
-    const router = new Router();
     const func = vi.fn();
     router.get('/test', func);
     router.post('/test', func);
@@ -47,29 +50,29 @@ describe('Make routes and test if they works as expected', () => {
 
     const request = new Request(new Socket());
     request.url = '/test';
-
     request.method = 'GET';
-    expect(router.match(request)).toEqual([getRoute]);
+
+    const response = new Response(request);
+    expect(router.match(request, response)).toEqual([getRoute]);
 
     request.method = 'POST';
-    expect(router.match(request)).toEqual([postRoute]);
+    expect(router.match(request, response)).toEqual([postRoute]);
   });
 
   it('should return false when making the request and no routes match', () => {
-    const router = new Router();
     const func = vi.fn();
     router.get('/test', func);
     router.post('/test', func);
 
     const request = new Request(new Socket());
     request.url = '/test';
-
     request.method = 'PUT';
-    expect(router.match(request)).toBeFalsy();
+
+    const response = new Response(request);
+    expect(router.match(request, response)).toBeFalsy();
   });
 
   it('should call the actions of the matched route when making the request', () => {
-    const router = new Router();
     const func = vi.fn();
     router.get('/test', func);
 
@@ -79,14 +82,15 @@ describe('Make routes and test if they works as expected', () => {
     request.url = '/test';
     request.method = 'GET';
 
-    const matchedRoutes = router.match(request);
+    const response = new Response(request);
+
+    const matchedRoutes = router.match(request, response);
     expect(matchedRoutes).toHaveLength(1);
     (matchedRoutes[0] as Route).dispatch(request, null);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
   it('should call the next function when making the request', () => {
-    const router = new Router();
     const next = vi.fn();
     const func = vi.fn(next);
     router.get('/test', func);
@@ -97,7 +101,9 @@ describe('Make routes and test if they works as expected', () => {
     request.url = '/test';
     request.method = 'GET';
 
-    const matchedRoutes = router.match(request);
+    const response = new Response(request);
+
+    const matchedRoutes = router.match(request, response);
     expect(matchedRoutes).toHaveLength(1);
     (matchedRoutes[0] as Route).dispatch(request, null, next);
     expect(func).toHaveBeenCalledTimes(1);
@@ -105,7 +111,6 @@ describe('Make routes and test if they works as expected', () => {
   });
 
   it('should add all methods to the router', () => {
-    const router = new Router();
     router.all('/test', () => 'response value');
     router.any('/test-2', () => 'response value');
 
@@ -122,7 +127,6 @@ describe('Make routes and test if they works as expected', () => {
   });
 
   it('should add all routes with all methods', () => {
-    const router = new Router();
     const allMethods = [...METHODS.filter((m) => m !== 'M-SEARCH')];
 
     // add a route for every HTTP method
@@ -141,7 +145,6 @@ describe('Make routes and test if they works as expected', () => {
   });
 
   it('should add route with m-search HTTP method', () => {
-    const router = new Router();
     router.mSearch('/test', () => 'response value');
 
     const route = router.routes[0];
@@ -150,7 +153,6 @@ describe('Make routes and test if they works as expected', () => {
   });
 
   it('should add route with all wanted methods', () => {
-    const router = new Router();
     router.anyOf(['GET', 'POST', 'ACL'], '/test', () => 'response value');
 
     const route = router.routes[0];
@@ -159,7 +161,6 @@ describe('Make routes and test if they works as expected', () => {
   });
 
   it('should add route with get only http method', () => {
-    const router = new Router();
     router.getOnly('/test', () => 'response value');
 
     const route = router.routes[0];
@@ -168,27 +169,28 @@ describe('Make routes and test if they works as expected', () => {
   });
 
   it('should return false if there is no matched route', () => {
-    const router = new Router();
     router.get('/test', () => 'response value');
     const request = new Request(new Socket());
     request.url = '/another-url';
     request.method = 'GET';
 
-    expect(router.match(request)).toBeFalsy();
+    const response = new Response(request);
+
+    expect(router.match(request, response)).toBeFalsy();
   });
 
   it('should return false if there is no matched route for any method', () => {
-    const router = new Router();
     router.get('/test', () => 'response value');
     const request = new Request(new Socket());
     request.url = '/test';
     request.method = 'post';
 
-    expect(router.match(request)).toBeFalsy();
+    const response = new Response(request);
+
+    expect(router.match(request, response)).toBeFalsy();
   });
 
   it('should not stack overflow with a large sync stack of routes', () => {
-    const router = new Router();
     const stackSize = 10000;
     const testFunc = vi.fn();
 
@@ -212,7 +214,10 @@ describe('Make routes and test if they works as expected', () => {
     const request = new Request(new Socket());
     request.url = '/test';
     request.method = 'GET';
-    const matchedRoutes = router.match(request);
+
+    const response = new Response(request);
+
+    const matchedRoutes = router.match(request, response);
     expect(matchedRoutes).toHaveLength(stackSize + 2);
 
     if (matchedRoutes === false) return;
@@ -236,8 +241,6 @@ describe('Make routes and test if they works as expected', () => {
   });
 
   it('should not stack overflow with a large sync stacked functions', () => {
-    const router = new Router();
-
     const middleware = [];
     for (var i = 0; i < 6000; i++) {
       middleware.push(({ req, next }) => {
@@ -258,7 +261,10 @@ describe('Make routes and test if they works as expected', () => {
     const request = new Request(new Socket());
     request.url = '/test';
     request.method = 'GET';
-    const matchedRoutes = router.match(request);
+
+    const response = new Response(request);
+
+    const matchedRoutes = router.match(request, response);
     expect(matchedRoutes).toHaveLength(1);
 
     (matchedRoutes[0] as Route).dispatch(request, null);
@@ -286,10 +292,11 @@ describe('Make routes and test if they works as expected', () => {
       },
     ];
 
-    const router = new Router();
     router.get('/test-stack', stack);
 
-    const matchedRoutes = router.match(request);
+    const response = new Response(request);
+
+    const matchedRoutes = router.match(request, response);
     (matchedRoutes[0] as Route).dispatch(request, null);
     expect(request.locals.counter).toBe(2);
   });
@@ -325,7 +332,6 @@ describe('Make routes and test if they works as expected', () => {
     const routerC = new Router();
     routerC.get('/test-stack', stack[2]);
 
-    const router = new Router();
     router.use(routerA);
     router.use(routerB);
     router.use(routerC);
@@ -336,7 +342,6 @@ describe('Make routes and test if they works as expected', () => {
   });
 
   it('should handle errors thrown by the action', async () => {
-    const router = new Router();
     router.get('/test', () => {
       throw new Error('test error');
     });
@@ -387,5 +392,214 @@ describe('Make routes and test if they works as expected', () => {
       'UNLOCK',
       'UNSUBSCRIBE',
     ]);
+  });
+
+  it('should add middleware to routes group', () => {
+    const middlewareFn = () => {};
+
+    const routesGroup = router.middleware(middlewareFn);
+
+    expect(routesGroup).toBeDefined();
+    expect(router.routes.length).toBe(1);
+  });
+
+  it('should add prefix to routes group', () => {
+    const prefix = '/api';
+
+    const routesGroup = router.prefix(prefix);
+
+    expect(routesGroup).toBeDefined();
+    expect(router.routes.length).toBe(1);
+  });
+
+  it('should handle empty route list when matching', () => {
+    const request = new Request(new Socket());
+    request.url = '/test';
+    request.method = 'GET';
+
+    const response = new Response(request);
+
+    const matchedRoutes = router.match(request, response);
+
+    expect(matchedRoutes).toBe(false);
+  });
+
+  it('should add sub-router and use its routes', () => {
+    const subRouter = new Router();
+    const route = subRouter.get('/sub-test', () => {});
+
+    const routesGroup = router.use(subRouter);
+
+    expect(routesGroup).toBeDefined();
+    expect(router.routes.length).toBe(1);
+    expect((router.routes[0] as RoutesGroup).routes[0]).toBe(route);
+  });
+
+  it('should correctly handle dispatch error', async () => {
+    const request = new Request(new Socket());
+    request.url = '/error';
+    request.method = 'GET';
+    const response = new Response(request);
+
+    router.get('/error', () => {
+      throw new Error('Test Error');
+    });
+
+    const dispatchResult = await router.dispatch(request, response);
+
+    expect(dispatchResult).toEqual({
+      success: false,
+      message: 'Test Error',
+      stack: expect.arrayContaining(['Error: Test Error']),
+    });
+    expect(response.statusCode).toBe(500);
+    expect(response.statusMessage).toBe('Internal Server Error');
+  });
+
+  it('should create and use route groups with attributes', () => {
+    const routesGroup = router.group({ prefix: '/api' }, (group) => {
+      group.get('/users', () => {});
+    });
+
+    expect(routesGroup).toBeDefined();
+    expect(router.routes.length).toBe(1);
+    expect(router.routes[0].prefix).toBe('api');
+    expect((router.routes[0] as RoutesGroup).routes.length).toBe(1);
+  });
+
+  it('should create and use route groups without attributes', () => {
+    const routesGroup = router.group((group) => {
+      group.get('/posts', () => {});
+    });
+
+    expect(routesGroup).toBeDefined();
+    expect(router.routes.length).toBe(1);
+    expect((router.routes[0] as RoutesGroup).routes.length).toBe(1);
+  });
+
+  it('should match multiple routes', () => {
+    const request = new Request(new Socket());
+    request.url = '/common';
+    request.method = 'GET';
+
+    const route1 = router.get('/common', () => {});
+    const route2 = router.get('/common', () => {});
+
+    const response = new Response(request);
+
+    const matchedRoutes = router.match(request, response);
+
+    expect(matchedRoutes).toHaveLength(2);
+    expect(matchedRoutes[0]).toBe(route1);
+    expect(matchedRoutes[1]).toBe(route2);
+  });
+
+  it('should handle middleware in a route', async () => {
+    const request = new Request(new Socket());
+    request.url = '/test';
+    request.method = 'GET';
+    const response = new Response(request);
+
+    let middlewareCalled = false;
+
+    const middleware = ({ next }) => {
+      middlewareCalled = true;
+      next();
+    };
+
+    const route = router.get('/test', () => {});
+    route.middleware(middleware);
+
+    await router.dispatch(request, response);
+
+    expect(middlewareCalled).toBe(true);
+  });
+
+  it('should handle nested middleware in route group', async () => {
+    const request = new Request(new Socket());
+    request.url = '/test';
+    request.method = 'GET';
+    const response = new Response(request);
+
+    let middleware1Called = false;
+    let middleware2Called = false;
+
+    const testFunc = vi.fn();
+    const middleware1 = ({ next }) => {
+      middleware1Called = true;
+      testFunc();
+      return next();
+    };
+
+    const middleware2 = ({ next }) => {
+      middleware2Called = true;
+      testFunc();
+      return next();
+    };
+
+    router
+      .middleware(middleware1)
+      .get('/test', () => {})
+      .middleware(middleware2);
+
+    await router.dispatch(request, response);
+
+    expect(testFunc).toBeCalledTimes(2);
+    expect(middleware1Called).toBe(true);
+    expect(middleware2Called).toBe(true);
+  });
+
+  it('should call next function if no route is matched', async () => {
+    const request = new Request(new Socket());
+    request.url = '/nonexistent';
+    request.method = 'GET';
+    const response = new Response(request);
+
+    const nextFn = vi.fn();
+
+    const dispatchResult = await router.dispatch(request, response, nextFn);
+
+    expect(dispatchResult).toBeUndefined();
+    expect(nextFn).toHaveBeenCalled();
+  });
+
+  it('should return null if no route is matched and no next function', async () => {
+    const request = new Request(new Socket());
+    request.url = '/nonexistent';
+    request.method = 'GET';
+    const response = new Response(request);
+
+    const dispatchResult = await router.dispatch(request, response);
+
+    expect(dispatchResult).toBeNull();
+  });
+
+  it('should execute matched route and call next function', async () => {
+    const request = new Request(new Socket());
+    request.url = '/test';
+    request.method = 'GET';
+    const response = new Response(request);
+
+    let routeExecuted = false;
+    let nextFunctionCalled = false;
+
+    router.get('/test', ({ next }) => {
+      routeExecuted = true;
+      next();
+    });
+
+    const nextFunction = () => {
+      nextFunctionCalled = true;
+    };
+
+    const dispatchResult = await router.dispatch(
+      request,
+      response,
+      nextFunction,
+    );
+
+    expect(dispatchResult).toBeUndefined();
+    expect(routeExecuted).toBe(true);
+    expect(nextFunctionCalled).toBe(true);
   });
 });
