@@ -9,12 +9,10 @@ import { Application, HttpKernel } from '@/core';
  */
 export async function TestApp() {
   // Get instance of Application
-  const app = new Application({});
+  const app = new Application();
 
   // Boot the application and return app instance
   await app.boot();
-
-  app.make<HttpKernel>('HttpKernel').captureRequest();
 
   return app;
 }
