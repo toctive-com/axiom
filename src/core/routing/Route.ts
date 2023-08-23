@@ -1,6 +1,6 @@
 import { Request } from '@/core/http/Request';
 import { Response } from '@/core/http/Response';
-import { Url } from '@/utils';
+import { Url, makeFunctionsChain } from '@/utils';
 
 /**
  * The `Route` class represents a route in a web application and provides
@@ -67,7 +67,7 @@ export class Route {
    * @returns The method is returning a boolean value.
    *
    */
-  public match(request: Request): this | false {
+  public match(request: Request, response: Response): this | false {
     const { method } = request;
 
     // `isMiddlewareAllowed()` must be called after all other checker. So, we
@@ -75,7 +75,7 @@ export class Route {
     return this.isHttpMethodAllowed(method) &&
       this.isMatchPrefix(request) &&
       this.isUriMatches(request) &&
-      this.isMiddlewareAllowed(request)
+      this.isMiddlewareAllowed(request, response)
       ? this
       : false;
   }
@@ -180,10 +180,14 @@ export class Route {
    * @returns A boolean value
    *
    */
-  public isMiddlewareAllowed(request: Request): boolean {
-    return this.middlewareLayers.every((middleware: Function) =>
-      middleware(request),
-    );
+  public isMiddlewareAllowed(request: Request, response: Response): boolean {
+    const stack = makeFunctionsChain([...this.middlewareLayers, () => true], {
+      request,
+      response,
+      req: request,
+      res: response,
+    });
+    return stack();
   }
 
   /**

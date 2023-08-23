@@ -4,6 +4,7 @@ import { Arr, Url } from '@/utils';
 import { Route } from './Route';
 import { RouterBase } from './RouterBase';
 import { HttpMethod } from '@/types';
+import { Response } from '../http/Response';
 
 /**
  * The `RoutesGroup` class is a subclass of `RouterBase` that represents a group
@@ -133,9 +134,9 @@ export class RoutesGroup extends RouterBase {
    * @returns The method is returning a boolean value.
    *
    */
-  public match(request: Request): false | Route {
+  public match(request: Request, response: Response): false | Route {
     for (const route of this.routes) {
-      const isMatched = route.match(request);
+      const isMatched = route.match(request, response);
       if (!isMatched) continue;
 
       if (isMatched instanceof Route) return isMatched;
