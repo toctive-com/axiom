@@ -117,7 +117,8 @@ export class Application extends Container {
    * @param ApplicationParameters
    *
    */
-  constructor({ basePath = process.cwd() }: ApplicationParameters) {
+  constructor(parameters?: ApplicationParameters) {
+    const basePath = parameters?.basePath ?? process.cwd();
     super();
 
     // Register the base path of the application
