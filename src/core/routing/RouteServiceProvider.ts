@@ -1,5 +1,4 @@
 import { stringify } from '@/utils';
-import { makeFunctionsChain } from '@/utils/helpers/makeFunctionsChain';
 import { ServiceProvider } from '../ServiceProvider';
 import { Router } from './Router';
 
@@ -13,7 +12,7 @@ export class RouteServiceProvider extends ServiceProvider {
    * requests.
    *
    */
-  protected registerRoutes(router: Router): void {
+  public registerRoutes(router: Router): void {
     this.app.add(async (req, res, next) => {
       let result = await router.dispatch(req, res, next);
 
@@ -39,10 +38,10 @@ export class RouteServiceProvider extends ServiceProvider {
    * Adds a route to the app that writes "Route not found" to the response.
    *
    */
-  protected handlerNotFoundError(): void {
+  public handlerNotFoundError(): void {
     this.app.add((req, res) => {
       // TODO add default views for errors
-      res.statusCode = 404;
+      res.setStatus('NOT_FOUND');
       res.write('Route not found');
     });
   }
