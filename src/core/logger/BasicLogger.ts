@@ -13,9 +13,29 @@ import { LogTransport } from './transports/LogTransport';
  * transports for handling log messages.
  */
 export class BasicLogger {
-  protected config: Partial<LoggerConfig>;
-  protected transports: LogTransport[];
-  protected formatters: LogFormatter[];
+  private _config: Partial<LoggerConfig>;
+  public get config(): Partial<LoggerConfig> {
+    return this._config;
+  }
+  public set config(value: Partial<LoggerConfig>) {
+    this._config = value;
+  }
+
+  private _transports: LogTransport[];
+  public get transports(): LogTransport[] {
+    return this._transports;
+  }
+  public set transports(value: LogTransport[]) {
+    this._transports = value;
+  }
+
+  private _formatters: LogFormatter[];
+  public get formatters(): LogFormatter[] {
+    return this._formatters;
+  }
+  public set formatters(value: LogFormatter[]) {
+    this._formatters = value;
+  }
 
   /**
    * Creates an instance of BasicLogger with optional configuration arguments.

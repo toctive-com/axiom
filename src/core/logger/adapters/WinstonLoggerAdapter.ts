@@ -11,7 +11,10 @@ import { LogLevel, logLevels } from '../LogLevel';
  * logging levels. Website: https://github.com/winstonjs/winston
  */
 export class WinstonLoggerAdapter extends LoggerAdapter {
-  protected logger: winston.Logger;
+  protected _logger: winston.Logger;
+  public get logger(): winston.Logger {
+    return this._logger;
+  }
 
   /**
    * Creates an instance of WinstonLoggerAdapter with optional configuration
@@ -24,7 +27,7 @@ export class WinstonLoggerAdapter extends LoggerAdapter {
   constructor(args?: LoggerArguments) {
     super(args);
 
-    this.logger = winston.createLogger({
+    this._logger = winston.createLogger({
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.colorize(),

@@ -93,7 +93,10 @@ import { LoggerAdapter, WinstonLoggerAdapter } from './adapters';
  * ```
  */
 export class Logger extends BasicLogger {
-  private externalLoggers: LoggerAdapter[];
+  protected _externalLoggers: LoggerAdapter[];
+  public get externalLoggers(): LoggerAdapter[] {
+    return this._externalLoggers;
+  }
 
   /**
    * Creates an instance of Logger with optional configuration arguments. If no
