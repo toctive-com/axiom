@@ -1,7 +1,5 @@
 import {
-  LogDetails,
   LogLevel,
-  LogTransport,
   Logger,
   LoggerAdapter,
   LoggerArguments,
