@@ -110,9 +110,7 @@ export class Logger extends BasicLogger {
 
     // If no external loggers are provided, initialize an array containing a
     // default external logger.
-    if (!args?.externalLoggers) {
-      this.externalLoggers = [new WinstonLoggerAdapter(args)];
-    }
+    this._externalLoggers = args?.externalLoggers || [new WinstonLoggerAdapter(args)];
   }
 
   /**
@@ -124,10 +122,6 @@ export class Logger extends BasicLogger {
    * @param data Additional data to be included in the log message.
    */
   async log(level: LogLevel, message: string, data?: Object): Promise<void> {
-    // If no external loggers are provided, use the super.log method from the
-    // parent class (BasicLogger).
-    if (!this.externalLoggers) super.log(level, message, data);
-
     // If external loggers are provided, log the message using each external
     // logger.
     this.externalLoggers?.forEach(async (logger) => {
