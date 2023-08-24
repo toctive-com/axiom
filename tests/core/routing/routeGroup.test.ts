@@ -1,4 +1,4 @@
-import { Request } from '@/core';
+import { Request, Response } from '@/core';
 import { Route, RoutesGroup } from '@/core/routing';
 import { Socket } from 'net';
 import { expect, it, vi } from 'vitest';
@@ -38,8 +38,9 @@ it('should get matched routes successfully', () => {
   const request = new Request(new Socket());
   request.url = '/test';
   request.method = 'GET';
+  const response = new Response(request)
 
-  const matchedRoutes = router.match(request);
+  const matchedRoutes = router.match(request, response);
   expect(matchedRoutes).toBeInstanceOf(Route);
 });
 
@@ -51,8 +52,9 @@ it('should return false when no route is matched', () => {
   const request = new Request(new Socket());
   request.url = '/not-found';
   request.method = 'GET';
+  const response = new Response(request)
 
-  const matchedRoutes = router.match(request);
+  const matchedRoutes = router.match(request, response);
   expect(matchedRoutes).toBe(false);
 });
 
