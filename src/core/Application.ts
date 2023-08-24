@@ -14,6 +14,8 @@ import { expand } from 'dotenv-expand';
 import { join } from 'path';
 import { Request } from './http/Request';
 import { Response } from './http/Response';
+import { Logger } from './logger';
+import { existsSync } from 'node:fs';
 
 export class Application extends Container {
   /**
@@ -99,6 +101,12 @@ export class Application extends Container {
   }
 
   /**
+   * Store an instance of the `Logger` class, which is responsible for logging
+   * messages and events in the application.
+   */
+  logger: Logger;
+
+  /**
    * Adds a middleware function to an array of middleware functions that will be
    * executed on incoming requests.
    *
@@ -158,14 +166,16 @@ export class Application extends Container {
       envFile = '.env.test';
     }
 
-    const output = config({ path: join(this._basePath, envFile) });
-    if (output.error) console.error(output.error);
+    if (existsSync(join(this._basePath, envFile))) {
+      const output = config({ path: join(this._basePath, envFile) });
+      if (output.error) console.error(output.error);
 
-    // extend env variables allowing to use variables inside env variables
-    // @see https://github.com/motdotla/dotenv-expand/
-    expand(output);
+      // extend env variables allowing to use variables inside env variables
+      // @see https://github.com/motdotla/dotenv-expand/
+      expand(output);
 
-    return output.parsed;
+      return output.parsed;
+    }
   }
 
   /**
