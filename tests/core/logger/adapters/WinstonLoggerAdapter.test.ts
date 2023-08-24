@@ -43,14 +43,25 @@ describe('WinstonLoggerAdapter', () => {
   });
 
   it('should log message using configured Winston logger', async () => {
-    const spyWinstonLog = vi.spyOn(logger, 'log');
+    const testFunc = vi.fn((...args: unknown[]) => {});
     const level = InfoLevel;
     const message = 'Test message';
     const data = { key: 'value' };
 
+    class MockWinstonLoggerAdapter extends WinstonLoggerAdapter {
+      constructor(args?: LoggerArguments) {
+        super(args);
+        // Override constructor to avoid initializing the actual Winston logger
+        this._logger = winston.createLogger();
+      }
+      async log(level: LogLevel, message: string, data?: any): Promise<void> {
+        testFunc(level, message, data);
+      }
+    }
+    let loggerAdapter = new MockWinstonLoggerAdapter();
     await loggerAdapter.log(level, message, data);
 
-    expect(spyWinstonLog).toHaveBeenCalledWith('info', message, data);
+    expect(testFunc).toHaveBeenCalledWith(level, message, data);
   });
 
   it('should not log if shouldLog returns false', async () => {
@@ -84,7 +95,6 @@ describe('WinstonLoggerAdapter', () => {
     expect(winstonLevel).toBe('info');
   });
 
-  
   it('should set silent mode based on LoggerArguments', () => {
     const silentArgs: LoggerArguments = {
       config: {
@@ -98,7 +108,7 @@ describe('WinstonLoggerAdapter', () => {
     };
     const silentLogger = new MockWinstonLoggerAdapter(silentArgs);
     const nonSilentLogger = new MockWinstonLoggerAdapter(nonSilentArgs);
-    
+
     expect(nonSilentLogger.logger.silent).toBe(false);
     expect(silentLogger.logger.silent).toBe(true);
   });

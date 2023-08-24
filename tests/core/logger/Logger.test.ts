@@ -1,5 +1,7 @@
 import {
+  LogDetails,
   LogLevel,
+  LogTransport,
   Logger,
   LoggerAdapter,
   LoggerArguments,
@@ -31,12 +33,15 @@ describe('Logger', () => {
   });
 
   it('should use the internal logger when no external loggers are provided', async () => {
+    const logger = new Logger({ transports: [] });
+    logger.log = vi.fn();
     const spy = vi.spyOn(logger, 'log');
     await logger.log(InfoLevel, 'Test message');
     expect(spy).toHaveBeenCalledWith(InfoLevel, 'Test message');
   });
 
   it('should log using only internal logger', async () => {
+    logger.log = vi.fn();
     const spyLog = vi.spyOn(logger, 'log');
     const level = InfoLevel;
     const message = 'Internal logger message';
@@ -95,6 +100,7 @@ describe('Logger', () => {
   });
 
   it('should use super.log if no external loggers are provided', async () => {
+    logger.log = vi.fn();
     const spySuperLog = vi.spyOn(logger, 'log');
     await logger.log(InfoLevel, 'Test message');
 

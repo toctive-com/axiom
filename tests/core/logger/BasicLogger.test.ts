@@ -81,6 +81,7 @@ describe('BasicLogger', () => {
   });
 
   it('emergency should log with the correct log level and message', async () => {
+    const logger = new BasicLogger({transports: []})
     const mockLog = vi.spyOn(logger, 'log'); // Spy on the log method to check if it's called
 
     const message = 'Emergency message';
@@ -98,8 +99,8 @@ describe('BasicLogger', () => {
 
     let logLevel = logLevels.Emergency;
     for (const method of logMethods) {
-      await logger[method](message, data);
-      expect(mockLog).toHaveBeenCalledWith(logLevel, message, data);
+      await logger[method](`${method} message`, data);
+      expect(mockLog).toHaveBeenCalledWith(logLevel, `${method} message`, data);
       logLevel++;
     }
   });
@@ -158,10 +159,11 @@ describe('BasicLogger', () => {
     const loggerWithArgs = new BasicLogger(args);
 
     // Make sure console.error is called with the expected error message
-    const spyConsoleError = vi.spyOn(console, 'error');
-    
+    const originalConsoleError = console.error;
+    const spyConsoleError = console.error = vi.fn((...args: unknown[]) => {})
     await loggerWithArgs.log(InfoLevel, 'Test message');
-
+    
     expect(spyConsoleError).toHaveBeenCalledWith('An error occurred while calling transports:', expect.any(Error));
+    console.error = originalConsoleError;
   });
 });
