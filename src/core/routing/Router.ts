@@ -144,11 +144,7 @@ export class Router extends RouterBase {
 
       return await matchedRoutes[0].dispatch(req, res, nextFunctionsStack);
     } catch (error) {
-      // TODO add error handler object
-      console.error('Something went wrong when dispatching a route', error);
-
-      res.statusCode = 500;
-      res.statusMessage = 'Internal Server Error';
+      res.setStatus("INTERNAL_SERVER_ERROR")
 
       return {
         success: false,
