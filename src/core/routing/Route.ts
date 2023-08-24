@@ -40,7 +40,9 @@ export class Route {
     public httpMethods: string[],
     public uri: string[],
     public actions: Function[],
-  ) {}
+  ) {
+    this.uri = uri.map((item) => Url.trim(item));
+  }
 
   /**
    * Checks if the given HTTP method and URL match the allowed criteria and
@@ -86,7 +88,7 @@ export class Route {
   /**
    * Extracts variables from a given original URL and current URL.
    */
-  protected extractVariables(originalUrl: string, currentUrl: string) {
+  public extractVariables(originalUrl: string, currentUrl: string) {
     const originalUrlParts = originalUrl.split('/');
     const currentUrlParts = currentUrl.split('/');
     const variables = {};
@@ -110,11 +112,11 @@ export class Route {
    */
   getMatchedUri(currentUrl: string) {
     for (const uri of this.uri) {
-      const regex = new RegExp(
-        `^${uri
-          .replace(/{[a-zA-Z0-9_-]+}/g, '[a-zA-Z0-9_-]+')
-          .replace(/:\w+/g, '\\w+')}$`,
-      );
+      const regexPattern = `^${uri
+        .replace(/{[a-zA-Z0-9_-]+}/g, '(?!.*\\/)(.+)')
+        .replace(/:\w+/g, '(?!.*\\/)(.+)')}$`;
+
+      const regex = new RegExp(regexPattern);
 
       if (regex.test(currentUrl)) return uri;
     }
@@ -124,14 +126,17 @@ export class Route {
   /**
    * Checks if all middleware layers are allowed.
    */
-  public isMiddlewareAllowed(request: Request, response: Response): boolean {
+  public async isMiddlewareAllowed(
+    request: Request,
+    response: Response,
+  ): Promise<boolean> {
     const stack = makeFunctionsChain([...this.middlewareLayers, () => true], {
       request,
       response,
       req: request,
       res: response,
     });
-    return stack();
+    return await stack();
   }
 
   /**
@@ -143,19 +148,23 @@ export class Route {
     next: Function = () => {},
   ) {
     const url = Url.trim(request.url).replace(this.prefixUri, '');
+    const matchedUri = this.getMatchedUri(url);
 
-    const variables = this.extractVariables(this.getMatchedUri(url), url);
+    if (matchedUri) {
+      const variables = this.extractVariables(matchedUri, url);
 
-    request.params = variables;
+      request.params = variables;
 
-    this._tempActions = [...this.actions, next];
+      this._tempActions = [...this.actions, next];
 
-    return await this.callFunctions(
-      this._tempActions,
-      request,
-      response,
-      variables,
-    );
+      return await this.callFunctions(
+        this._tempActions,
+        request,
+        response,
+        variables,
+      );
+    }
+    return false;
   }
 
   /**
