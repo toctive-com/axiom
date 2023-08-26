@@ -73,9 +73,7 @@ export class Route {
   public isUriMatches(request: Request): boolean {
     const url = Url.trim(request.url).replace(this.prefixUri, '');
     const matchedRoute = this.getMatchedUri(url);
-    return this.uri.some((regex: string | RegExp) =>
-      regex instanceof RegExp ? regex.test(url) : matchedRoute !== null,
-    );
+    return matchedRoute !== null;
   }
 
   /**
@@ -152,7 +150,6 @@ export class Route {
 
     if (matchedUri) {
       const variables = this.extractVariables(matchedUri, url);
-
       request.params = variables;
 
       this._tempActions = [...this.actions, next];
@@ -164,7 +161,6 @@ export class Route {
         variables,
       );
     }
-    return false;
   }
 
   /**
