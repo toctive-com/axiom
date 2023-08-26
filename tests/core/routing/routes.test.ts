@@ -602,4 +602,263 @@ describe('Make routes and test if they works as expected', () => {
     expect(routeExecuted).toBe(true);
     expect(nextFunctionCalled).toBe(true);
   });
+
+  it('should extract variables from URLs', () => {
+    let extractVariablesMock: (
+      originalUrl: string,
+      currentUrl: string,
+    ) => Object;
+    class MockRoute extends Route {
+      constructor(
+        public httpMethods: string[],
+        public uri: string[],
+        public actions: Function[],
+      ) {
+        super(httpMethods, uri, actions);
+        extractVariablesMock = this.extractVariables;
+      }
+    }
+    new MockRoute(['GET'], ['/{id}/{slug}', '/post/:postId'], []);
+
+    const originalUrl = '{id}/{slug}';
+    const currentUrl = '123/my-post';
+
+    const variables = extractVariablesMock(originalUrl, currentUrl);
+    expect(variables).toEqual({ id: '123', slug: 'my-post' });
+  });
+
+  it('should get the matched URI from a list of URIs', () => {
+    const route = new Route(['GET'], ['/post/:postId', '/{id}/{slug}'], []);
+
+    const currentUrl = 'post/123';
+
+    const matchedUri = route.getMatchedUri(currentUrl);
+    expect(matchedUri).toEqual('post/:postId');
+  });
+
+  it('should call all middleware layers', async () => {
+    const mockRequest = new Request(new Socket());
+    const mockResponse = new Response(mockRequest);
+    const route = new Route(['GET'], [], []);
+    const middleware1 = vi.fn(({ next }) => next());
+    const middleware2 = vi.fn();
+    route.middleware([middleware1, middleware2]);
+
+    await route.isMiddlewareAllowed(mockRequest, mockResponse);
+
+    expect(middleware1).toHaveBeenCalled();
+    expect(middleware2).toHaveBeenCalled();
+  });
+
+  it('should dispatch route actions', async () => {
+    const mockRequest = new Request(new Socket());
+    mockRequest.url = '/post/123';
+    mockRequest.method = 'GET';
+    const mockResponse = new Response(mockRequest);
+    const route = new Route(
+      ['GET'],
+      ['post/:postId'],
+      [
+        async ({ response, postId }) => {
+          response.send(`Post ID: ${postId}`);
+        },
+      ],
+    );
+
+    const sendSpy = vi.spyOn(mockResponse, 'send');
+
+    await route.dispatch(mockRequest, mockResponse);
+
+    expect(sendSpy).toHaveBeenCalledWith('Post ID: 123');
+  });
+
+  it('should add middleware layers', () => {
+    let middlewareLayers: Function[] = [];
+    class MockRoute extends Route {
+      constructor(
+        public httpMethods: string[],
+        public uri: string[],
+        public actions: Function[],
+      ) {
+        super(httpMethods, uri, actions);
+        middlewareLayers = this.middlewareLayers;
+      }
+    }
+    const route = new MockRoute(['GET'], [], []);
+
+    const middleware1 = () => {};
+    const middleware2 = () => {};
+
+    route.middleware([middleware1, middleware2]);
+
+    expect(middlewareLayers).toEqual([middleware1, middleware2]);
+  });
+
+  it('should set the name of the route', () => {
+    let routeNameMocked: () => string;
+    class MockRoute extends Route {
+      constructor(
+        public httpMethods: string[],
+        public uri: string[],
+        public actions: Function[],
+      ) {
+        super(httpMethods, uri, actions);
+        routeNameMocked = () => this.routeName;
+      }
+    }
+    const route = new MockRoute(['GET'], [], []);
+
+    const routeName = 'myRoute';
+    route.named(routeName);
+
+    expect(routeNameMocked()).toBe(routeName);
+  });
+
+  it('should set the prefix URI of the route', () => {
+    const route = new Route(['GET'], [], []);
+
+    const prefixUri = 'api';
+    route.prefix(prefixUri);
+
+    expect(route.prefixUri).toBe(prefixUri);
+  });
+
+  it('should return false when dispatch is not allowed', async () => {
+    const mockRequest = new Request(new Socket());
+    mockRequest.url = '/post/123';
+    mockRequest.method = 'GET';
+    const mockResponse = new Response(mockRequest);
+    const route = new Route(['GET'], ['/'], []);
+
+    // Assume the middleware doesn't allow the dispatch
+    route.middleware((req, res, next) => {
+      // In this case, middleware returns false, preventing dispatch
+      return false;
+    });
+
+    const result = await route.dispatch(mockRequest, mockResponse);
+
+    expect(result).toBe(undefined);
+  });
+
+  it('should correctly match URI using isUriMatches', () => {
+    const mockRequest = new Request(new Socket());
+    mockRequest.method = 'GET';
+    const route = new Route(['GET'], ['/users/{id}', 'articles/:slug'], []);
+
+    // URL matches the first URI pattern
+    mockRequest.url = '/users/123';
+    expect(route.isUriMatches(mockRequest)).toBe(true);
+
+    // URL matches the second URI pattern
+    mockRequest.url = 'articles/article-title';
+    expect(route.isUriMatches(mockRequest)).toBe(true);
+
+    // URL doesn't match any of the URI patterns
+    mockRequest.url = '/random';
+    expect(route.isUriMatches(mockRequest)).toBe(false);
+  });
+
+  it('should extract variables from URI using extractVariables', () => {
+    const mockRequest = new Request(new Socket());
+    mockRequest.method = 'GET';
+    const mockResponse = new Response(mockRequest);
+    const route = new Route(['GET'], ['/users/{id}', '/articles/:slug'], []);
+
+    // URL matches the first URI pattern
+    const originalUrl = '/users/{id}';
+    const currentUrl = '/users/123';
+    const expectedVariables = { id: '123' };
+    const variables = route.extractVariables(originalUrl, currentUrl);
+    expect(variables).toEqual(expectedVariables);
+
+    // URL matches the second URI pattern
+    const originalUrl2 = '/articles/:slug';
+    const currentUrl2 = '/articles/article-title';
+    const expectedVariables2 = { slug: 'article-title' };
+    const variables2 = route.extractVariables(originalUrl2, currentUrl2);
+    expect(variables2).toEqual(expectedVariables2);
+  });
+
+  it('should return false if dispatch does not match URI', async () => {
+    const mockRequest = new Request(new Socket());
+    mockRequest.method = 'GET';
+    const mockResponse = new Response(mockRequest);
+    const route = new Route(['GET'], ['/users/{id}', '/articles/:slug'], []);
+    mockRequest.url = '/random';
+    const result = await route.dispatch(mockRequest, mockResponse);
+    expect(result).toBe(undefined);
+  });
+
+  it('should call functions in sequence using callFunctions', async () => {
+    const mockRequest = new Request(new Socket());
+    const mockResponse = new Response(mockRequest);
+    const route = new Route(['GET'], ['/users/{id}'], []);
+
+    const actions = [
+      async (context: any) => {
+        context.req.locals.data = 'A';
+        await context.next();
+      },
+      async (context: any) => {
+        context.req.locals.data += 'B';
+        await context.next();
+      },
+      async (context: any) => {
+        context.req.locals.data += 'C';
+        await context.next();
+      },
+    ];
+
+    mockRequest.url = '/users/123';
+    const context = {
+      request: mockRequest,
+      response: mockResponse,
+      data: '',
+    };
+
+    await route.callFunctions(
+      actions,
+      context.request,
+      context.response,
+      context,
+    );
+    expect(context.request.locals.data).toBe('ABC');
+  });
+
+  it('should stop calling functions when next is not called', async () => {
+    const mockRequest = new Request(new Socket());
+    const mockResponse = new Response(mockRequest);
+    const route = new Route(['GET'], ['/users/{id}'], []);
+
+    const actions = [
+      async (context: any) => {
+        context.req.locals.data = 'A';
+        // next() is not called
+      },
+      async (context: any) => {
+        context.data += 'B';
+        await context.next();
+      },
+      async (context: any) => {
+        context.data += 'C';
+        await context.next();
+      },
+    ];
+
+    mockRequest.url = '/users/123';
+    const context = {
+      request: mockRequest,
+      response: mockResponse,
+      data: '',
+    };
+
+    const result = await route.callFunctions(
+      actions,
+      context.request,
+      context.response,
+      context,
+    );
+    expect(context.request.locals.data).toBe('A');
+  });
 });

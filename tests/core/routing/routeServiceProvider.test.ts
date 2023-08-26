@@ -1,27 +1,30 @@
-import {
-  Application,
-  Request,
-  Response,
-  Route,
-  Router,
-  RoutesGroup,
-} from '@/core';
-import { makeFunctionsChain } from '@/utils/helpers/makeFunctionsChain';
-import { METHODS } from 'node:http';
-import { Socket } from 'node:net';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Application, HttpKernel, Request, Response, Router } from '@/core';
 import { RouteServiceProvider } from '@/core/routing/RouteServiceProvider';
+import { Socket } from 'node:net';
 import TestApp from 'tests/TestApp';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+class TestableRouteServiceProvider extends RouteServiceProvider {
+  // Expose the app property for testing
+  public getTestableApp() {
+    return this.app;
+  }
+}
 
 describe('RouteServiceProvider', () => {
-  let serviceProvider: RouteServiceProvider;
+  let serviceProvider: TestableRouteServiceProvider;
   let router: Router;
   let app: Application;
+  let request: Request;
+  let response: Response;
 
   beforeEach(async () => {
     router = new Router(); // Create a new Router instance before each test
     app = await TestApp();
-    serviceProvider = new RouteServiceProvider(app);
+    serviceProvider = new TestableRouteServiceProvider(app);
+
+    request = new Request(new Socket());
+    response = new Response(request);
   });
 
   it('should register routes and execute matched route', async () => {
@@ -109,5 +112,179 @@ describe('RouteServiceProvider', () => {
     await middleware(request, response);
 
     expect(response.statusCode).toBe(404);
+  });
+
+  it('should register routes and execute route handler', async () => {
+    const routeHandler = () => 'Hello, World!';
+    router.get('test', routeHandler);
+    serviceProvider.registerRoutes(router);
+
+    request.method = 'GET';
+    request.url = 'test';
+    request.app = app;
+
+    let writtenData = '';
+    response.write = (data: string) => {
+      writtenData = data;
+      return true;
+    };
+
+    // Use the testable app for testing
+    const httpKernel = serviceProvider
+      .getTestableApp()
+      .make<HttpKernel>('HttpKernel');
+    await httpKernel.handle(request, response);
+
+    expect(writtenData).toBe('Hello, World!');
+  });
+
+  it('should handle handlerNotFoundError when route is not found', async () => {
+    serviceProvider.handlerNotFoundError();
+
+    request.method = 'GET';
+    request.url = '/nonexistent-route';
+    request.app = app;
+
+    let writtenData = '';
+    response.write = (data: string) => {
+      writtenData = data;
+      return true; // response.write should return boolean
+    };
+
+    // Use the testable app for testing
+    const httpKernel = serviceProvider
+      .getTestableApp()
+      .make<HttpKernel>('HttpKernel');
+    await httpKernel.handle(request, response);
+
+    expect(writtenData).toBe('Route not found');
+  });
+
+  it('should handle route returning an object', async () => {
+    const routeHandler = () => ({
+      message: 'Hello, World!',
+    });
+    router.get('test', routeHandler);
+    serviceProvider.registerRoutes(router);
+
+    request.method = 'GET';
+    request.url = 'test';
+    request.app = app;
+
+    let writtenData = '';
+    response.write = (data: string) => {
+      writtenData = data;
+      return true; // response.write should return boolean
+    };
+
+    const httpKernel = serviceProvider
+      .getTestableApp()
+      .make<HttpKernel>('HttpKernel');
+    await httpKernel.handle(request, response);
+
+    expect(writtenData).toBe('{"message":"Hello, World!"}');
+    expect(response.getHeaders()['content-type']).toBe(
+      'application/json; charset=utf-8',
+    );
+  });
+
+  it('should handle route returning null or undefined', async () => {
+    const routeHandler = () => null;
+    router.get('/', routeHandler);
+    serviceProvider.registerRoutes(router);
+
+    request.method = 'GET';
+    request.url = '/';
+    request.app = app;
+
+    let writtenData = '';
+    response.write = (data: string) => {
+      writtenData = data;
+      return true; // response.write should return boolean
+    };
+
+    const httpKernel = serviceProvider
+      .getTestableApp()
+      .make<HttpKernel>('HttpKernel');
+    await httpKernel.handle(request, response);
+
+    expect(writtenData).toBe('');
+    expect(response.getHeaders()['content-type']).toBeUndefined();
+  });
+
+  it('should handle route returning number', async () => {
+    const routeHandler = () => 123;
+    router.get('test', routeHandler);
+    serviceProvider.registerRoutes(router);
+
+    request.method = 'GET';
+    request.url = 'test';
+    request.app = app;
+
+    let writtenData = '';
+    response.write = (data: string) => {
+      writtenData = data;
+      return true; // response.write should return boolean
+    };
+
+    const httpKernel = serviceProvider
+      .getTestableApp()
+      .make<HttpKernel>('HttpKernel');
+    await httpKernel.handle(request, response);
+
+    expect(writtenData).toBe('123');
+    expect(response.getHeaders()['content-type']).toBeUndefined();
+  });
+
+  it('should handle route returning not stringable object', async () => {
+    const routeHandler = () => ({
+      data: "value",
+      toString: () => null
+    });
+    router.get('test', routeHandler);
+    serviceProvider.registerRoutes(router);
+
+    request.method = 'GET';
+    request.url = 'test';
+    request.app = app;
+
+    let writtenData = '';
+    response.write = (data: string) => {
+      writtenData = data;
+      return true; // response.write should return boolean
+    };
+
+    const httpKernel = serviceProvider
+      .getTestableApp()
+      .make<HttpKernel>('HttpKernel');
+    await httpKernel.handle(request, response);
+
+    expect(writtenData).toBe('{"data":"value"}');
+  });
+  
+  it('should handle route returning Jsonable object', async () => {
+    const routeHandler = () => ({
+      "toJSON": () => "some value"
+    });
+    router.get('test', routeHandler);
+    serviceProvider.registerRoutes(router);
+
+    request.method = 'GET';
+    request.url = 'test';
+    request.app = app;
+
+    let writtenData = '';
+    response.write = (data: string) => {
+      writtenData = data;
+      return true; // response.write should return boolean
+    };
+
+    const httpKernel = serviceProvider
+      .getTestableApp()
+      .make<HttpKernel>('HttpKernel');
+    await httpKernel.handle(request, response);
+
+    expect(writtenData).toBe("some value");
+    expect(response.getHeaders()['content-type']).toBe("application/json; charset=utf-8");
   });
 });
