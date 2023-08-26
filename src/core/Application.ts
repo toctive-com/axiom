@@ -126,11 +126,10 @@ export class Application extends Container {
    *
    */
   constructor(parameters?: ApplicationParameters) {
-    const basePath = parameters?.basePath ?? process.cwd();
     super();
 
     // Register the base path of the application
-    if (basePath) this.basePath = basePath;
+    this.basePath = parameters?.basePath ?? process.cwd();
 
     // load env variables before developer config. Allowing to use env variables
     // inside config files.
