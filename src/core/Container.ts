@@ -58,7 +58,7 @@ export class Container extends BrandiContainer {
    *
    */
   set<TClass>(name: string, value: UnknownCreator<TClass>) {
-    return Application.set<TClass>(name, value);
+    return Container.set<TClass>(name, value);
   }
 
   /**
@@ -107,7 +107,7 @@ export class Container extends BrandiContainer {
    */
   static make<TValue>(name: string) {
     const token = Container.getToken<TValue>(name);
-    return Container.container.get<Token<TValue>>(token);
+    return Container.container.get<typeof token>(token);
   }
 
   /**
