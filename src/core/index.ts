@@ -3,6 +3,7 @@ export * from './Container';
 export * from './Maintenance';
 export * from './ServiceProvider';
 
+export * from './logger';
 export * from './kernel';
 export * from './routing';
 
