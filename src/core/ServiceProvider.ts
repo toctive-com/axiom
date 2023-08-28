@@ -1,102 +1,47 @@
 import Application from '@/core/Application';
 
-type callback = (app: Application) => unknown;
-
+/**
+ * The `ServiceProvider` class is an abstract base class for creating service providers
+ * in the Axiom framework. Service providers allow you to register and bootstrap
+ * application services.
+ *
+ * @abstract
+ * @class ServiceProvider
+ */
 export abstract class ServiceProvider {
   /**
-   * The application instance.
+   * The application instance that the service provider is associated with.
    *
    * @var Application
    */
   protected app: Application;
 
   /**
-   * All of the registered booting callbacks.
+   * Creates a new instance of the service provider.
    *
-   * @var array
-   */
-  protected bootingCallbacks: callback[] = [];
-
-  /**
-   * All of the registered booted callbacks.
-   *
-   * @var array
-   */
-  protected bootedCallbacks: callback[] = [];
-
-  /**
-   * Create a new service provider instance.
-   *
-   * @param Application app
-   *
-   * @return void
-   *
+   * @constructor
+   * @param app - The application instance to associate with the service provider.
    */
   constructor(app: Application) {
     this.app = app;
   }
 
   /**
-   * Register any application services.
+   * Register any application services provided by the service provider.
    *
-   * @return void
-   *
+   * @abstract
+   * @returns {Promise<void>} - A Promise that resolves when the registration is complete.
    */
-  public async register() {
-    // ...
-  }
+  public async register(): Promise<void> {}
 
   /**
-   * Bootstrap any application services.
+   * Bootstrap any application services provided by the service provider.
+   * This method is called after all service providers have been registered.
    *
-   * @return void
-   *
+   * @abstract
+   * @returns {Promise<void>} - A Promise that resolves when the bootstrapping is complete.
    */
-  public async boot() {
-    // ...
-  }
-
-  /**
-   * Register a booting callback to be run before the "boot" method is called.
-   *
-   * @param callback callback
-   *
-   * @return void
-   *
-   */
-  public runBeforeBooting(callback: callback) {
-    this.bootingCallbacks.push(callback);
-  }
-
-  /**
-   * Register a booted callback to be run after the "boot" method is called.
-   *
-   * @param callback callback
-   *
-   * @return void
-   *
-   */
-  public runAfterBooted(callback: callback) {
-    this.bootedCallbacks.push(callback);
-  }
-
-  /**
-   * Call the registered booting callbacks.
-   *
-   * @return void
-   *
-   */
-  public callBootingCallbacks() {
-    for (const fn of this.bootingCallbacks) fn(this.app);
-  }
-
-  /**
-   * Call the registered booted callbacks.
-   *
-   * @return void
-   *
-   */
-  public callBootedCallbacks() {
-    for (const fn of this.bootedCallbacks) fn(this.app);
-  }
+  public async boot(): Promise<void> {}
 }
+
+export default ServiceProvider;

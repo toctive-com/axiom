@@ -1,5 +1,5 @@
 import { Container } from '@/core/Container';
-import { Maintenance } from '@/core/Maintenance';
+import { Maintenance } from '@/core/maintenance/Maintenance';
 import { ServiceProvider } from '@/core/ServiceProvider';
 import { ApplicationParameters } from '@/types';
 import {
@@ -17,19 +17,25 @@ import { Response } from './http/Response';
 import { Logger } from './logger';
 import { existsSync } from 'node:fs';
 
+/**
+ * The `Application` class represents the core of the Axiom framework and
+ * provides methods for managing service providers, handling middleware, and
+ * more.
+ *
+ * @class Application
+ * @extends Container
+ */
 export class Application extends Container {
   /**
-   * Defining a version number for Axiom framework
+   * Defining a version number for the Axiom framework.
    *
    * @var string
-   *
    */
   readonly VERSION = '0.1.2';
 
   /**
-   * Indicates if the application is booted or not.
-   * method boot in all Service Providers won't run if until this property be
-   * true.
+   * Indicates if the application is booted or not. method boot in all Service
+   * Providers won't run if until this property be true.
    *
    * @var boolean
    *
@@ -104,7 +110,7 @@ export class Application extends Container {
    * Store an instance of the `Logger` class, which is responsible for logging
    * messages and events in the application.
    */
-  logger: Logger;
+  logger: Logger = new Logger();
 
   /**
    * Adds a middleware function to an array of middleware functions that will be
@@ -218,10 +224,11 @@ export class Application extends Container {
   }
 
   /**
-   * Checks if the application is already booted and if not,
-   * it runs the boot method in all service providers.
+   * Checks if the application is already booted and if not, it runs the boot
+   * method in all service providers.
    *
-   * @returns {Application} The method is returning the current instance of the class.
+   * @returns {Application} The method is returning the current instance of the
+   * class.
    *
    */
   public async boot(): Promise<this> {
@@ -264,8 +271,8 @@ export class Application extends Container {
    * The `register` function takes a `ServiceProvider` and registers it if it is
    * not already registered, returning the registered provider.
    *
-   * @param provider - The `provider` parameter is an instance of
-   * the `ServiceProvider` class.
+   * @param provider - The `provider` parameter is an instance of the
+   * `ServiceProvider` class.
    *
    * @returns The method is returning the registered provider.
    *
@@ -296,8 +303,8 @@ export class Application extends Container {
   }
 
   /**
-   * The function iterates over the registered providers and calls the boot method
-   * on each one.
+   * The function iterates over the registered providers and calls the boot
+   * method on each one.
    *
    * @return void
    *
@@ -329,25 +336,29 @@ export class Application extends Container {
    * Handles the maintenance mode by calling the handle method of the
    * Maintenance class.
    *
-   * @param request: The incoming HTTP request object.
-   * @param response: The server response object.
-   *
+   * @param request - The incoming HTTP request object.
+   * @param response - The server response object.
    */
-  public async handleMaintenanceMode({ request, response }): Promise<void> {
-    if (!this.config('app.maintenanceMode.enabled')) return;
+  public async handleMaintenanceMode(
+    request: Request,
+    response: Response,
+  ): Promise<void> {
+    if (!this.getConfig('app.maintenanceMode.enabled')) return;
 
-    const handler = Application.make<Maintenance>('Maintenance');
+    const handler = this.make<Maintenance>('Maintenance');
     await handler.handle({ request, response });
   }
 
   /**
-   * Returns a singleton instance of the Application class with the given parameters.
+   * Returns a singleton instance of the Application class with the given
+   * parameters.
    *
-   * @param {ApplicationParameters} parameters - The `parameters` parameter in the
-   * `getInstance` method is an object of type `ApplicationParameters`. It is
-   * likely that this object contains various properties and values that are used
-   * to configure and initialize the `Application` instance that is being returned.
-   * The specific properties and values of the `ApplicationParameters` object
+   * @param {ApplicationParameters} parameters - The `parameters` parameter in
+   * the `getInstance` method is an object of type `ApplicationParameters`. It
+   * is likely that this object contains various properties and values that are
+   * used to configure and initialize the `Application` instance that is being
+   * returned. The specific properties and values of the `ApplicationParameters`
+   * object
    *
    * @returns Application
    *
@@ -357,29 +368,17 @@ export class Application extends Container {
   }
 
   /**
-   * Get the number version of the application
+   * Retrieves a value from the application's configuration based on the given
+   * name, with an optional default value if the configuration value is not
+   * found.
    *
-   * @return string
+   * @param name - The name of the configuration property to retrieve, using dot
+   * notation for nested properties.
+   * @param defaultValue - The default value to return if the configuration
+   * value is not found.
+   * @returns The retrieved configuration value.
    */
-  public get version(): string {
-    return this.VERSION;
-  }
-
-  /**
-   * Retrieves a value from a nested object based on a given string
-   * path, with an optional default value if the path does not exist.
-   *
-   * @param {string} name - A string representing the name of the configuration
-   * property to retrieve. It can be a nested property, separated by dots (e.g.
-   * "database.host").
-   * @param {unknown} [defaultValue=null] - defaultValue is an optional parameter
-   * with a default value of null. It is used to specify the default value to be
-   * returned if the requested configuration value is not found.
-   *
-   * @returns unknown
-   *
-   */
-  public config<T>(name: string, defaultValue: T = null): T {
+  public getConfig<T>(name: string, defaultValue: T = null): T {
     let value = this._config;
 
     for (const configName of name.split('.')) {
@@ -391,13 +390,13 @@ export class Application extends Container {
   }
 
   /**
-   * Creates a server using the `createServer()` function and assigns it
-   * to the "server" property of the current object.
+   * Creates an HTTP server using the `createServer()` function and assigns it
+   * to the "server" property of the application.
    *
-   * @returns The `createServer()` function is being returned.
-   *
+   * @param callback - An optional callback function to handle server requests.
+   * @returns The created server instance.
    */
-  public createServer(
+  public createHttpServer(
     callback?: (request: IncomingMessage, response: ServerResponse) => void,
   ): Server<typeof IncomingMessage, typeof ServerResponse> {
     return (this._server = createServer(callback));
