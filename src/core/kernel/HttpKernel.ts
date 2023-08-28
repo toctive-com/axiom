@@ -54,23 +54,25 @@ export class HttpKernel {
    */
   async captureRequest() {
     return new Promise<void>(async (resolve, reject) => {
-      let port = this.app.config('server.port', 8000);
-      const hostname = this.app.config('server.host', 'localhost');
+      let port = this.app.getConfig('server.port', 8000);
+      const hostname = this.app.getConfig('server.host', 'localhost');
 
-      const server = (this.server = this.app.createServer(async (req, res) => {
-        const request: Request = setPrototypeOf(req, Request.prototype);
-        const response: Response = setPrototypeOf(res, Response.prototype);
+      const server = (this.server = this.app.createHttpServer(
+        async (req, res) => {
+          const request: Request = setPrototypeOf(req, Request.prototype);
+          const response: Response = setPrototypeOf(res, Response.prototype);
 
-        request.app = this.app;
-        response.app = this.app;
+          request.app = this.app;
+          response.app = this.app;
 
-        Application.set('HttpRequest', () => request);
-        Application.set('HttpResponse', () => response);
+          Application.set('HttpRequest', () => request);
+          Application.set('HttpResponse', () => response);
 
-        const result = await this.handle(request, response);
-        result.send();
-        resolve();
-      }));
+          const result = await this.handle(request, response);
+          result.send();
+          resolve();
+        },
+      ));
 
       this.httpTerminator = createHttpTerminator({ server });
 
@@ -82,7 +84,7 @@ export class HttpKernel {
       server.on('error', (error: Error & { code: string }) => {
         if (
           error.code === 'EADDRINUSE' &&
-          this.app.config('server.incrementalPort', true)
+          this.app.getConfig('server.incrementalPort', true)
         ) {
           console.log(
             `The port ${port} is already in use. Axiom will try the port ${
@@ -113,18 +115,7 @@ export class HttpKernel {
    *
    */
   async handle(request: Request, response: Response): Promise<Response> {
-    /**
-     * Check If The Application Is Under Maintenance
-     * --------------------------------------------------------------------------
-     * If there is a file called `down` in this project directory,
-     * This means the website is under maintenance and all incoming request will
-     * get 503 status code.
-     *
-     */
-    await request.app.handleMaintenanceMode({ request, response });
-
     await this.executeSequence(this.app.middleware, request, response);
-
     return response;
   }
 
