@@ -1,6 +1,8 @@
-import { IncomingMessage, ServerResponse } from 'node:http';
 import Application from '@/core/Application';
 import { HttpStatusCode, HttpStatusMessage } from '@/types/HttpStatusCode';
+import fs from 'node:fs';
+import { IncomingMessage, ServerResponse } from 'node:http';
+import stream from 'node:stream';
 
 export class Response extends ServerResponse<IncomingMessage> {
   /**
@@ -174,6 +176,58 @@ export class Response extends ServerResponse<IncomingMessage> {
         .map(([rel, href]) => `<${href}>; rel="${rel}"`)
         .join(', '),
     );
+  }
+
+  /**
+   * Download a file in response.
+   *
+   * @param filePath - The path to the file you want to download.
+   * @param fileName - (Optional) The name to use for the downloaded file. If not provided, the original file name will be used.
+   *
+   * @example
+   * ```typescript
+   * // Download a file named "example.pdf"
+   * response.downloadFile('/path/to/example.pdf');
+   *
+   * // Download a file with a custom name "my-document.pdf"
+   * response.downloadFile('/path/to/document.docx', 'my-document.pdf');
+   * ```
+   */
+  download(filePath: string, fileName?: string): void {
+    const fileStream = fs.createReadStream(filePath);
+
+    this.appendHeader('Content-Type', 'application/octet-stream');
+    this.appendHeader(
+      'Content-Disposition',
+      `attachment; filename="${fileName || filePath}"`,
+    );
+
+    fileStream.pipe(this, { end: true });
+  }
+
+  /**
+   * Download a stream to the client as a file.
+   *
+   * @param stream - The readable stream you want to download.
+   * @param fileName - (Optional) The name to use for the downloaded file. If not provided, a generic name will be used.
+   *
+   * @example
+   * ```typescript
+   * // Create a readable stream (e.g., from a database query or an API)
+   * const readStream = createReadStreamFromDatabase();
+   *
+   * // Download the stream as a file with a custom name "data.txt"
+   * response.downloadStream(readStream, 'data.txt');
+   * ```
+   */
+  downloadStream(downloadStream: stream.Readable, fileName?: string): void {
+    this.appendHeader('Content-Type', 'application/octet-stream');
+    this.appendHeader(
+      'Content-Disposition',
+      `attachment; filename="${fileName || 'downloaded-file'}"`,
+    );
+
+    downloadStream.pipe(this, { end: true });
   }
 
   /**
