@@ -154,6 +154,29 @@ export class Response extends ServerResponse<IncomingMessage> {
   }
 
   /**
+   * Set Links Header in the response.
+   *
+   * @param links - An object of links to be included in the Links Header.
+   *
+   * @example
+   * ```typescript
+   * const links = {
+   *   self: 'https://example.com/resource/1',
+   *   next: 'https://example.com/resource/2',
+   * };
+   * response.links(links);
+   * ```
+   */
+  links(links: Record<string, string>): this {
+    return this.appendHeader(
+      'Link',
+      Object.entries(links)
+        .map(([rel, href]) => `<${href}>; rel="${rel}"`)
+        .join(', '),
+    );
+  }
+
+  /**
    * Sets the status code and status message of a response object based on a
    * provided code or message.
    *
