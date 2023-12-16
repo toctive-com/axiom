@@ -48,13 +48,16 @@ export class Route {
    * Checks if the given HTTP method and URL match the allowed criteria and
    * returns whether the middleware is allowed or not.
    */
-  public match(request: Request, response: Response): this | false {
+  public async match(
+    request: Request,
+    response: Response,
+  ): Promise<this | false> {
     const { method } = request;
 
     return this.isHttpMethodAllowed(method) &&
       this.isMatchPrefix(request) &&
       this.isUriMatches(request) &&
-      this.isMiddlewareAllowed(request, response)
+      (await this.isMiddlewareAllowed(request, response))
       ? this
       : false;
   }
@@ -108,7 +111,7 @@ export class Route {
   /**
    * Gets the matched URI from a list of URIs.
    */
-  getMatchedUri(currentUrl: string) {
+  getMatchedUri(currentUrl: string): string | null {
     for (const uri of this.uri) {
       const regexPattern = `^${uri
         .replace(/{[a-zA-Z0-9_-]+}/g, '(?!.*\\/)(.+)')
@@ -148,7 +151,7 @@ export class Route {
     const url = Url.trim(request.url).replace(this.prefixUri, '');
     const matchedUri = this.getMatchedUri(url);
 
-    if (matchedUri) {
+    if (matchedUri !== null) {
       const variables = this.extractVariables(matchedUri, url);
       request.params = variables;
 

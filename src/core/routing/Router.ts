@@ -72,10 +72,13 @@ export class Router extends RouterBase {
    * @returns either an array of matched routes or false.
    *
    */
-  public match(request: Request, response: Response): false | Route[] {
+  public async match(
+    request: Request,
+    response: Response,
+  ): Promise<false | Route[]> {
     const matchedRoutes = [];
     for (const route of this.routes) {
-      const isMatched = route.match(request, response);
+      const isMatched = await route.match(request, response);
       if (!isMatched) continue;
 
       matchedRoutes.push(isMatched);
@@ -124,7 +127,7 @@ export class Router extends RouterBase {
     next?: Function,
   ): Promise<unknown> {
     try {
-      const matchedRoutes = this.match(req, res);
+      const matchedRoutes = await this.match(req, res);
       if (!matchedRoutes) {
         // If there is no matched route call the next function
         if (next) return await next();

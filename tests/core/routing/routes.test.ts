@@ -40,7 +40,7 @@ describe('Make routes and test if they works as expected', () => {
     expect((postRoute as Route).actions).toEqual([func]);
   });
 
-  it('should return the matched routes when making the request', () => {
+  it('should return the matched routes when making the request', async () => {
     const func = vi.fn();
     router.get('/test', func);
     router.post('/test', func);
@@ -53,13 +53,13 @@ describe('Make routes and test if they works as expected', () => {
     request.method = 'GET';
 
     const response = new Response(request);
-    expect(router.match(request, response)).toEqual([getRoute]);
+    expect(await router.match(request, response)).toEqual([getRoute]);
 
     request.method = 'POST';
-    expect(router.match(request, response)).toEqual([postRoute]);
+    expect(await router.match(request, response)).toEqual([postRoute]);
   });
 
-  it('should return false when making the request and no routes match', () => {
+  it('should return false when making the request and no routes match', async () => {
     const func = vi.fn();
     router.get('/test', func);
     router.post('/test', func);
@@ -69,10 +69,10 @@ describe('Make routes and test if they works as expected', () => {
     request.method = 'PUT';
 
     const response = new Response(request);
-    expect(router.match(request, response)).toBeFalsy();
+    expect(await router.match(request, response)).toBeFalsy();
   });
 
-  it('should call the actions of the matched route when making the request', () => {
+  it('should call the actions of the matched route when making the request', async () => {
     const func = vi.fn();
     router.get('/test', func);
 
@@ -84,13 +84,13 @@ describe('Make routes and test if they works as expected', () => {
 
     const response = new Response(request);
 
-    const matchedRoutes = router.match(request, response);
+    const matchedRoutes = await router.match(request, response);
     expect(matchedRoutes).toHaveLength(1);
     (matchedRoutes[0] as Route).dispatch(request, null);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should call the next function when making the request', () => {
+  it('should call the next function when making the request', async () => {
     const next = vi.fn();
     const func = vi.fn(next);
     router.get('/test', func);
@@ -103,7 +103,7 @@ describe('Make routes and test if they works as expected', () => {
 
     const response = new Response(request);
 
-    const matchedRoutes = router.match(request, response);
+    const matchedRoutes = await router.match(request, response);
     expect(matchedRoutes).toHaveLength(1);
     (matchedRoutes[0] as Route).dispatch(request, null, next);
     expect(func).toHaveBeenCalledTimes(1);
@@ -168,7 +168,7 @@ describe('Make routes and test if they works as expected', () => {
     expect((route as Route).httpMethods).toEqual(['GET']);
   });
 
-  it('should return false if there is no matched route', () => {
+  it('should return false if there is no matched route', async () => {
     router.get('/test', () => 'response value');
     const request = new Request(new Socket());
     request.url = '/another-url';
@@ -176,10 +176,10 @@ describe('Make routes and test if they works as expected', () => {
 
     const response = new Response(request);
 
-    expect(router.match(request, response)).toBeFalsy();
+    expect(await router.match(request, response)).toBeFalsy();
   });
 
-  it('should return false if there is no matched route for any method', () => {
+  it('should return false if there is no matched route for any method', async () => {
     router.get('/test', () => 'response value');
     const request = new Request(new Socket());
     request.url = '/test';
@@ -187,10 +187,10 @@ describe('Make routes and test if they works as expected', () => {
 
     const response = new Response(request);
 
-    expect(router.match(request, response)).toBeFalsy();
+    expect(await router.match(request, response)).toBeFalsy();
   });
 
-  it('should not stack overflow with a large sync stack of routes', () => {
+  it('should not stack overflow with a large sync stack of routes', async () => {
     const stackSize = 10000;
     const testFunc = vi.fn();
 
@@ -217,7 +217,7 @@ describe('Make routes and test if they works as expected', () => {
 
     const response = new Response(request);
 
-    const matchedRoutes = router.match(request, response);
+    const matchedRoutes = await router.match(request, response);
     expect(matchedRoutes).toHaveLength(stackSize + 2);
 
     if (matchedRoutes === false) return;
@@ -240,7 +240,7 @@ describe('Make routes and test if they works as expected', () => {
     expect(testFunc).toBeCalledTimes(stackSize);
   });
 
-  it('should not stack overflow with a large sync stacked functions', () => {
+  it('should not stack overflow with a large sync stacked functions', async () => {
     const middleware = [];
     for (var i = 0; i < 6000; i++) {
       middleware.push(({ req, next }) => {
@@ -264,7 +264,7 @@ describe('Make routes and test if they works as expected', () => {
 
     const response = new Response(request);
 
-    const matchedRoutes = router.match(request, response);
+    const matchedRoutes = await router.match(request, response);
     expect(matchedRoutes).toHaveLength(1);
 
     (matchedRoutes[0] as Route).dispatch(request, null);
@@ -273,7 +273,7 @@ describe('Make routes and test if they works as expected', () => {
     expect(matchedRoutes).toBeTruthy();
   });
 
-  it('should call a stack of actions with the same request', () => {
+  it('should call a stack of actions with the same request', async () => {
     const request = new Request(new Socket());
     request.url = '/test-stack';
     request.method = 'GET';
@@ -296,12 +296,12 @@ describe('Make routes and test if they works as expected', () => {
 
     const response = new Response(request);
 
-    const matchedRoutes = router.match(request, response);
+    const matchedRoutes = await router.match(request, response);
     (matchedRoutes[0] as Route).dispatch(request, null);
     expect(request.locals.counter).toBe(2);
   });
 
-  it('should call a stack of routes from multiple routers with the same request', () => {
+  it('should call a stack of routes from multiple routers with the same request', async () => {
     const request = new Request(new Socket());
     request.url = '/test-stack';
     request.method = 'GET';
@@ -335,7 +335,7 @@ describe('Make routes and test if they works as expected', () => {
     router.use(routerA);
     router.use(routerB);
     router.use(routerC);
-    router.dispatch(request, null);
+    await router.dispatch(request, null);
 
     expect(testFunc).toBeCalledTimes(3);
     expect(request.locals.counter).toBe(2);
@@ -412,14 +412,14 @@ describe('Make routes and test if they works as expected', () => {
     expect(router.routes.length).toBe(1);
   });
 
-  it('should handle empty route list when matching', () => {
+  it('should handle empty route list when matching', async () => {
     const request = new Request(new Socket());
     request.url = '/test';
     request.method = 'GET';
 
     const response = new Response(request);
 
-    const matchedRoutes = router.match(request, response);
+    const matchedRoutes = await router.match(request, response);
 
     expect(matchedRoutes).toBe(false);
   });
@@ -477,7 +477,7 @@ describe('Make routes and test if they works as expected', () => {
     expect((router.routes[0] as RoutesGroup).routes.length).toBe(1);
   });
 
-  it('should match multiple routes', () => {
+  it('should match multiple routes', async () => {
     const request = new Request(new Socket());
     request.url = '/common';
     request.method = 'GET';
@@ -487,7 +487,7 @@ describe('Make routes and test if they works as expected', () => {
 
     const response = new Response(request);
 
-    const matchedRoutes = router.match(request, response);
+    const matchedRoutes = await router.match(request, response);
 
     expect(matchedRoutes).toHaveLength(2);
     expect(matchedRoutes[0]).toBe(route1);

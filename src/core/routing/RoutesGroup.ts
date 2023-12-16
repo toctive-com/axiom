@@ -134,9 +134,9 @@ export class RoutesGroup extends RouterBase {
    * @returns The method is returning a boolean value.
    *
    */
-  public match(request: Request, response: Response): false | Route {
+  public async match(request: Request, response: Response): Promise<false | Route> {
     for (const route of this.routes) {
-      const isMatched = route.match(request, response);
+      const isMatched = await route.match(request, response);
       if (!isMatched) continue;
 
       if (isMatched instanceof Route) return isMatched;
