@@ -100,10 +100,12 @@ Overall, this file structure is organized in a way that separates concerns and p
 
 1. **Introduction**
 2. **Getting Started**
+
    1. Installation Guide
    2. Quick Start
-     - Offer a simple example of using Axiom to create a basic project.
-     - Include code snippets and explanations.
+
+   - Offer a simple example of using Axiom to create a basic project.
+   - Include code snippets and explanations.
 
 3. **Configuration**
 

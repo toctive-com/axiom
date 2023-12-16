@@ -14,10 +14,7 @@ export class ColoredConsoleFormatter implements LogFormatter {
    * messageId, message, and timestamp.
    * @returns The formatted log message as a colored string.
    */
-  format({
-    level,
-    message,
-  }: LogDetails): string {
+  format({ level, message }: LogDetails): string {
     // Create the initial formatted message with level and message
     let formattedMessage = `[${Object.keys(logLevels)[level]}] ${message}`;
 

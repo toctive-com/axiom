@@ -110,7 +110,9 @@ export class Logger extends BasicLogger {
 
     // If no external loggers are provided, initialize an array containing a
     // default external logger.
-    this._externalLoggers = args?.externalLoggers || [new WinstonLoggerAdapter(args)];
+    this._externalLoggers = args?.externalLoggers || [
+      new WinstonLoggerAdapter(args),
+    ];
   }
 
   /**

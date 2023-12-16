@@ -18,14 +18,14 @@ describe('ConsoleTransport', () => {
       level: 0,
       messageId: '',
       rawMessage: '',
-      timestamp: ''
+      timestamp: '',
     };
-    
+
     // Mock console.log to capture the logged message
     const spyConsoleLog = vi.spyOn(console, 'log');
-    
+
     await consoleTransport.log(mockLogDetails);
-    
+
     expect(spyConsoleLog).toHaveBeenCalledWith(mockMessage);
     console.log = originalConsoleLog;
   });

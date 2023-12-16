@@ -13,7 +13,9 @@ describe('LogTransport', () => {
 
   it('should log message to the console by default', async () => {
     const spyMockLog = vi.spyOn(logTransport, 'log');
-    const originalConsoleLog = console.log = vi.fn((...args: unknown[])=>{});
+    const originalConsoleLog = (console.log = vi.fn(
+      (...args: unknown[]) => {},
+    ));
     const spyConsoleLog = vi.spyOn(console, 'log');
     const logDetails: LogDetails = {
       level: 6,

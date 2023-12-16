@@ -144,7 +144,7 @@ export class Router extends RouterBase {
 
       return await matchedRoutes[0].dispatch(req, res, nextFunctionsStack);
     } catch (error) {
-      res.setStatus("INTERNAL_SERVER_ERROR")
+      res.setStatus('INTERNAL_SERVER_ERROR');
 
       return {
         success: false,
