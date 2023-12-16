@@ -1,6 +1,5 @@
-import { Application} from '../src';
+import { Application } from '../src';
 import { ConsoleKernel, HttpKernel } from '../src/core/kernel';
-
 
 class App extends Application {
   /**

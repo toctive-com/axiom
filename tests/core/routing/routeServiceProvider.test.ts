@@ -238,8 +238,8 @@ describe('RouteServiceProvider', () => {
 
   it('should handle route returning not stringable object', async () => {
     const routeHandler = () => ({
-      data: "value",
-      toString: () => null
+      data: 'value',
+      toString: () => null,
     });
     router.get('test', routeHandler);
     serviceProvider.registerRoutes(router);
@@ -261,10 +261,10 @@ describe('RouteServiceProvider', () => {
 
     expect(writtenData).toBe('{"data":"value"}');
   });
-  
+
   it('should handle route returning Jsonable object', async () => {
     const routeHandler = () => ({
-      "toJSON": () => "some value"
+      toJSON: () => 'some value',
     });
     router.get('test', routeHandler);
     serviceProvider.registerRoutes(router);
@@ -284,7 +284,9 @@ describe('RouteServiceProvider', () => {
       .make<HttpKernel>('HttpKernel');
     await httpKernel.handle(request, response);
 
-    expect(writtenData).toBe("some value");
-    expect(response.getHeaders()['content-type']).toBe("application/json; charset=utf-8");
+    expect(writtenData).toBe('some value');
+    expect(response.getHeaders()['content-type']).toBe(
+      'application/json; charset=utf-8',
+    );
   });
 });

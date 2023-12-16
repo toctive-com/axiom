@@ -3,7 +3,7 @@ import tsconfig from './tsconfig.json';
 
 export default defineConfig((options) => ({
   name: 'Axiom',
-  entry: ['src/index.ts', 'src/cli.ts'],
+  entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   target: tsconfig.compilerOptions.target as 'esnext',
   outDir: 'dist',
