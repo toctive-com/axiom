@@ -78,6 +78,7 @@
     "figlet": "^1.6.0",
     "http-terminator": "^3.2.0",
     "inquire": "^0.4.8",
+    "moment": "^2.29.4",
     "setprototypeof": "^1.2.0",
     "uuidv7": "^0.6.2",
     "winston": "^3.10.0"

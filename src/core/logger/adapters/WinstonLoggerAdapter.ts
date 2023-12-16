@@ -1,7 +1,15 @@
+import moment from 'moment';
+import { join } from 'path';
 import winston from 'winston';
+import { LogLevel, logLevels } from '../LogLevel';
 import { LoggerArguments } from '../LoggerArguments';
 import { LoggerAdapter } from './LoggerAdapter';
-import { LogLevel, logLevels } from '../LogLevel';
+import { ConvertLowercase } from '@/types';
+
+export type WinstonLogLevels = Pick<
+  ConvertLowercase<typeof logLevels>,
+  'debug' | 'info' | 'warn' | 'error'
+>;
 
 /**
  * WinstonLoggerAdapter is a class that extends the functionality of the
@@ -33,7 +41,19 @@ export class WinstonLoggerAdapter extends LoggerAdapter {
         winston.format.colorize(),
         winston.format.simple(),
       ),
-      transports: [new winston.transports.Console()],
+      transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({
+          dirname: join(process.cwd(), 'logs'),
+          filename: 'logs.log',
+          format: winston.format.combine(
+            winston.format.uncolorize(),
+            winston.format.json(),
+          ),
+          maxsize: 10 * 1024 * 1024, // 10 MB
+          rotationFormat: () => '-' + moment().format('YYYY-MM-DD'),
+        }),
+      ],
       silent: args?.config?.silent,
       level: this.getWinstonLevel(args?.config?.logLevel),
     });
@@ -44,15 +64,19 @@ export class WinstonLoggerAdapter extends LoggerAdapter {
    * @param level The LogLevel value.
    * @returns The corresponding Winston log level string.
    */
-  protected getWinstonLevel(level: LogLevel): string {
+  protected getWinstonLevel(level: LogLevel): keyof WinstonLogLevels {
     switch (level) {
       case logLevels.Debug:
         return 'debug';
       case logLevels.Info:
+      case logLevels.Notice:
         return 'info';
       case logLevels.Warning:
+      case logLevels.Alert:
         return 'warn';
       case logLevels.Error:
+      case logLevels.Critical:
+      case logLevels.Emergency:
         return 'error';
       default:
         return 'info';

@@ -1,3 +1,5 @@
+import { ConvertLowercase } from '@/types/ConvertLowercase';
+
 /**
  * logLevels represents a set of predefined log levels along with their
  * associated numerical values.
@@ -23,11 +25,13 @@ export const logLevels = {
    * Represents a log level indicating a general error.
    */
   Error: 3,
+  Err: 3,
 
   /**
    * Represents a log level indicating a potential problem or warning.
    */
   Warning: 4,
+  Warn: 4,
 
   /**
    * Represents a log level for important notices.
@@ -51,3 +55,5 @@ export const logLevels = {
  * used to specify the desired log level when logging messages.
  */
 export type LogLevel = (typeof logLevels)[keyof typeof logLevels];
+
+export type LogLevelName = keyof ConvertLowercase<typeof logLevels>;
