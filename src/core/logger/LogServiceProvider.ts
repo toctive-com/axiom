@@ -16,7 +16,7 @@ export class LogServiceProvider extends ServiceProvider {
   public async register(): Promise<void> {
     this.app.set('log', () => {
       // Retrieve the logger configuration from the application's configuration
-      const config = this.app.config<LoggerConfig>('logger');
+      const config = this.app.getConfig<LoggerConfig>('logger');
 
       // Create a new Logger instance with the provided configuration
       const logger = new Logger({ config });
