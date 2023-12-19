@@ -1,21 +1,25 @@
 import { Container } from '@/core/Container';
-import { Maintenance } from '@/core/maintenance/Maintenance';
 import { ServiceProvider } from '@/core/ServiceProvider';
-import { ApplicationParameters } from '@/types';
+import { Maintenance } from '@/core/maintenance/Maintenance';
+import {
+  ApplicationParameters,
+  RouteAction,
+  RouteActionParameters,
+} from '@/types';
+import { HookType } from '@/types/HookType';
+import { config } from 'dotenv';
+import { expand } from 'dotenv-expand';
+import { existsSync } from 'node:fs';
 import {
   IncomingMessage,
   Server,
   ServerResponse,
   createServer,
 } from 'node:http';
-
-import { config } from 'dotenv';
-import { expand } from 'dotenv-expand';
-import { join } from 'path';
+import { join } from 'node:path';
 import { Request } from './http/Request';
 import { Response } from './http/Response';
 import { Logger } from './logger';
-import { existsSync } from 'node:fs';
 
 /**
  * The `Application` class represents the core of the Axiom framework and
@@ -111,6 +115,92 @@ export class Application extends Container {
    * messages and events in the application.
    */
   logger: Logger = new Logger();
+
+  /**
+   * An object that stores hooks for different stages in the request-response
+   * cycle. The keys are hook names, and the values are arrays of hook actions.
+   */
+  private hooks?: Record<HookType, RouteAction[]>;
+
+  /**
+   * Registers a hook or multiple hooks for a specific stage in the
+   * request-response cycle. If a hook with the same name already exists, the
+   * new hook(s) will be appended.
+   *
+   * @param hookName - The name of the hook (e.g., 'preRequest', 'postRoute').
+   * @param action - A single hook action or an array of hook actions to be
+   * executed.
+   * @returns The array of hook actions registered for the specified hookName.
+   */
+  public readonly useHook = (
+    hookName: HookType,
+    action: RouteAction | RouteAction[],
+  ): RouteAction[] => {
+    // Ensure action is an array
+    if (!Array.isArray(action)) action = [action];
+
+    // Retrieve existing hooks for the specified hookName
+    const prevHooks = this.hooks[hookName];
+
+    // Combine existing hooks with the new ones and update the hooks object
+    this.hooks[hookName] =
+      prevHooks !== undefined ? [...prevHooks, ...action] : [...action];
+
+    // Return the array of hook actions for the specified hookName
+    return this.hooks[hookName];
+  };
+
+  /**
+   * Executes hooks for a specific stage in the request-response cycle by hook
+   * name.
+   *
+   * @param hookName - The name of the hook (e.g., 'preRequest', 'postRoute').
+   * @param params - The parameters to pass to the hook actions.
+   */
+  public readonly executeHook = (
+    hookName: HookType,
+    params: RouteActionParameters,
+  ): void => {
+    const actions = this.hooks[hookName];
+
+    // Execute each hook in the order they were registered
+    if (actions) actions.forEach((action) => action(params));
+  };
+
+  /**
+   * Removes a specific function from a hook.
+   *
+   * @param hookName - The name of the hook to remove the function from.
+   * @param targetFunction - The function to be removed from the hook.
+   * @returns True if the function was successfully removed, false otherwise.
+   */
+  public readonly removeFunctionFromHook = (
+    hookName: HookType,
+    targetFunction: RouteAction,
+  ): boolean => {
+    const hooks = this.hooks[hookName];
+
+    if (hooks) {
+      const index = hooks.indexOf(targetFunction);
+
+      if (index !== -1) {
+        // Remove the function from the array
+        hooks.splice(index, 1);
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  /**
+   * Clears a hook completely, removing all registered functions.
+   *
+   * @param hookName - The name of the hook to be cleared.
+   */
+  public readonly clearHook = (hookName: HookType): void => {
+    if (this.hooks[hookName]) this.hooks[hookName] = [];
+  };
 
   /**
    * Adds a middleware function to an array of middleware functions that will be

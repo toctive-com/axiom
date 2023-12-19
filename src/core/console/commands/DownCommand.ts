@@ -2,7 +2,7 @@ import * as boxen from 'boxen';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { existsSync, renameSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'node:path';
 import { cwd } from 'process';
 import { AxiomCommand } from '../AxiomCommand';
 

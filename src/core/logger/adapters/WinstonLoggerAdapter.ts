@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { join } from 'path';
+import { join } from 'node:path';
 import winston from 'winston';
 import { LogLevel, logLevels } from '../LogLevel';
 import { LoggerArguments } from '../LoggerArguments';
