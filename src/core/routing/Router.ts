@@ -166,7 +166,7 @@ export class Router extends RouterBase {
       await req.app.executeHook('post-route', hookParams);
       return result;
     } catch (error) {
-      req.app.logger.error(error.message, error);
+      req.app.logger.error(`Unhandled error: (${error.message})`, error);
       await req.app.executeHook('error-handling', hookParams);
       res.setStatus('INTERNAL_SERVER_ERROR');
 
