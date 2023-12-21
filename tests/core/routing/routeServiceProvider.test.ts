@@ -24,14 +24,18 @@ describe('RouteServiceProvider', () => {
     serviceProvider = new TestableRouteServiceProvider(app);
 
     request = new Request(new Socket());
+    request.app = app;
     response = new Response(request);
+    response.app = app;
   });
 
   it('should register routes and execute matched route', async () => {
     const request = new Request(new Socket());
+    request.app = app;
     request.url = '/test';
     request.method = 'GET';
     const response = new Response(request);
+    response.app = app;
 
     let routeExecuted = false;
 
@@ -54,9 +58,11 @@ describe('RouteServiceProvider', () => {
 
   it('should handle null or undefined route action result', async () => {
     const request = new Request(new Socket());
+    request.app = app;
     request.url = '/test';
     request.method = 'GET';
     const response = new Response(request);
+    response.app = app;
 
     let routeExecuted = false;
 
@@ -77,9 +83,11 @@ describe('RouteServiceProvider', () => {
 
   it('should handle object route action result', async () => {
     const request = new Request(new Socket());
+    request.app = app;
     request.url = '/test';
     request.method = 'GET';
     const response = new Response(request);
+    response.app = app;
 
     const data = { message: 'Hello, world!' };
     router.get('/test', () => {
@@ -102,14 +110,16 @@ describe('RouteServiceProvider', () => {
 
   it('should handle handler not found error', async () => {
     const request = new Request(new Socket());
+    request.app = app;
     request.url = '/nonexistent';
     request.method = 'GET';
+
     const response = new Response(request);
+    response.app = app;
 
     serviceProvider.handlerNotFoundError();
 
-    const middleware = app.middleware[0];
-    await middleware(request, response);
+    await app.middleware[0](request, response);
 
     expect(response.statusCode).toBe(404);
   });
@@ -143,7 +153,6 @@ describe('RouteServiceProvider', () => {
 
     request.method = 'GET';
     request.url = '/nonexistent-route';
-    request.app = app;
 
     let writtenData = '';
     response.write = (data: string) => {
@@ -157,7 +166,13 @@ describe('RouteServiceProvider', () => {
       .make<HttpKernel>('HttpKernel');
     await httpKernel.handle(request, response);
 
-    expect(writtenData).toBe('Route not found');
+    expect(writtenData).toBe(
+      JSON.stringify({
+        success: false,
+        message: 'Route not found',
+        statusCode: 404,
+      }),
+    );
   });
 
   it('should handle route returning an object', async () => {

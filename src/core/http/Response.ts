@@ -3,6 +3,7 @@ import { HttpStatusCode, HttpStatusMessage } from '@/types/HttpStatusCode';
 import fs from 'node:fs';
 import { IncomingMessage, ServerResponse } from 'node:http';
 import stream from 'node:stream';
+import { Request } from './Request';
 
 export class Response extends ServerResponse<IncomingMessage> {
   /**
@@ -63,7 +64,7 @@ export class Response extends ServerResponse<IncomingMessage> {
    * The function will exit early and no further code will be executed.
    *
    */
-  protected prepareHeaders(contents?: unknown): void {
+  protected async prepareHeaders(contents?: unknown): Promise<void> {
     // this is to prevent the response from being sent twice if the content is
     // undefined and the response has not been sent yet. This can happen if the
     // response is sent from a middleware or sent manually using
@@ -83,8 +84,19 @@ export class Response extends ServerResponse<IncomingMessage> {
     this.appendHeader('Transfer-Encoding', 'chunked');
     this.appendHeader('Content-Language', 'en-US');
 
-    // TODO check if the client accepts gzip if (this.isAcceptsGzip()) {
-    // this.appendHeader("Content-Encoding", "gzip");
+    const hookParams = {
+      req: this.req as Request,
+      request: this.req as Request,
+      res: this,
+      response: this,
+      app: this.app,
+    };
+
+    // TODO check if the client accepts gzip
+    // if (this.isAcceptsGzip()) {
+    //    this.app.executeHook('pre-compression', hookParams);
+    //    this.appendHeader("Content-Encoding", "gzip");
+    //    this.app.executeHook('post-compression', hookParams);
     // }
 
     this.prepareContentType(contents);
@@ -100,7 +112,16 @@ export class Response extends ServerResponse<IncomingMessage> {
    *
    */
   protected prepareBody(contents?: unknown): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      const hookParams = {
+        req: this.req as Request,
+        request: this.req as Request,
+        res: this,
+        response: this,
+        app: this.app,
+      };
+      await this.app.executeHook('pre-serialization', hookParams);
+
       if (typeof contents === 'object') {
         // FIXME JSON.stringify is slow. Replace it with something faster like
         // Typia @see https://typia.io/docs/json/stringify/
@@ -114,6 +135,8 @@ export class Response extends ServerResponse<IncomingMessage> {
           err ? reject(err) : resolve(),
         );
       }
+
+      await this.app.executeHook('post-serialization', hookParams);
     });
   }
 

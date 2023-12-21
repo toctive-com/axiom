@@ -120,7 +120,7 @@ export class Application extends Container {
    * An object that stores hooks for different stages in the request-response
    * cycle. The keys are hook names, and the values are arrays of hook actions.
    */
-  private hooks?: Record<HookType, RouteAction[]>;
+  private hooks: Record<HookType | string, RouteAction[]> = {};
 
   /**
    * Registers a hook or multiple hooks for a specific stage in the
@@ -138,6 +138,8 @@ export class Application extends Container {
   ): RouteAction[] => {
     // Ensure action is an array
     if (!Array.isArray(action)) action = [action];
+
+    if (!Object.keys(this.hooks).includes(hookName)) this.hooks[hookName] = [];
 
     // Retrieve existing hooks for the specified hookName
     const prevHooks = this.hooks[hookName];
@@ -157,10 +159,10 @@ export class Application extends Container {
    * @param hookName - The name of the hook (e.g., 'preRequest', 'postRoute').
    * @param params - The parameters to pass to the hook actions.
    */
-  public readonly executeHook = (
+  public readonly executeHook = async (
     hookName: HookType,
     params: RouteActionParameters,
-  ): void => {
+  ): Promise<void> => {
     const actions = this.hooks[hookName];
 
     // Execute each hook in the order they were registered
@@ -210,9 +212,30 @@ export class Application extends Container {
    *
    */
   public add(
-    middleware: (res: Request, req: Response, next?: Function) => any,
+    middleware: (
+      req: Request,
+      res: Response,
+      next?: Function,
+    ) => Promise<any> | unknown,
   ) {
-    this.middleware.push(middleware);
+    this.middleware.push(
+      async (req: Request, res: Response, next?: Function) => {
+        const hookParams = {
+          req,
+          request: req,
+          res,
+          response: res,
+          app: this,
+          next,
+        };
+
+        await this.executeHook('pre-middleware', hookParams);
+
+        await middleware(req, res, next);
+
+        await this.executeHook('post-middleware', hookParams);
+      },
+    );
   }
 
   /**

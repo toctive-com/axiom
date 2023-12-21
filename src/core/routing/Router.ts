@@ -126,8 +126,18 @@ export class Router extends RouterBase {
     res: Response,
     next?: Function,
   ): Promise<unknown> {
+    const hookParams = {
+      req,
+      request: req,
+      res,
+      response: res,
+      next,
+      app: req.app,
+    };
+
     try {
       const matchedRoutes = await this.match(req, res);
+
       if (!matchedRoutes) {
         // If there is no matched route call the next function
         if (next) return await next();
@@ -145,8 +155,19 @@ export class Router extends RouterBase {
         res,
       });
 
-      return await matchedRoutes[0].dispatch(req, res, nextFunctionsStack);
+      await req.app.executeHook('pre-route', hookParams);
+
+      const result = await matchedRoutes[0].dispatch(
+        req,
+        res,
+        nextFunctionsStack,
+      );
+
+      await req.app.executeHook('post-route', hookParams);
+      return result;
     } catch (error) {
+      req.app.logger.error(error.message, error);
+      await req.app.executeHook('error-handling', hookParams);
       res.setStatus('INTERNAL_SERVER_ERROR');
 
       return {

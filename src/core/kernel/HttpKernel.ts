@@ -67,9 +67,23 @@ export class HttpKernel {
 
           Application.set('HttpRequest', () => request);
           Application.set('HttpResponse', () => response);
+          const hookParams = {
+            req: request,
+            request,
+            res: response,
+            response,
+            app: this.app,
+          };
+
+          await this.app.executeHook('pre-request', hookParams);
 
           const result = await this.handle(request, response);
+
+          await this.app.executeHook('pre-response', hookParams);
+
           result.send();
+
+          await this.app.executeHook('post-response', hookParams);
           resolve();
         },
       ));
@@ -81,7 +95,9 @@ export class HttpKernel {
           console.log(`server started on http://${hostname}:${port}/`);
       });
 
-      server.on('error', (error: Error & { code: string }) => {
+      server.on('error', async (error: Error & { code: string }) => {
+        await this.app.executeHook('error-handling', { error });
+
         if (
           error.code === 'EADDRINUSE' &&
           this.app.getConfig('server.incrementalPort', true)
@@ -130,6 +146,10 @@ export class HttpKernel {
       await func(request, response, async () => {
         return await this.executeSequence(tempFunctionArray, request, response);
       });
+    } else {
+      await this.app.logger.warning(
+        "a middleware is not a function anc can't be executed",
+      );
     }
   }
 

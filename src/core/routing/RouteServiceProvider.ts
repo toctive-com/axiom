@@ -21,6 +21,7 @@ export class RouteServiceProvider extends ServiceProvider {
         res.write(result);
       } else if (result === null || result === undefined) {
         // if the route action didn't return anything, end the function
+        return;
       } else if (typeof result === 'object') {
         res.addHeader('Content-Type', 'application/json; charset=utf-8');
 
@@ -39,10 +40,16 @@ export class RouteServiceProvider extends ServiceProvider {
    *
    */
   public handlerNotFoundError(): void {
-    this.app.add((req, res) => {
-      // TODO add default views for errors
+    this.app.add(async (_req, res) => {
       res.setStatus('NOT_FOUND');
-      res.write('Route not found');
+
+      return res.write(
+        JSON.stringify({
+          success: false,
+          message: 'Route not found',
+          statusCode: 404,
+        }),
+      );
     });
   }
 }
