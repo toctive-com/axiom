@@ -174,7 +174,7 @@ export class Response extends ServerResponse<IncomingMessage> {
     if (!this.headersSent) {
       return this.appendHeader(name, value);
     }
-    console.warn("headers already sent and can't be modified.");
+    this.app.logger.warning("headers already sent and can't be modified.");
     return this;
   }
 
