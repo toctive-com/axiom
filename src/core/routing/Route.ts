@@ -74,16 +74,20 @@ export class Route {
    * an array.
    */
   public isUriMatches(request: Request): boolean {
-    const url = Url.trim(request.url).replace(this.prefixUri, '');
-    const matchedRoute = this.getMatchedUri(url);
-    return matchedRoute !== null;
+    let url = Url.trim(
+      new URL(request.url, 'http://localhost/').pathname,
+    ).replace(this.prefixUri, '');
+
+    return this.getMatchedUri(url) !== null;
   }
 
   /**
    * Checks if the request URL matches the route's prefix.
    */
   public isMatchPrefix = (request: Request): boolean => {
-    return Url.trim(request.url).startsWith(this.prefixUri);
+    return Url.trim(
+      new URL(request.url, 'http://localhost/').pathname,
+    ).startsWith(this.prefixUri);
   };
 
   /**
@@ -148,7 +152,9 @@ export class Route {
     response: Response,
     next: Function = () => {},
   ) {
-    const url = Url.trim(request.url).replace(this.prefixUri, '');
+    const url = Url.trim(
+      new URL(request.url, 'http://localhost/').pathname,
+    ).replace(this.prefixUri, '');
     const matchedUri = this.getMatchedUri(url);
 
     if (matchedUri !== null) {
