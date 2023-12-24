@@ -61,10 +61,11 @@ export class HttpKernel {
         async (req, res) => {
           const request: Request = setPrototypeOf(req, Request.prototype);
           const response: Response = setPrototypeOf(res, Response.prototype);
-
+          
           request.app = this.app;
           response.app = this.app;
-
+          
+          await request.parseBody();
           Application.set('HttpRequest', () => request);
           Application.set('HttpResponse', () => response);
           const hookParams = {
@@ -81,7 +82,7 @@ export class HttpKernel {
 
           await this.app.executeHook('pre-response', hookParams);
 
-          result.send();
+          await result.send();
 
           await this.app.executeHook('post-response', hookParams);
           resolve();
@@ -147,7 +148,7 @@ export class HttpKernel {
         return await this.executeSequence(tempFunctionArray, request, response);
       });
     } else {
-      await this.app.logger.warning(
+      this.app.logger.warning(
         "a middleware is not a function anc can't be executed",
       );
     }
