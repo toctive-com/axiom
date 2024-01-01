@@ -31,9 +31,71 @@ export class Request extends IncomingMessage implements Jsonable {
     this._body = { ...this._body, ...value };
   }
 
+  _params: any = {};
+  public get params() {
+    return this._params;
+  }
+  public set params(value: unknown) {
+    if (typeof value !== 'object') {
+      this._params = value;
+      return;
+    }
+
+    this._params = { ...this._params, ...value };
+  }
+
   public files: Record<string, File> = {};
 
-  public async parseBody(): Promise<void> {
+  public async parse() {
+    // TODO: add method to parse cookies too
+    // await this.parseCookies();
+    this.params = await this.parseUrlParams();
+    await this.parseBody();
+  }
+
+  /**
+   * Parses URL parameters from the request and resolves a promise with the
+   * parsed parameters.
+   * @returns A promise that resolves to an object containing the parsed URL
+   * parameters.
+   * @throws Error if the URL parameters have an invalid format.
+   */
+  protected async parseUrlParams(): Promise<Record<string, string>> {
+    return new Promise<Record<string, string>>((resolve, reject) => {
+      let data = '';
+
+      this.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      this.on('end', () => {
+        try {
+          // Extract URL parameters using URLSearchParams
+          const params = new URLSearchParams(
+            new URL(this.url, `http://${this.headers.host}`).search,
+          );
+
+          // Convert URLSearchParams to a plain object
+          const parsedParams: Record<string, string> = {};
+          params.forEach((value, key) => {
+            parsedParams[key] = value;
+          });
+
+          // Resolve the promise with the parsed parameters
+          resolve(parsedParams);
+        } catch (error) {
+          // Reject the promise with an error message for invalid URL parameters format
+          reject(new Error('Invalid URL parameters format'));
+        }
+      });
+    });
+  }
+
+  /**
+   * Parses the request body based on the content type and sets the 'body' and
+   * 'files' properties accordingly.
+   */
+  protected async parseBody(): Promise<void> {
     const contentType = this.headers['content-type'] || '';
     if (contentType.includes('application/json')) {
       this.body = await this.parseJson();
@@ -54,7 +116,7 @@ export class Request extends IncomingMessage implements Jsonable {
     }
   }
 
-  private async parseJson(): Promise<any> {
+  protected async parseJson(): Promise<any> {
     return new Promise((resolve, reject) => {
       let data = '';
 
@@ -72,7 +134,7 @@ export class Request extends IncomingMessage implements Jsonable {
     });
   }
 
-  private async parseUrlEncoded(): Promise<any> {
+  protected async parseUrlEncoded(): Promise<any> {
     return new Promise((resolve, reject) => {
       let data = '';
 
@@ -86,7 +148,7 @@ export class Request extends IncomingMessage implements Jsonable {
     });
   }
 
-  private async parseMultipart(): Promise<{
+  protected async parseMultipart(): Promise<{
     fields: Record<string, unknown>;
     files: Record<string, File>;
   }> {
@@ -152,7 +214,7 @@ export class Request extends IncomingMessage implements Jsonable {
     });
   }
 
-  private async parseText(): Promise<string> {
+  protected async parseText(): Promise<string> {
     return new Promise((resolve, reject) => {
       let data = '';
 
@@ -172,14 +234,6 @@ export class Request extends IncomingMessage implements Jsonable {
   }
   public set locals(value: any) {
     Request.locals = { ...Request.locals, value };
-  }
-
-  static params: any = {};
-  public get params(): any {
-    return Request.params;
-  }
-  public set params(value: any) {
-    Request.params = value;
   }
 
   /**
