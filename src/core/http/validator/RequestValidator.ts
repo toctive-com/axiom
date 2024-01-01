@@ -12,13 +12,6 @@ export abstract class RequestValidator extends Middleware {
     this.routeActionParameters = routeActionParameters;
   }
 
-  public abstract authorize(
-    routeActionParameters: RouteActionParameters,
-  ): boolean;
-  public abstract validate(
-    routeActionParameters: RouteActionParameters,
-  ): unknown;
-
   public isValid(): boolean {
     return this.authorize(this.routeActionParameters);
   }
@@ -30,7 +23,7 @@ export abstract class RequestValidator extends Middleware {
         return { success: false, message: 'UNAUTHORIZED' };
       }
 
-      if (!this.validate(params)) {
+      if ((this.validate(params) as any).success === false) {
         params.res.setStatus('BAD_REQUEST');
         return { success: false, message: 'BAD_REQUEST' };
       }
