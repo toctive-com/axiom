@@ -65,7 +65,7 @@ export class HttpKernel {
           request.app = this.app;
           response.app = this.app;
           
-          await request.parseBody();
+          await request.parse();
           Application.set('HttpRequest', () => request);
           Application.set('HttpResponse', () => response);
           const hookParams = {
