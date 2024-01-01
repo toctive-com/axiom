@@ -1,5 +1,5 @@
-import { Request } from '@/core/http/Request';
-import { Response } from '@/core/http/Response';
+import { Middleware, Request, Response } from '@/core';
+import { Instantiable, RouteActionParameters } from '@/types';
 import { Url, makeFunctionsChain } from '@/utils';
 
 /**
@@ -39,7 +39,7 @@ export class Route {
   constructor(
     public httpMethods: string[],
     public uri: string[],
-    public actions: Function[],
+    public actions: (Function | typeof Middleware)[],
   ) {
     this.uri = uri.map((item) => Url.trim(item));
   }
@@ -150,7 +150,7 @@ export class Route {
   public async dispatch(
     request: Request,
     response: Response,
-    next: Function = () => {},
+    next: Function | typeof Middleware = () => {},
   ) {
     const url = Url.trim(
       new URL(request.url, 'http://localhost/').pathname,
@@ -163,8 +163,22 @@ export class Route {
 
       this._tempActions = [...this.actions, next];
 
+      const processedActions = this._tempActions.map((action) => {
+        if (action.prototype instanceof Middleware) {
+          return (params: RouteActionParameters) => {
+            const routeAction = new (action as Instantiable & Middleware)(
+              params,
+            ).getAction();
+
+            return routeAction(params);
+          };
+        } else {
+          return action;
+        }
+      });
+
       return await this.callFunctions(
-        this._tempActions,
+        processedActions,
         request,
         response,
         variables,
@@ -177,23 +191,36 @@ export class Route {
    * objects, until all functions have been called.
    */
   async callFunctions(
-    functions: Function[],
+    functions: (Function | Middleware)[],
     request: Request,
     response: Response,
     rest: { [key: string]: any },
   ) {
     if (functions.length === 0) return;
     const currentFunc = functions.shift();
-    return await currentFunc({
-      next: async () =>
-        await this.callFunctions(functions, request, response, rest),
-      request,
-      response,
-      req: request,
-      res: response,
-      app: request.app,
-      ...rest,
-    });
+    if (currentFunc instanceof Middleware) {
+      return await (currentFunc as Middleware).validate({
+        app: request.app,
+        request,
+        req: request,
+        response,
+        res: response,
+        next: () => {
+          return this.callFunctions(functions, request, response, rest);
+        },
+      });
+    } else {
+      return await currentFunc({
+        next: async () =>
+          await this.callFunctions(functions, request, response, rest),
+        request,
+        response,
+        req: request,
+        res: response,
+        app: request.app,
+        ...rest,
+      });
+    }
   }
 
   /**

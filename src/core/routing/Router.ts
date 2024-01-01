@@ -1,8 +1,6 @@
-import { Request } from '@/core/http/Request';
-import { RoutesGroupAttributes } from '@/types/RoutesGroupAttributes';
-import { RoutesGroupCallback } from '@/types/RoutesGroupCallback';
+import { Request, Response } from '@/core';
+import { RoutesGroupAttributes, RoutesGroupCallback } from '@/types';
 import { makeFunctionsChain } from '@/utils';
-import { Response } from '../http/Response';
 import { Route } from './Route';
 import { RouterBase } from './RouterBase';
 import { RoutesGroup } from './RoutesGroup';

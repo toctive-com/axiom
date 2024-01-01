@@ -1,13 +1,15 @@
-import { HttpMethod, Instantiable } from '@/types';
+import { Middleware } from '@/core';
+import { HttpMethod } from '@/types';
 import { Arr, Url } from '@/utils';
 import { Route } from './Route';
 import { RoutesGroup } from './RoutesGroup';
 
-export type AcceptedAction =
-  | (Instantiable | CallableFunction)[]
-  | CallableFunction;
-
 export type AcceptedURI = string | string[];
+export type AcceptedAction = typeof Middleware | Function;
+export type RouteFunction = (
+  uri: AcceptedURI,
+  ...action: AcceptedAction[]
+) => Route;
 
 export abstract class RouterBase {
   /**
@@ -82,7 +84,7 @@ export abstract class RouterBase {
   protected addRoute(
     httpMethods: HttpMethod | HttpMethod[],
     uris: AcceptedURI,
-    actions: AcceptedAction,
+    actions: AcceptedAction[],
   ) {
     httpMethods = Arr.wrap(httpMethods);
     uris = Arr.wrap(uris).map((uri) => Url.trim(uri));
@@ -113,33 +115,25 @@ export abstract class RouterBase {
 
   /**
    * Create a new route with all HTTP verbs and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public all(uri: AcceptedURI, action: AcceptedAction) {
-    return this.any(uri, action);
-  }
+  public all: RouteFunction = (uri, ...action) => {
+    return this.any(uri, ...action);
+  };
 
   /**
    * Create a new route with all HTTP verbs and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public any(uri: AcceptedURI, action: AcceptedAction) {
+  public any: RouteFunction = (uri, ...action) => {
     return this.addRoute(RouterBase.httpMethods, uri, action);
-  }
+  };
 
   /**
    * Create a new route with one or more HTTP verbs and store it in Router
-   * routes
+   * routes.
    *
    * @param httpMethods
    * @param uri
@@ -151,463 +145,324 @@ export abstract class RouterBase {
   public anyOf(
     httpMethods: HttpMethod | HttpMethod[],
     uri: AcceptedURI,
-    action: AcceptedAction,
+    ...action: AcceptedAction[]
   ) {
     return this.addRoute(httpMethods, uri, action);
   }
 
   /**
    * Create a new Acl route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public acl(uri: AcceptedURI, action: AcceptedAction) {
+  public acl: RouteFunction = (uri, ...action) => {
     return this.addRoute('ACL', uri, action);
-  }
+  };
 
   /**
    * Create a new Bind route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public bind(uri: AcceptedURI, action: AcceptedAction) {
+  public bind: RouteFunction = (uri, ...action) => {
     return this.addRoute('BIND', uri, action);
-  }
+  };
 
   /**
    * Create a new Checkout route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public checkout(uri: AcceptedURI, action: AcceptedAction) {
+  public checkout: RouteFunction = (uri, ...action) => {
     return this.addRoute('CHECKOUT', uri, action);
-  }
+  };
 
   /**
    * Create a new Connect route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public connect(uri: AcceptedURI, action: AcceptedAction) {
+  public connect: RouteFunction = (uri, ...action) => {
     return this.addRoute('CONNECT', uri, action);
-  }
+  };
 
   /**
    * Create a new Copy route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public copy(uri: AcceptedURI, action: AcceptedAction) {
+  public copy: RouteFunction = (uri, ...action) => {
     return this.addRoute('COPY', uri, action);
-  }
+  };
 
   /**
    * Create a new Delete route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public delete(uri: AcceptedURI, action: AcceptedAction) {
+  public delete: RouteFunction = (uri, ...action) => {
     return this.addRoute('DELETE', uri, action);
-  }
+  };
 
   /**
    * Create a new Get route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public get(uri: AcceptedURI, action: AcceptedAction) {
+  public get: RouteFunction = (uri, ...action) => {
     return this.addRoute(['GET', 'HEAD'], uri, action);
-  }
+  };
 
   /**
-   * Create a new Get route without HEAD HTTP method and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
+   * Create a new Get route without HEAD HTTP method and store it in Router
+   * routes
    * @returns Route
    *
    */
-  public getOnly(uri: AcceptedURI, action: AcceptedAction) {
+  public getOnly: RouteFunction = (uri, ...action) => {
     return this.addRoute('GET', uri, action);
-  }
+  };
 
   /**
    * Create a new Head route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public head(uri: AcceptedURI, action: AcceptedAction) {
+  public head: RouteFunction = (uri, ...action) => {
     return this.addRoute('HEAD', uri, action);
-  }
+  };
 
   /**
    * Create a new Link route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public link(uri: AcceptedURI, action: AcceptedAction) {
+  public link: RouteFunction = (uri, ...action) => {
     return this.addRoute('LINK', uri, action);
-  }
+  };
 
   /**
    * Create a new Lock route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public lock(uri: AcceptedURI, action: AcceptedAction) {
+  public lock: RouteFunction = (uri, ...action) => {
     return this.addRoute('LOCK', uri, action);
-  }
+  };
 
   /**
    * Create a new Merge route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public merge(uri: AcceptedURI, action: AcceptedAction) {
+  public merge: RouteFunction = (uri, ...action) => {
     return this.addRoute('MERGE', uri, action);
-  }
+  };
 
   /**
    * Create a new Mkactivity route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public mkactivity(uri: AcceptedURI, action: AcceptedAction) {
+  public mkactivity: RouteFunction = (uri, ...action) => {
     return this.addRoute('MKACTIVITY', uri, action);
-  }
+  };
 
   /**
    * Create a new Mkcalendar route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public mkcalendar(uri: AcceptedURI, action: AcceptedAction) {
+  public mkcalendar: RouteFunction = (uri, ...action) => {
     return this.addRoute('MKCALENDAR', uri, action);
-  }
+  };
 
   /**
    * Create a new Mkcol route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public mkcol(uri: AcceptedURI, action: AcceptedAction) {
+  public mkcol: RouteFunction = (uri, ...action) => {
     return this.addRoute('MKCOL', uri, action);
-  }
+  };
 
   /**
    * Create a new Move route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public move(uri: AcceptedURI, action: AcceptedAction) {
+  public move: RouteFunction = (uri, ...action) => {
     return this.addRoute('MOVE', uri, action);
-  }
+  };
 
   /**
    * Create a new Notify route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public notify(uri: AcceptedURI, action: AcceptedAction) {
+  public notify: RouteFunction = (uri, ...action) => {
     return this.addRoute('NOTIFY', uri, action);
-  }
+  };
 
   /**
    * Create a new Options route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public options(uri: AcceptedURI, action: AcceptedAction) {
+  public options: RouteFunction = (uri, ...action) => {
     return this.addRoute('OPTIONS', uri, action);
-  }
+  };
 
   /**
    * Create a new Patch route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public patch(uri: AcceptedURI, action: AcceptedAction) {
+  public patch: RouteFunction = (uri, ...action) => {
     return this.addRoute('PATCH', uri, action);
-  }
+  };
 
   /**
    * Create a new Post route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public post(uri: AcceptedURI, action: AcceptedAction) {
+  public post: RouteFunction = (uri, ...action) => {
     return this.addRoute('POST', uri, action);
-  }
+  };
 
   /**
    * Create a new Propfind route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public propfind(uri: AcceptedURI, action: AcceptedAction) {
+  public propfind: RouteFunction = (uri, ...action) => {
     return this.addRoute('PROPFIND', uri, action);
-  }
+  };
 
   /**
    * Create a new Proppatch route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public proppatch(uri: AcceptedURI, action: AcceptedAction) {
+  public proppatch: RouteFunction = (uri, ...action) => {
     return this.addRoute('PROPPATCH', uri, action);
-  }
+  };
 
   /**
    * Create a new Purge route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public purge(uri: AcceptedURI, action: AcceptedAction) {
+  public purge: RouteFunction = (uri, ...action) => {
     return this.addRoute('PURGE', uri, action);
-  }
+  };
 
   /**
    * Create a new Put route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public put(uri: AcceptedURI, action: AcceptedAction) {
+  public put: RouteFunction = (uri, ...action) => {
     return this.addRoute('PUT', uri, action);
-  }
+  };
 
   /**
    * Create a new Rebind route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public rebind(uri: AcceptedURI, action: AcceptedAction) {
+  public rebind: RouteFunction = (uri, ...action) => {
     return this.addRoute('REBIND', uri, action);
-  }
+  };
 
   /**
    * Create a new Report route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public report(uri: AcceptedURI, action: AcceptedAction) {
+  public report: RouteFunction = (uri, ...action) => {
     return this.addRoute('REPORT', uri, action);
-  }
+  };
 
   /**
    * Create a new Search route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public search(uri: AcceptedURI, action: AcceptedAction) {
+  public search: RouteFunction = (uri, ...action) => {
     return this.addRoute('M-SEARCH', uri, action);
-  }
+  };
 
   /**
    * Create a new Search route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public mSearch(uri: AcceptedURI, action: AcceptedAction) {
+  public mSearch: RouteFunction = (uri, ...action) => {
     return this.addRoute('M-SEARCH', uri, action);
-  }
+  };
 
   /**
    * Create a new Source route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public source(uri: AcceptedURI, action: AcceptedAction) {
+  public source: RouteFunction = (uri, ...action) => {
     return this.addRoute('SOURCE', uri, action);
-  }
+  };
 
   /**
    * Create a new Subscribe route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public subscribe(uri: AcceptedURI, action: AcceptedAction) {
+  public subscribe: RouteFunction = (uri, ...action) => {
     return this.addRoute('SUBSCRIBE', uri, action);
-  }
+  };
 
   /**
    * Create a new Trace route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public trace(uri: AcceptedURI, action: AcceptedAction) {
+  public trace: RouteFunction = (uri, ...action) => {
     return this.addRoute('TRACE', uri, action);
-  }
+  };
 
   /**
    * Create a new Unbind route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public unbind(uri: AcceptedURI, action: AcceptedAction) {
+  public unbind: RouteFunction = (uri, ...action) => {
     return this.addRoute('UNBIND', uri, action);
-  }
+  };
 
   /**
    * Create a new Unlink route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public unlink(uri: AcceptedURI, action: AcceptedAction) {
+  public unlink: RouteFunction = (uri, ...action) => {
     return this.addRoute('UNLINK', uri, action);
-  }
+  };
 
   /**
    * Create a new Unlock route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public unlock(uri: AcceptedURI, action: AcceptedAction) {
+  public unlock: RouteFunction = (uri, ...action) => {
     return this.addRoute('UNLOCK', uri, action);
-  }
+  };
 
   /**
    * Create a new Unsubscribe route and store it in Router routes
-   *
-   * @param {string|string[]} uri
-   * @param {CallableFunction|CallableFunction[]} action
-   *
    * @returns Route
    *
    */
-  public unsubscribe(uri: AcceptedURI, action: AcceptedAction) {
+  public unsubscribe: RouteFunction = (uri, ...action) => {
     return this.addRoute('UNSUBSCRIBE', uri, action);
-  }
+  };
 }

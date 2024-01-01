@@ -1,10 +1,9 @@
-import { Request } from '@/core/http/Request';
+import { Request, Response } from '@/core';
+import { HttpMethod } from '@/types';
 import { RoutesGroupAttributes } from '@/types/RoutesGroupAttributes';
 import { Arr, Url } from '@/utils';
 import { Route } from './Route';
-import { RouterBase } from './RouterBase';
-import { HttpMethod } from '@/types';
-import { Response } from '../http/Response';
+import { AcceptedAction, RouterBase } from './RouterBase';
 
 /**
  * The `RoutesGroup` class is a subclass of `RouterBase` that represents a group
@@ -87,7 +86,7 @@ export class RoutesGroup extends RouterBase {
   public addRoute(
     httpMethods: HttpMethod | HttpMethod[],
     uris: string | string[],
-    actions: CallableFunction[] | CallableFunction | null,
+    actions: AcceptedAction[],
   ) {
     const route = super.addRoute(httpMethods, uris, actions);
     if (this.middlewareLayers) route.middleware(this.middlewareLayers);
@@ -134,7 +133,10 @@ export class RoutesGroup extends RouterBase {
    * @returns The method is returning a boolean value.
    *
    */
-  public async match(request: Request, response: Response): Promise<false | Route> {
+  public async match(
+    request: Request,
+    response: Response,
+  ): Promise<false | Route> {
     for (const route of this.routes) {
       const isMatched = await route.match(request, response);
       if (!isMatched) continue;
